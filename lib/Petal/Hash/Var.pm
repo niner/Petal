@@ -5,41 +5,57 @@
 # This module is redistributed under the same license as Perl
 # itself.
 # ------------------------------------------------------------------
+
 package Petal::Hash::Var;
+
 use strict;
 use warnings;
+
 use Carp;
+use UNIVERSAL qw( isa );
+use Scalar::Util qw( blessed );
 
+#our $STRING_RE_DOUBLE = qq |(?<!\\\\)\\".*?(?<!\\\\)\\"|;
+#our $STRING_RE_SINGLE = qq |(?<!\\\\)\\'.*?(?<!\\\\)\\'|;
+#our $STRING_RE        = "(?:$STRING_RE_SINGLE|$STRING_RE_DOUBLE)";
+#our $VARIABLE_RE      = "(?:--)?[A-Za-z\_][^ \t]*";
+#our $TOKEN_RE         = "(?:$STRING_RE|$VARIABLE_RE)";
 
-our $STRING_RE_DOUBLE = qq |(?<!\\\\)\\".*?(?<!\\\\)\\"|;
-our $STRING_RE_SINGLE = qq |(?<!\\\\)\\'.*?(?<!\\\\)\\'|;
-our $STRING_RE        = "(?:$STRING_RE_SINGLE|$STRING_RE_DOUBLE)";
-our $VARIABLE_RE      = "(?:--)?[A-Za-z\_][^ \t]*";
-our $TOKEN_RE         = "(?:$STRING_RE|$VARIABLE_RE)";
+our $STRING_RE_DOUBLE  = qr/(?<!\\)\".*?(?<!\\)\"/;
+our $STRING_RE_SINGLE  = qr/(?<!\\)\'.*?(?<!\\)\'/;
+our $STRING_RE         = qr/(?:$STRING_RE_SINGLE|$STRING_RE_DOUBLE)/;
+our $VARIABLE_RE       = qr/(?:--)?[A-Za-z\_][^ \t]*/;
+our $PARAM_PREFIX_RE   = qr/^--/;
+our $ESCAPED_CHAR_RE   = qr/(?sm:\\(.))/;
+our $BEGIN_QUOTE_RE    = qr/^\"|\'/;
+our $END_QUOTE_RE      = qr/\"|\'$/;
+our $TOKEN_RE          = qr/(?:$STRING_RE|$VARIABLE_RE)/;
+our $PATH_SEPARATOR_RE = qr/(?:\/|\.)/;
+our $INTEGER_KEY_RE    = qr/^\d+$/;
 
+our $ERROR_ON_UNDEF_VAR = 1;
 
 sub process
 {
-    my $class = shift;
-    my $hash  = shift;
-    
+    my $class    = shift;
+    my $hash     = shift;
     my $argument = shift;
-   
+
     my @tokens = $argument =~ /($TOKEN_RE)/gsm;
     my $path   = shift (@tokens) or confess "bad syntax for $class: $argument (\$path)";
-    my @path = split /\/|\./, $path;    
-    my @args = @tokens;
-    
+    my @path   = split( /$PATH_SEPARATOR_RE/, $path );
+    my @args   = @tokens;
+
     # replace variable names by their value
     for (my $i=0; $i < @args; $i++)
     {
 	my $arg = $args[$i];
 	if ($arg =~ /^$VARIABLE_RE$/)
 	{
-	    $arg =~ s/\\(.)/$1/gsm;
-	    if ($arg =~ /^--/)
+	    $arg =~ s/$ESCAPED_CHAR_RE/$1/gsm;
+	    if ($arg =~ $PARAM_PREFIX_RE)
 	    {
-		$arg =~ s/^--//;
+		$arg =~ s/$PARAM_PREFIX_RE//;
 		$args[$i] = $arg;
 	    }
 	    else
@@ -49,90 +65,75 @@ sub process
 	}
 	else
 	{
-	    $arg =~ s/^(\"|\')//;
-	    $arg =~ s/(\"|\')$//;
-	    $arg =~ s/\\(.)/$1/gsm;
+	    $arg =~ s/$BEGIN_QUOTE_RE//;
+	    $arg =~ s/$END_QUOTE_RE//;
+	    $arg =~ s/$ESCAPED_CHAR_RE/$1/gsm;
 	    $args[$i] = $arg;
 	}
     }
-    
+
     my $current = $hash;
+    my $current_path = '';
     while (@path)
     {
 	my $next = shift (@path);
-	if (ref $current eq 'HASH' or ref $current eq 'Petal::Hash')
+	my $has_path_tokens = scalar @path;
+	my $has_args        = scalar @args;
+
+	if (blessed $current)
 	{
-	    confess "Cannot access $argument"
-	        if (scalar @args and not scalar @path);
-	    
-	    $current = $current->{$next};
-	}
-	
-	# it might be an array, then the key has to be numerical...
-	elsif (ref $current eq 'ARRAY')
-	{
-	    confess "Cannot access array with non decimal key ($argument)"
-	        unless ($next =~ /^\d+$/);
-	    
-	    confess "Cannot access array with parameters ($argument)"
-	        if (scalar @args and not scalar @path);
-	    
-	    $current = $current->[$next];
-	}
-	
-	# ... or maybe an object? ...
-	elsif (ref $current)
-	{
-	    if (scalar @path == 0 and scalar @args > 0)
+	  ACCESS_OBJECT:
+	    goto ACCESS_HASH if (isa ($current, 'Petal::Hash'));
+
+	    if ($current->can ($next) or $current->can ('AUTOLOAD'))
 	    {
-		confess "Cannot invoke $next on $argument"
-		    unless ($current->can ($next) or $current->can ('AUTOLOAD'));
-		
-		$current = $current->$next (@args);
+		if ($has_path_tokens) { $current = $current->$next ()      }
+		else                  { $current = $current->$next (@args) }
 	    }
-	    
 	    else
 	    {
-		if ($current->can ($next) or $current->can ('AUTOLOAD'))
-		{
-		    if (scalar @path) { $current = $current->$next ()      }
-		    else              { $current = $current->$next (@args) }
-		}
-		else
-		{		    
-		    confess "Cannot invoke $next on $argument with @path (not a method)"
-			if (@path == 0 and scalar @args > 0);
-		    
-		    if ($current =~ /=HASH\(/)
-		    {
-			$current =  $current->{$next};
-		    }
-		    elsif ($current =~ /=ARRAY\(/)
-		    {
-			confess "Cannot access array with non decimal key ($argument)"
-			    unless ($next =~ /^\d+$/);
-			$current = $current->[$next];
-		    }
-		    else
-		    {
-			confess "Cannot invoke $next on current object ($argument)";		
-		    }
-		}
+		goto ACCESS_HASH  if (isa ($current, 'HASH'));
+		goto ACCESS_ARRAY if (isa ($current, 'ARRAY'));
+		confess "Cannot invoke '$next' on '" . ref($current) .
+		  "' object at '$current_path' - no such method (near $argument)";
 	    }
 	}
-	
-	# ... or we cannot find the next value
-	# let's croak and return
+	elsif (isa ($current, 'HASH'))
+	{
+	  ACCESS_HASH:
+	    confess "Cannot access hash at '$current_path' with parameters (near $argument)"
+	        if ($has_args and not $has_path_tokens);
+	    $current = $current->{$next};
+	}
+	elsif (isa ($current, 'ARRAY'))
+	{
+	  ACCESS_ARRAY:
+	    # it might be an array, then the key has to be numerical...
+	    confess "Cannot access array at '$current_path' with non-integer index '$next' (near $argument)"
+	        unless ($next =~ /$INTEGER_KEY_RE/);
+
+	    confess "Cannot access array at '$current_path' with parameters (near $argument)"
+	        if ($has_args and not $has_path_tokens);
+
+	    $current = $current->[$next];
+	}
 	else
 	{
-	    my $warnstr = "Cannot find value for $argument: $next cannot be retrieved\n";
-	    $warnstr .= "(current value was ";
-	    $warnstr .= (defined $current) ? "'$current'" : 'undef';
-	    $warnstr .= ")";
-	    confess $warnstr;
+	    # ... or we cannot find the next value
+	    if ($ERROR_ON_UNDEF_VAR)
+	    {
+		# let's croak and return
+		my $warnstr = "Cannot find value for '$next' at '$current_path': $next cannot be retrieved\n";
+		$warnstr   .= "(current value was ";
+		$warnstr   .= (defined $current) ? "'$current'" : 'undef';
+		$warnstr   .= ", near $argument)";
+		confess $warnstr;
+	    }
 	}
+
+	$current_path .= "/$next";
     }
-    
+
     return '' unless (defined $current);
     return $current;
 }
