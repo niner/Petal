@@ -279,19 +279,22 @@ sub _include_compute_path
 sub process
 {
     my $self = shift;
-
+    
     # ok, from there on we need to override any global
     # variable with stuff that might have been specified
     # when constructing the object
-    local $TAINT        = defined $self->{taint}        ? $self->{taint}        : $TAINT;
-    local $DISK_CACHE   = defined $self->{disk_cache}   ? $self->{disk_cache}   : $DISK_CACHE;
-    local $MEMORY_CACHE = defined $self->{memory_cache} ? $self->{memory_cache} : $MEMORY_CACHE;
-    local $MAX_INCLUDES = defined $self->{max_includes} ? $self->{max_includes} : $MAX_INCLUDES;
-    local $INPUT        = defined $self->{input}        ? $self->{input}        : $INPUT;
-    local $OUTPUT       = defined $self->{output}       ? $self->{output}       : $OUTPUT;
-    local $BASE_DIR     = defined $self->{base_dir} ? do { ref $self->{base_dir} ? undef : $self->{base_dir} } : $BASE_DIR;
-    local @BASE_DIR     = defined $self->{base_dir} ? do { ref $self->{base_dir} ? @{$self->{base_dir}} : undef } : @BASE_DIR;
-    local $LANGUAGE     = defined $self->{default_language} ? $self->{default_language} : $LANGUAGE;
+    local $TAINT          = defined $self->{taint}            ? $self->{taint}          : $TAINT;
+    local $DISK_CACHE     = defined $self->{disk_cache}       ? $self->{disk_cache}     : $DISK_CACHE;
+    local $MEMORY_CACHE   = defined $self->{memory_cache}     ? $self->{memory_cache}   : $MEMORY_CACHE;
+    local $MAX_INCLUDES   = defined $self->{max_includes}     ? $self->{max_includes}   : $MAX_INCLUDES;
+    local $INPUT          = defined $self->{input}            ? $self->{input}          : $INPUT;
+    local $OUTPUT         = defined $self->{output}           ? $self->{output}         : $OUTPUT;
+    local $BASE_DIR       = defined $self->{base_dir} ? do { ref $self->{base_dir} ? undef : $self->{base_dir} } : $BASE_DIR;
+    local @BASE_DIR       = defined $self->{base_dir} ? do { ref $self->{base_dir} ? @{$self->{base_dir}} : undef } : @BASE_DIR;
+    local $LANGUAGE       = defined $self->{default_language} ? $self->{default_language} : $LANGUAGE;
+    local $DEBUG_DUMP     = defined $self->{debug_dump}       ? $self->{debug_dump}     : $DEBUG_DUMP;
+    local $DECODE_CHARSET = defined $self->{decode_charset}   ? $self->{decode_charset} : $DECODE_CHARSET;
+    local $ENCODE_CHARSET = defined $self->{encode_charset}   ? $self->{encode_charset} : $ENCODE_CHARSET;
     
     # prevent infinite includes from happening...
     my $current_includes = $CURRENT_INCLUDES;
@@ -307,6 +310,11 @@ sub process
     my $res = undef;
     eval { $res = $coderef->($hash) };
     $self->_handle_error ($@) if (defined $@ and $@);
+    
+    $Petal::ENCODE_CHARSET and do {
+	require "Encode.pm";
+	$res = Encode::encode ($Petal::ENCODE_CHARSET, $res);
+    };
     
     return $res;
 }
@@ -427,24 +435,19 @@ sub _file_data_ref
 {
     my $self      = shift;
     my $file_path = $self->_file_path;
-    my $data      = undef;
     
-    if ($Petal::DECODE_CHARSET)
-    {
-	open FP, "<:$Petal::DECODE_CHARSET", $file_path || die 'Cannot read-open $file_path';
-	$data = join '', <FP>;
-	close FP;
-    }
-    else
-    {
-	open FP, "<$file_path" || die 'Cannot read-open $file_path';
-	$data = join '', <FP>;
-	close FP;
-    }
+    open FP, "<$file_path" || die 'Cannot read-open $file_path';
+    my $res = join '', <FP>;
+    close FP;
+    
+    $Petal::DECODE_CHARSET and do {
+	require "Encode.pm";
+	$res = Encode::decode ($Petal::DECODE_CHARSET, $res);
+    };
     
     # kill template comments
-    $data =~ s/\<!--\?.*?\-->//gsm;
-    return \$data;
+    $res =~ s/\<!--\?.*?\-->//gsm;
+    return \$res;
 }
 
 
