@@ -1,4 +1,4 @@
-Petal version 0.90
+Petal version 0.91
 ==================
 
 Petal stands for "Perl Template Attribute Language". It is inspired from the
@@ -37,30 +37,7 @@ This module requires these other modules and libraries:
   XML::Parser
 
 
-THANKS TO
-
-  * William McKee <william@knowmad.com>
-	(bug reports, suggestions, patches)
-
-  * Sean M. Burke <sburke@cpan.org>
-	(improvements on HTML::TreeBuilder used by Petal)
-
-  * Kurt Stephens <kstep@pepsdesign.com>
-	(plenty of bug reports, patches)
-
-  * Lucas Saud <lucas.marinho@uol.com.br>
-	(code padding patch)
-
-  * Bruno Postle  <bruno@mkdoc.com>
-	(coderef modifier suggestion)
-
-  * Steve Purkis  <spurkis@mkdoc.com>
-	(bug reports, added tests)
-
-  * Chris Croome  <chris@mkdoc.com>
-	(bug reports)
-
-Hopefully I didn't forget anyone :-)
+THANKS TO - everybody - :)
 
 
 MISCELLEANOUS

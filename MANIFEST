@@ -1,6 +1,5 @@
 Changes
 MANIFEST
-Makefile
 Makefile.PL
 README
 lib/Petal.pm

@@ -112,11 +112,11 @@ sub _include
     my $lang  = $petal_object->language();
     if (defined $lang and $lang)
     {
-        push @code, ("    " x $indent . "push \@res, Petal->new (file => '$path', lang => '$lang')->process (\$hash);");
+        push @code, ("    " x $indent . "push \@res, Petal->new (file => '$path', lang => '$lang')->process (\$hash->new());");
     }
     else
     {
-        push @code, ("    " x $indent . "push \@res, Petal->new ('$path')->process (\$hash);");
+        push @code, ("    " x $indent . "push \@res, Petal->new ('$path')->process (\$hash->new());");
     }
 }
 

@@ -1,5 +1,11 @@
 Revision history for Petal.
 
+0.91 Mon Apr  7 16:20:15 2003
+	- Added multi-lingual mode
+	- Added scoping to included templates
+	- Applied Fergal Daly's XML_Encode_Decode patch
+	- Revamped the documentation
+
 0.90 Wed Apr  2 14:02:27 2003
 	- Re-done plugin system
 
