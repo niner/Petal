@@ -1,7 +1,11 @@
 Revision history for Petal.
 
+2.14
+    - Added I18N to string:
+
 2.13 Mon Aug  9 11:32:12 BST 2004
     - Stopped Petal doing I18N stuff for includes
+    - Fixed Petal::TranslationService::Gettext wrongly using noop
 
 2.12 Fri Aug  6 13:58:55 2004
     - Added namespace support to Petal::I18N
@@ -151,8 +155,8 @@ Revision history for Petal.
     - Tweaked the multi-lingual mechanism a little bit
     - Applied Fergal Daly's tests2.patch file
     - Made Fergal's CodeGeneratorString the default
-        - Applied William's Hash.pm taintmode diff
-        - Did a lot of work on the docs based on Patrick's suggestions 
+    - Applied William's Hash.pm taintmode diff
+    - Did a lot of work on the docs based on Patrick's suggestions 
 
 0.91 Mon Apr 07 16:20:15 2003
     - Added multi-lingual mode
@@ -274,7 +278,7 @@ Revision history for Petal.
     - Fixed <a petal:attr="href string:test.cgi?fn=$first_name"> bugfix bug!
 
 0.6 Sat Aug 10 14:59:53 2002
-        - Fixed <a petal:attr="href string:test.cgi?fn=$first_name"> bug
+    - Fixed <a petal:attr="href string:test.cgi?fn=$first_name"> bug
     - Fixed declarations being striped out
     - Fixed <some:tag> being turned into <some> bug
     - Fixed petal:attributes="style nothing" does not delete 'style' *K*

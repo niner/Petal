@@ -47,14 +47,14 @@ sub mo_file_translation_service
 sub _mo_file_translation_service
 {
     my $self   = shift;
-    my $target_lang = $self->{target_lang};
+    my $target_lang = $self->target_lang() || die 'target_lang() returned undef';
     my $domain = $Petal::I18N::Domain || 'default';
     my $res    = undef;
 
     $res = $self->_instanciate_mo_file_tranlation_service_if_file_exists ($target_lang);
     $res && return $res;
 
-    $target_lang =~ s/_.*//;
+    $target_lang =~ s/_.*$//;
 
     $res = $self->_instanciate_mo_file_tranlation_service_if_file_exists ($target_lang);
     $res && return $res;
@@ -71,7 +71,7 @@ sub _instanciate_mo_file_tranlation_service_if_file_exists
 
     my $locale_dir = $self->{locale_dir};
     $locale_dir    =~ s/\/$//;
-    
+   
     my $mo_file_relative_path = "/$target_lang/LC_MESSAGES/$domain.mo";
     my $mo_file_absolute_path = $locale_dir . $mo_file_relative_path;
 
