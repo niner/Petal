@@ -9,6 +9,7 @@ package Petal::Hash;
 use strict;
 use warnings;
 use Carp;
+use Petal::XML_Encode_Decode;
 
 our $MODIFIERS = {};
 
@@ -32,7 +33,9 @@ foreach my $include_dir (@INC)
 	
 	foreach my $module (@modules)
 	{
-	    eval "use Petal::Hash::$module";
+		$module =~ /^(\w+)$/;
+		$module = $1;
+		eval "use Petal::Hash::$module";
 	    $@ and warn "Cannot import module $module. Reason: $@";
 	    $MODIFIERS->{lc ($module) . ':'} = "Petal::Hash::$module";
 	}
@@ -143,11 +146,7 @@ sub _xml_encode
 {
     my $self = shift;
     my $data = join '', @_;
-    $data =~ s/\&/&amp;/g;
-    $data =~ s/\</&lt;/g;
-    $data =~ s/\>/&gt;/g;
-    $data =~ s/\"/&quot;/g;
-    return $data;
+    return Petal::XML_Encode_Decode::encode ($data);
 }
 
 

@@ -16,6 +16,36 @@ our $PI_RE = '^<\?(?:\s|\r|\n)*(attr|include|var|if|condition|else|repeat|loop|f
 use vars qw /$petal_object $tokens $variables @code $indent $token_name %token_hash $token $my_array/;
 
 
+# these _xxx_res primitives have been contributed by Fergal Daly <fergal@esatclear.ie>
+# they speed up string construction a little bit
+sub _init_res
+{
+	return '$res = ""';
+}
+
+
+sub _add_res
+{
+	my $class = shift;
+
+	my $thing = shift;
+
+	return qq{\$res .= $thing};
+}
+
+
+sub _final_res
+{
+	return q{$res};
+}
+
+
+sub _get_res
+{
+	return q{$res};
+}
+
+
 # $class->process ($data_ref, $petal_object);
 # -------------------------------------------
 # This (too big) subroutine converts the canonicalized template
@@ -39,7 +69,7 @@ sub process
     push @code, "    " x $indent . "\$VAR1 = sub {";
     $indent++;
     push @code, "    " x $indent . "my \$hash = shift;";
-    push @code, "    " x $indent . "my \@res = ();";
+    push @code, "    " x $indent . "my ".$class->_init_res.";";
     
     foreach $token (@{$tokens})
     {
@@ -89,11 +119,11 @@ sub process
             $string =~ s/\n/\\n/gsm;
             $string =~ s/\n//gsm;
             $string =~ s/\"/\\\"/gsm;
-            push @code, ("    " x $indent . 'push @res, "' . $string . '";');
+            push @code, ("    " x $indent . $class->_add_res( '"' . $string . '";'));
         }
     }
     
-    push @code, "    " x $indent . "return join '', \@res;";
+    push @code, "    " x $indent . "return ". $class->_final_res() .";";
     $indent--;
     push @code, "    " x $indent . "};";
     
@@ -112,11 +142,11 @@ sub _include
     my $lang  = $petal_object->language();
     if (defined $lang and $lang)
     {
-        push @code, ("    " x $indent . "push \@res, Petal->new (file => '$path', lang => '$lang')->process (\$hash->new());");
+        push @code, ("    " x $indent . $class->_add_res("Petal->new (file => '$path', lang => '$lang')->process (\$hash->new());"));
     }
     else
     {
-        push @code, ("    " x $indent . "push \@res, Petal->new ('$path')->process (\$hash->new());");
+        push @code, ("    " x $indent . $class->_add_res("Petal->new ('$path')->process (\$hash->new());"));
     }
 }
 
@@ -126,6 +156,7 @@ sub _include
 # process a <?var name="blah"?> statement
 sub _var
 {
+    my $class = shift;
     my $variable = $token_hash{name} or
         confess "Cannot parse $token : 'name' attribute is not defined";
     
@@ -138,7 +169,7 @@ sub _var
     $variables->{$tmp} = 1;
     
     $variable =~ s/\'/\\\'/g;
-    push @code, ("    " x $indent . "push \@res, \$hash->get ('$variable');");
+    push @code, ("    " x $indent . $class->_add_res("\$hash->get ('$variable');"));
 }
 
 
@@ -147,6 +178,7 @@ sub _var
 # process a <?if name="blah"?> statement
 sub _if
 {
+    my $class = shift;
     my $variable = $token_hash{name} or
         confess "Cannot parse $token : 'name' attribute is not defined";
     
@@ -169,9 +201,10 @@ sub _if
 # process a <?eval?> statement
 sub _eval
 {
-    push @code, ("    " x $indent . "push \@res, eval {");    
+    my $class = shift;
+    push @code, ("    " x $indent . $class->_add_res("eval {"));    
     $indent++;
-    push @code, ("    " x $indent . "my \@res = ();");
+    push @code, ("    " x $indent . "my " . $class->_init_res() .";");
     push @code, ("    " x $indent . "local %SIG;");
     push @code, ("    " x $indent . "\$SIG{__DIE__} = sub { \$\@ = shift };");
 }
@@ -182,17 +215,18 @@ sub _eval
 # process a <?endeval errormsg="..."?> statement
 sub _endeval
 {   
+    my $class = shift;
     my $variable = $token_hash{'errormsg'} or
        confess "Cannot parse $token : 'errormsg' attribute is not defined";
     
-    push @code, ("    " x $indent . "return \@res;");
+    push @code, ("    " x $indent . "return " . $class->_get_res() . ";");
     $indent--;
     push @code, ("    " x $indent . "};");
 
     push @code, ("    " x $indent . "if (defined \$\@ and \$\@) {");
     $indent++;
     $variable = quotemeta ($variable);
-    push @code, ("    " x $indent . "push \@res, \"$variable\";");
+    push @code, ("    " x $indent . $class->_add_res("\"$variable\";"));
     $indent--;
     push @code, ("    " x $indent . "}");
 }
@@ -203,6 +237,7 @@ sub _endeval
 # process a <?attr name="blah"?> statement
 sub _attr
 {
+    my $class = shift;
     my $attribute = $token_hash{name} or
         confess "Cannot parse $token : 'name' attribute is not defined";
 
@@ -219,7 +254,7 @@ sub _attr
     
     $variable =~ s/\'/\\\'/g;
     push @code, ("    " x $indent . "if (defined \$hash->get ('$variable') and \$hash->get ('$variable') ne '') {");
-    push @code, ("    " x ++$indent . "push \@res, \"$attribute\" . '=\"' . \$hash->get ('$variable') . '\"'");
+    push @code, ("    " x ++$indent . $class->_add_res("\"$attribute\" . '=\"' . \$hash->get ('$variable') . '\"'"));
     push @code, ("    " x --$indent . "}");
 }
 
@@ -229,6 +264,7 @@ sub _attr
 # process a <?else name="blah"?> statement
 sub _else
 {
+    my $class = shift;
     $indent--;
     push @code, ("    " x $indent . "}");
     push @code, ("    " x $indent . "else {");
@@ -241,6 +277,7 @@ sub _else
 # process a <?for name="some_list" as="element"?> statement
 sub _for
 {
+    my $class = shift;
     my $variable = $token_hash{name} or
     confess "Cannot parse $token : 'name' attribute is not defined";
     

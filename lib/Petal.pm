@@ -149,7 +149,7 @@ sub _initialize
 
     my @dirs = @BASE_DIR;
     unshift (@dirs, $BASE_DIR) if (defined $BASE_DIR);
-    @dirs = map { "$_/$self->{file}" } @dirs;
+    @dirs = map { File::Spec->canonpath ("$_/$self->{file}") } @dirs;
 
     $self->{file} =~ s/\/$//;
     my $filename = Petal::Functions::find_filename ($lang, @dirs);

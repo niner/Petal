@@ -3,13 +3,12 @@
 package main;
 use warnings;
 use lib ('lib');
-use Test;
+use Test::More tests => 3;
 
-BEGIN {print "1..3\n";}
-END {print "not ok 1\n" unless $loaded;}
+END {fail("loaded") unless $loaded;}
 use Petal;
 $loaded = 1;
-print "ok 1\n";
+pass("loaded");
 
 my $template_file = 'string_count.html';
 $Petal::DISK_CACHE = 0;
@@ -39,5 +38,5 @@ my $hash = {
 };
 
 my $html = $template->process($hash);
-($html =~ /1 - William/) ? print "ok 2\n" : print "not ok 2\n";
-($html =~ /2 - Elizabeth/) ? print "ok 3\n" : print "not ok 3\n";
+like($html, '/1 - William/');
+like($html, '/2 - Elizabeth/');

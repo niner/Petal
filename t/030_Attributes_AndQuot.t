@@ -1,13 +1,12 @@
 #!C:/perl/bin/perl -w
 use warnings;
 use lib ('lib');
-use Test;
+use Test::More tests => 20;
 
-BEGIN {print "1..20\n";}
-END {print "not ok 1\n" unless $loaded;}
+END {fail("loaded") unless $loaded;}
 use Petal;
 $loaded = 1;
-print "ok 1\n";
+pass("loaded");
 
 use strict;
 my $loaded = 1;
@@ -23,7 +22,6 @@ my $template;
 my $string;
 
 
-
 #####
 
 {
@@ -31,9 +29,8 @@ my $string;
     $Petal::OUTPUT = "XML";
     $template = new Petal ('attributes_andquot.xml');
     
-    $loaded++;
     $string = ${$template->_canonicalize()};
-    ($string !~ /\"\"/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    unlike($string, '/""/');
 }
 
 
@@ -42,9 +39,8 @@ my $string;
     $Petal::OUTPUT = "XHTML";
     $template = new Petal ('attributes_andquot.xml');
     
-    $loaded++;
     $string = ${$template->_canonicalize()};
-    ($string !~ /\"\"/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    unlike($string, '/""/');
 }
 
 
@@ -53,9 +49,8 @@ my $string;
     $Petal::OUTPUT = "XML";
     $template = new Petal ('attributes_andquot.xml');
     
-    $loaded++;
     $string = ${$template->_canonicalize()};
-    ($string !~ /\"\"/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    unlike($string, '/""/');
 }
 
 
@@ -64,9 +59,8 @@ my $string;
     $Petal::OUTPUT = "XHTML";
     $template = new Petal ('attributes_andquot.xml');
     
-    $loaded++;
     $string = ${$template->_canonicalize()};
-    ($string !~ /\"\"/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    unlike($string, '/""/');
 }
 
 
@@ -76,14 +70,11 @@ my $string;
     $template = new Petal ('inline_vars.xml');
     $string = ${$template->_canonicalize()};
     
-    $loaded++;
-    ($string =~ /\&quot\;/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    like($string, '/&quot;/');
     
-    $loaded++;
-    ($string =~ /\<\?/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    like($string, '/\<\?/');
     
-    $loaded++;
-    ($string =~ /\?\>/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    like($string, '/\?\>/');
 }
 
 
@@ -93,14 +84,11 @@ my $string;
     $template = new Petal ('inline_vars.xml');
     $string = ${$template->_canonicalize()};
 
-    $loaded++;
-    ($string =~ /\&quot\;/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    like($string, '/&quot;/');
     
-    $loaded++;
-    ($string =~ /\<\?/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    like($string, '/<\?/');
     
-    $loaded++;
-    ($string =~ /\?\>/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    like($string, '/\?>/');
 }
 
 
@@ -110,14 +98,11 @@ my $string;
     $template = new Petal ('inline_vars.xml');
     $string = ${$template->_canonicalize()};
 
-    $loaded++;
-    ($string =~ /\&quot\;/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    like($string, '/&quot;/');
     
-    $loaded++;
-    ($string =~ /\<\?/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    like($string, '/<\?/');
     
-    $loaded++;
-    ($string =~ /\?\>/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    like($string, '/\?>/');
 }
 
 
@@ -127,17 +112,14 @@ my $string;
     $template = new Petal ('inline_vars.xml');
     $string = ${$template->_canonicalize()};
 
-    $loaded++;
-    ($string =~ /\&quot\;/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    like($string, '/&quot;/');
     
-    $loaded++;
-    ($string =~ /\<\?/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    like($string, '/<\?/');
     
-    $loaded++;
-    ($string =~ /\?\>/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    like($string, '/\?>/');
 }
 
-
+JUMP:
 {
     $Petal::INPUT = "XML";
     $Petal::OUTPUT = "XML";
@@ -146,15 +128,12 @@ my $string;
     $string = $template->process (
 	configuration => { get_identity_field_name => 'id' }
        );
+
+    like($string, '/petal:attributes="value entry\/id;"/');
     
-    $loaded++;
-    ($string =~ m!petal:attributes="value entry/id;"!) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    like($string, '/type="hidden"/');
     
-    $loaded++;
-    ($string =~ m!type="hidden"!) ? print "ok $loaded\n" : print "not ok $loaded\n";
-    
-    $loaded++;
-    ($string =~ m!name="id"!) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    like($string, '/name="id"/');
 }
 
 1;

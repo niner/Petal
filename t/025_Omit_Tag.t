@@ -3,13 +3,12 @@
 package main;
 use warnings;
 use lib ('lib');
-use Test;
+use Test::More tests => 8;
 
-BEGIN {print "1..8\n";}
-END {print "not ok 1\n" unless $loaded;}
+END {fail("loaded") unless $loaded;}
 use Petal;
 $loaded = 1;
-print "ok 1\n";
+pass("loaded");
 
 
 my $template_file = 'omit-tag.xml';
@@ -22,14 +21,14 @@ $Petal::OUTPUT = "XML";
 
 my $template = new Petal ($template_file);
 my $string = $template->process();
-($string =~ /<b>This tag should not be omited/) ? print "ok 2\n" : print "not ok 2\n";
-($string !~ /<b>This tag should be omited/) ? print "ok 3\n" : print "not ok 3\n";
+like($string, '/<b>This tag should not be omited/', "XML - XML preserve");
+unlike($string, '/<b>This tag should be omited/', "XML - XML omit");
 
 $Petal::OUTPUT = "XHTML";
 $string = $template->process();
 
-($string =~ /<b>This tag should not be omited/) ? print "ok 4\n" : print "not ok 4\n";
-($string !~ /<b>This tag should be omited/) ? print "ok 5\n" : print "not ok 5\n";
+like($string, '/<b>This tag should not be omited/', "XML - XHTML preserve");
+unlike($string, '/<b>This tag should be omited/', "XML - XHTML omit");
 
 $Petal::INPUT = "XML";
 $Petal::OUTPUT = "XHTML";
@@ -39,9 +38,8 @@ my $data = $template->process(
     content => "What's up with the closing tags below?"
    );
 
-($data =~ /<html>/) ? print "not ok 6\n" : print "ok 6\n";
-($data =~ /<body>/) ? print "not ok 7\n" : print "ok 7\n";
-($data =~ /<p>What/) ? print "ok 8\n" : print "not ok 8\n";
-
+unlike($data, '/<html>/');
+unlike($data, '/<body>/');
+like($data, '/<p>What/');
 
 1;

@@ -8,14 +8,12 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 use warnings;
 use lib ('lib');
-use Test;
+use Test::More tests => 12;
 
-BEGIN {print "1..12\n";}
-END {print "not ok 1\n" unless $loaded;}
+END {fail("loaded") unless $loaded;}
 use Petal;
 $loaded = 1;
-print "ok 1\n";
-
+pass("loaded");
 
 #########################
 
@@ -27,37 +25,35 @@ $Petal::DISK_CACHE = 0;
 $Petal::MEMORY_CACHE = 0;
 
 my $petal = new Petal ('index.xml');
-
 # deprecated
 # ($petal->_file_path =~ /\/t\/data\/include$/) ? print "ok 2\n" : (print "not ok 2\n" and exit);
-print "ok 2\n";
+pass();
 
-(${$petal->_canonicalize()} =~ /World\"\"/) ? print "not ok 3\n" : print "ok 3\n";
-($petal->process =~ /__INCLUDED__/) ? print "ok 4\n" : print "not ok 4\n";
-($petal->process =~ /__INCLUDED__\s+<\/body>/) ? print "not ok 5\n" : print "ok 5\n";
-($petal->process =~ /Hello, \&quot\;World\&quot\;/) ? print "ok 6\n" : print "not ok 6\n";
-
+unlike(${$petal->_canonicalize()}, '/World""/', "canonicalise");
+like($petal->process, '/__INCLUDED__/', "find marker");
+unlike($petal->process, '/__INCLUDED__\s+<\/body>/', "find marker and tag");
+like($petal->process, '/Hello, &quot;World&quot;/', "find hello");
 
 {
     $Petal::INPUT  = "XML";
     $Petal::OUTPUT = "XML";
     $petal = new Petal ('index_xinclude.xml');
-    ($petal->process =~ /__INCLUDED__/) ? print "ok 7\n" : print "not ok 7\n";
+    like($petal->process, '/__INCLUDED__/', "XML - XML find included");
     
     $Petal::INPUT  = "XHTML";
     $Petal::OUTPUT = "XML";
     my $petal = new Petal ('index_xinclude.xml');
-    ($petal->process =~ /__INCLUDED__/) ? print "ok 8\n" : print "not ok 8\n";
+    like($petal->process, '/__INCLUDED__/', "XHTML - XML find included");
     
     $Petal::INPUT  = "XML";
     $Petal::OUTPUT = "XHTML";
     $petal = new Petal ('index_xinclude.xml');
-    ($petal->process =~ /__INCLUDED__/) ? print "ok 9\n" : print "not ok 9\n";
+    like($petal->process, '/__INCLUDED__/', "XML - XHTML find included");
     
     $Petal::INPUT  = "XHTML";
     $Petal::OUTPUT = "XHTML";
     $petal = new Petal ('index_xinclude.xml');
-    ($petal->process =~ /__INCLUDED__/) ? print "ok 10\n" : print "not ok 10\n";
+    like($petal->process, '/__INCLUDED__/', "XHTML - XHTML find included");
 }
 
 $Petal::BASE_DIR = './t/data/include/deep';
@@ -67,7 +63,7 @@ eval {
     $petal = new Petal ('index.xml');
     $petal->process;
 };
-($@ =~ /Cannot go above base directory/) ? print "ok 11\n" : print "not ok 11\n";
+like($@, '/Cannot go above base directory/', "correct error");
 
 
 $Petal::BASE_DIR = './t/data/include';
@@ -75,7 +71,7 @@ $Petal::BASE_DIR = './t/data/include';
     $Petal::INPUT  = "XML";
     $Petal::OUTPUT = "XML";
     $petal = new Petal ('deep/index.xml');
-    ($petal->process =~ /__INCLUDED__/) ? print "ok 12\n" : print "not ok 12\n";
+    like($petal->process, '/__INCLUDED__/', "deep find included");
 }
 
 

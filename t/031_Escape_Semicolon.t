@@ -1,16 +1,17 @@
 #!C:/perl/bin/perl -w
 use warnings;
 use lib ('lib');
-use Test;
+use Test::More tests => 5;
 
-BEGIN {print "1..5\n";}
-END {print "not ok 1\n" unless $loaded;}
+my $loaded;
+END {fail("loaded") unless $loaded;}
 use Petal;
+pass("loaded");
 $loaded = 1;
-print "ok 1\n";
 
 use strict;
-my $loaded = 1;
+
+#$SIG{__WARN__} = \&Carp::confess;
 
 $|=1;
 
@@ -32,8 +33,7 @@ my $string;
     $template = new Petal ('test_attributes2.xml');
     
     $string = $template->process(); 
-    $loaded++;
-    ($string !~ /\\;/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    unlike($string, '/\\\\;/');
 }
 
 
@@ -41,10 +41,9 @@ my $string;
     $Petal::INPUT = "XML";
     $Petal::OUTPUT = "XHTML";
     $template = new Petal ('test_attributes2.xml');
-    
+
     $string = $template->process(); 
-    $loaded++;
-    ($string !~ /\\;/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    unlike($string, '/\\\\;/');
 }
 
 {
@@ -53,8 +52,7 @@ my $string;
     $template = new Petal ('test_attributes2.xml');
     
     $string = $template->process(); 
-    $loaded++;
-    ($string !~ /\\;/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    unlike($string, '/\\\\;/');
 }
 
 {
@@ -63,8 +61,7 @@ my $string;
     $template = new Petal ('test_attributes2.xml');
     
     $string = $template->process(); 
-    $loaded++;
-    ($string !~ /\\;/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    unlike($string, '/\\\\;/');
 }
 
 

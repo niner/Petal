@@ -1,7 +1,10 @@
 Revision history for Petal.
 
-0.92
-	- Changed slightly the multi-lingual mechanism
+0.92 Tue Apr 22 11:29:00 2003
+	- Tweaked the multi-lingual mechanism a little bit
+	- Applied Fergal Daly's tests2.patch file
+	- Made Fergal's CodeGeneratorString the default
+        - Applied William's Hash.pm taintmode diff 
 
 0.91 Mon Apr  7 16:20:15 2003
 	- Added multi-lingual mode
