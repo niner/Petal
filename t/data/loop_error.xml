@@ -1,0 +1,9 @@
+<li petal:repeat="num array_of_nums">
+      num = [$num]
+      <ul petal:repeat="chr array_of_chars">
+        <li>num = [$num]</li>
+        <li>chr = [$chr]</li>
+        <li>num = [$num]</li>
+	-----------------------
+      </ul>
+</li>
