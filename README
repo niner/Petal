@@ -1,13 +1,13 @@
-Petal version 0.51
-==================
+Petal version 0.6
+=================
 
 Petal stands for "Perl Template Attribute Language". It is inspired from the
 Zope Page Templates TAL specification, and lets you write very elegant,
 WYSIWYG-friendly templates such as:
 
-<ul petal:condition="user.list">
-  <li petal:repeat="user user.list"
-      petal:content=":encode user.login">
+<ul petal:condition="user/list">
+  <li petal:repeat="user user/list"
+      petal:content="encode:user/login">
     Dummy UserName
   </li>
 </ul>

@@ -1,6 +1,6 @@
 Revision history for Petal.
 
-0.6
+0.6 Sat Aug 10 14:59:53 BST 2002
 	- Added tests
         - Fixed <a petal:attr="href string:test.cgi?fn=$first_name"> bug
 	- Fixed declarations being striped out
