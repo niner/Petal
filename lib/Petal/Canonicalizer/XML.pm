@@ -54,7 +54,10 @@ sub process
     $parser->process ($class, $data_ref);
     
     $header ||= '';
-    my $res = $header . (join '', @Result);
+    my $res = '';
+    $res   .= $header unless ($Petal::CURRENT_INCLUDES > 1);
+    $res   .= (join '', @Result);
+
     $class->_processing_instructions_in (\$res, $pis);
     
     return \$res;

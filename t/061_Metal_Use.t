@@ -15,6 +15,7 @@ $Petal::OUTPUT = 'XML';
     my $s = $t->process();
     like ($s, qr/This is some stuff which should appear/);
     like ($s, qr/<span>Foo<\/span>/);
+    unlike ($s, qr/DOCTYPE/);
 }
 
 $Petal::OUTPUT = 'XHTML';
@@ -23,5 +24,6 @@ $Petal::OUTPUT = 'XHTML';
     my $s = $t->process();
     like ($s, qr/This is some stuff which should appear/);
     like ($s, qr/<span>Foo<\/span>/);
+    unlike ($s, qr/DOCTYPE/);
 }
 
