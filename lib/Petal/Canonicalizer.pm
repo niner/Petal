@@ -34,7 +34,6 @@ sub process
     # take the existing processing instructions out and replace
     # them with temporary xml-friendly handlers
     my $pis = _processing_instructions_out ($data_ref);
-    
     local @Result;
     local @NodeStack;
     

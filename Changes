@@ -5,6 +5,7 @@ Revision history for Petal.
 	- Fixed multiple includes bug
 	- Fixed Petal::Parser::HTMLWrapper includes
 	- Added tests
+	- Added warning for Petal statements with missing '?'
 
 0.3 Fri Jul 19 11:20:30 2002
 	- Fixed critical include bug

@@ -12,6 +12,10 @@ Petal - Perl Template Attribute Language
     some_object => $object,
   );
 
+Join the Petal mailing list:
+
+  http://lists.webarch.co.uk/mailman/listinfo/petal
+
 =head1 SUMMARY
 
 Hopefully, Petal is a bit more than "yet another template engine".
@@ -234,6 +238,15 @@ sub _file_data_ref
 
     # kill template comments
     $data =~ s/\<!--\?.*?\-->//gsm;
+    
+    # if there are any <?petal:xxx ... > instead of
+    # <?petal:xxx ... ?>, issuing a warning would be _good_
+    my @decl =  $data =~ /(\<\?petal\:.*?>)/gsm;
+    for (@decl)
+    {
+	next if /\?\>$/;
+	croak "Bad petal statement: $_ (missing question mark)";
+    }
     return \$data;
 }
 
@@ -569,7 +582,7 @@ points:
 
 =head2 repeat (loops)
 
-  <li petal:repeat="user system.user_list">$xml:user.real_name</span>
+  <li petal:repeat="user system.user_list">$xml:user.real_name</li>
 
 
 =head2 attributes
@@ -763,6 +776,9 @@ Petal::Hash::Encode_HTML he contributed.
 
 
 =head1 SEE ALSO
+
+Join the Petal mailing list:
+  http://lists.webarch.co.uk/mailman/listinfo/petal
 
   L<Petal::Hash>
   L<Petal::Hash::Var>

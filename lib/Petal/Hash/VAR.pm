@@ -140,6 +140,7 @@ sub process
 	$current = \%current;
     }
     
+    return '' unless (defined $current);
     return $current;
 }
 

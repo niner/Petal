@@ -96,10 +96,11 @@ use warnings;
 use Carp;
 
 use Petal::Hash::VAR;
-use Petal::Hash::Encode_XML;
+use Petal::Hash::SET;
 use Petal::Hash::TRUE;
 use Petal::Hash::FALSE;
-use Petal::Hash::SET;
+use Petal::Hash::Encode_XML;
+use Petal::Hash::Encode_HTML;
 
 
 our $IMPORTED  = {
@@ -108,18 +109,21 @@ our $IMPORTED  = {
     'Petal::Hash::TRUE' => 1,
     'Petal::Hash::FALSE' => 1,
     'Petal::Hash::SET' => 1,
+    'Petal::Hash::Encode_HTML' => 1,
 };
 
 
 our $MODIFIERS = {
-    var    => 'Petal::Hash::VAR',
-    xml    => 'Petal::Hash::Encode_XML',
-    encode => \'xml',
-    true   => 'Petal::Hash::TRUE',
-    false  => 'Petal::Hash::FALSE',
-    set    => 'Petal::Hash::SET',
-    def    => \'set',
-    define => \'define',
+    var         => 'Petal::Hash::VAR',
+    xml         => 'Petal::Hash::Encode_XML',
+    encode      => \'xml',
+    true        => 'Petal::Hash::TRUE',
+    false       => 'Petal::Hash::FALSE',
+    set         => 'Petal::Hash::SET',
+    def         => \'set',
+    define      => \'define',
+    html        => 'Petal::Hash::Encode_HTML',
+    encode_html => \'html',
 };
 
 
