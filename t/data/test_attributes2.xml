@@ -7,4 +7,6 @@
              petal:attributes="baz replace; buzz replace; quxx replace"
              petal-meta:attributes
                  ="petal:attributes string:baz ${baz_meta}\; buzz ${buzz_meta}\; quxx ${quxx_meta}" />
+        <bat petal-meta:content="string:Content\;"></bat>
+        <bat petal-meta:replace="string:Replace\;"></bat>
 </foo>

@@ -494,7 +494,7 @@ sub _replace
     my @new = map {
 	$_ = $class->_encode_backslash_semicolon ($_);
 	"<?var name=\"$_\"?>";
-    } split /(\s|\r|\n)*\;(\s|\r|\n)*/ms, $expr;
+    } $class->_split_expression ($expr);
     
     push @Result, @new;
     $NodeStack[$#NodeStack]->{replace} = 'true';
