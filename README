@@ -37,7 +37,25 @@ This module requires these other modules and libraries:
   XML::Parser
 
 
-THANKS TO - everybody - :)
+CONTRIBUTORS
+
+Those people (sorted by chronological order of first contribution) have helped
+Petal under the form of suggestions, bug reports, patches or tests. Thanks to
+everybody!
+
+William McKee <william@knowmad.com>
+Lucas Saud <lucas.marinho@uol.com.br>
+Sean M. Burke <sburke@cpan.org>
+Chris Croome <chris@webarchitects.co.uk>
+Paul Arzul <patricka@mkdoc.com>
+Kurt Stephens <kstep@pepsdesign.com>
+Steve Purkis <spurkis@mkdoc.com>
+Holland, Mark <Mark.Holland@commerzbankib.com>
+Ronald Hayden <rhayden@apple.com>
+Peter Wilson <pwilson@apple.com>
+Fergal Daly <fergal@esatclear.ie>
+
+(hopefully I didn't forget anybody...)
 
 
 MISCELLEANOUS
