@@ -55,6 +55,7 @@ t/036_Set_Cache_Fresh.t
 t/037_Set_Nested_Var.t
 t/038_Pass_Variables.t
 t/039_Access_Objects.t
+t/040_Tests_With_Zero.t
 t/050_Opt_base_dir.t
 t/051_Opt_in_out.t
 t/052_Opt_language.t
@@ -133,5 +134,6 @@ t/data/test_ns_attributes/test_ns_attributes5.xml
 t/data/test_ns_attributes/test_ns_attributes6.xml
 t/data/test_ns_attributes/test_ns_attributes7.xml
 t/data/test_ns_attributes/test_rightWayOfDoing.xml
+t/data/tests_with_zero.xml
 t/data/xhtml.html
 t/data/xhtml_omit_tag.html

@@ -9,7 +9,7 @@ WriteMakefile(
         'XML::Parser'       => '2.31',
 	'CGI'               => '2.97',
 	'Test::Harness'	    => '2.00',
-	'Scalar::Util'      => '1.09',
+	'Scalar::Util'      => '1.07',
     },
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM => 'lib/Petal.pm', # retrieve abstract from module

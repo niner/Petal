@@ -230,7 +230,6 @@ sub _base_dir
 }
 
 
-
 # _include_compute_path ($path);
 # ------------------------------
 # Computes the new absolute path from the current
@@ -285,6 +284,28 @@ sub _include_compute_path
 sub process
 {
     my $self = shift;
+    
+    # sets $BASE_DIR, @BASE_DIR and $self->{base_dir} to absolute paths once
+    # because File::Spec::rel2abs() can be quite expensive
+    $BASE_DIR = File::Spec->rel2abs ($BASE_DIR) if (defined $BASE_DIR and substr ($BASE_DIR, 0, 1) ne '/');
+    
+    @BASE_DIR = ( map { substr ($_, 0, 1) ne '/' ? File::Spec->rel2abs ($_) : $_ }
+		  map { defined $_ ? $_ : () } @BASE_DIR );
+
+    if ($self->{base_dir})
+    {
+	if (ref $self->{base_dir})
+	{
+	    $self->{base_dir} = [
+		map { substr ($_, 0, 1) ne '/' ? File::Spec->rel2abs ($_) : $_ }
+		map { defined $_ ? $_ : () } @{$self->{base_dir}}
+	       ] if (defined $self->{base_dir});
+	}
+	else
+	{
+	    $self->{base_dir} = File::Spec->rel2abs ($self->{base_dir}) unless (substr ($self->{base_dir}, 0, 1) ne '/');
+	}
+    }
     
     # ok, from there on we need to override any global
     # variable with stuff that might have been specified
@@ -425,9 +446,10 @@ sub _file_path
     
     foreach my $dir (@dirs)
     {
-	my $base_dir = File::Spec->canonpath ($dir);
-	$base_dir = File::Spec->rel2abs ($base_dir) unless ($base_dir =~ /^\//);
-	$base_dir =~ s/\/$//;
+	# my $base_dir  = File::Spec->canonpath ($dir);
+	# $base_dir     = File::Spec->rel2abs ($base_dir) unless ($base_dir =~ /^\//);
+	my $base_dir  = $dir;
+	$base_dir     =~ s/\/$//;
 	my $file_path = File::Spec->canonpath ($base_dir . '/' . $file);
 	return $file_path if (-e $file_path and -r $file_path);
     }
