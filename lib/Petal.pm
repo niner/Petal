@@ -13,6 +13,7 @@ use Petal::Parser::HTMLWrapper;
 use Petal::Canonicalizer::XML;
 use Petal::Canonicalizer::XHTML;
 use Petal::Functions;
+use Petal::Entities;
 use File::Spec;
 use strict;
 use warnings;
@@ -437,8 +438,8 @@ sub _file_path
 
 # $self->_file_data_ref;
 # ----------------------
-#   slurps the template data into a variable and returns a
-#   reference to that variable
+# slurps the template data into a variable and returns a
+# reference to that variable
 sub _file_data_ref
 {
     my $self      = shift;
@@ -450,10 +451,26 @@ sub _file_data_ref
     close FP;
     no bytes;
     
-    $Petal::DECODE_CHARSET and do {
+    if ($] > 5.007 and $Petal::DECODE_CHARSET)
+    {
 	require "Encode.pm";
 	$res = Encode::decode ($Petal::DECODE_CHARSET, $res);
-    };
+    }
+    
+    if ($OUTPUT eq 'HTML' or $OUTPUT eq 'XHTML')
+    {
+	if ($] > 5.007)
+	{
+	    require "Encode.pm";
+	    Encode::_utf8_on ($res);
+	    Petal::Entities::decode_entities ($res);
+	    Encode::_utf8_off ($res);
+	}
+	else
+	{
+	    decode_entities ($res);
+	}	
+    }
     
     # kill template comments
     $res =~ s/\<!--\?.*?\-->//gsm;
@@ -505,8 +522,6 @@ sub _code_memory_cached
 	    $cpt->permit ('entereval');
 	    $cpt->permit ('leaveeval');
 	    $cpt->permit ('require');
-	    $cpt->share_from ( 'Petal::Hash_Repeat', [ qw /$CUR $MAX/ ] );
-	    
 	    $cpt->reval($code_perl);
 	    confess ($@ . "\n" . $self->_code_with_line_numbers) if $@;
 	    
