@@ -226,14 +226,19 @@ sub _var
     
     (defined $variable and $variable) or
         confess "Cannot parse $token : 'name' attribute is not defined";
-
+    
     # set the variable in the $variables hash
     my $tmp = $variable;
     $tmp =~ s/\..*//;
     $variables->{$tmp} = 1;
     
     $variable =~ s/\'/\\\'/g;
-    $class->add_code($class->_add_res($class->comp_expr($variable)." || '';"));
+    $class->add_code ( $class->_add_res (('do {')) );
+    $class->indent_increment();
+    $class->add_code ('my $res = ' . $class->comp_expr ($variable) . ';');
+    $class->add_code ('(defined $res) ? $res : "";');
+    $class->indent_decrement();
+    $class->add_code ('};');
 }
 
 

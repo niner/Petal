@@ -1,5 +1,5 @@
-Petal version 1.03
-==================
+Petal - TAL for Perl
+====================
 
 Petal stands for "Perl Template Attribute Language". It is inspired from the
 Zope Page Templates TAL specification, and lets you write elegant, WYSIWYG

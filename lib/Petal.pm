@@ -84,7 +84,7 @@ our $CURRENT_INCLUDES = 0;
 
 
 # this is for CPAN
-our $VERSION = '1.03';
+our $VERSION = '1.04';
 
 
 # The CodeGenerator class backend to use.
@@ -344,7 +344,7 @@ sub _handle_error
 	ref $error and do {
 	    print ERROR "=============\n";
 	};
-	print "\n";
+	print ERROR "\n";
 	
 	print ERROR "Petal object dump:\n";
 	print ERROR "==================\n";

@@ -1,5 +1,9 @@
 Revision history for Petal.
 
+1.04
+	- Fixed a bug in the way <?var is handled
+	- Fixed "\n" bug in _handle_error
+
 1.03 Tue Jul 29 12:34:36 2003
 	- Fixed broken loops
 	- Added tests for broken loops
