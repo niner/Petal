@@ -197,6 +197,10 @@ sub StartTag
 	    }
 	    else
 	    {
+		$value =~ s/\&/&amp;/g;
+		$value =~ s/\</&lt;/g;
+		$value =~ s/\>/&gt;/g;
+		$value =~ s/\"/&quot;/g;
 		push @att_str, $key . '=' . "\"$value\"";
 	    }
 	}

@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 #
 package main;
+use warnings;
 use lib ('lib');
 use Test;
 
@@ -22,7 +23,7 @@ my $template = new Petal ($template_file);
 my %hash = (
 	    'array_of_nums'      => [1,2,3,],
 	    'array_of_chars'     => [qw/ a b c /],
-	    'array_of_stuff'     => [qw/ ! @ # /],
+	    'array_of_stuff'     => ['!', '@', '#'],
 	    'array_of_nums2'     => [9,8,7,],
 	    'array_of_chars2'    => [qw/ x y z /],
 	    'array_of_stuff2'    => [qw/ $ % ^ /],

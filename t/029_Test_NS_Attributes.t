@@ -1,4 +1,5 @@
 #!C:/perl/bin/perl -w
+use warnings;
 use lib ('lib');
 use Test;
 

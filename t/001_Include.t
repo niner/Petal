@@ -6,7 +6,7 @@
 #########################
 
 # change 'tests => 1' to 'tests => last_test_to_print';
-
+use warnings;
 use lib ('lib');
 use Test;
 
@@ -56,7 +56,7 @@ print "ok 2\n";
     
     $Petal::INPUT  = "XHTML";
     $Petal::OUTPUT = "XHTML";
-    my $petal = new Petal ('index_xinclude.xml');
+    $petal = new Petal ('index_xinclude.xml');
     ($petal->process =~ /__INCLUDED__/) ? print "ok 10\n" : print "not ok 10\n";
 }
 

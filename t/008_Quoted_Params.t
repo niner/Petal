@@ -2,6 +2,7 @@ package Foo;
 sub param { shift; return shift }
 
 package main;
+use warnings;
 use lib ('lib');
 use Test;
 

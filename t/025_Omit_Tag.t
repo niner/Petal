@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 #
 package main;
+use warnings;
 use lib ('lib');
 use Test;
 
@@ -32,8 +33,8 @@ $string = $template->process();
 
 $Petal::INPUT = "XML";
 $Petal::OUTPUT = "XHTML";
-my $template_file = 'xhtml_omit_tag.html';
-my $template = new Petal ($template_file);
+$template_file = 'xhtml_omit_tag.html';
+$template = new Petal ($template_file);
 my $data = $template->process(
     content => "What's up with the closing tags below?"
    );

@@ -1,3 +1,4 @@
+use warnings;
 use lib ('lib');
 use Test;
 

@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 #
 package main;
+use warnings;
 use lib ('lib');
 use Test;
 

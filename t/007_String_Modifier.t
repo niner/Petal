@@ -2,6 +2,7 @@ package Foo;
 sub add { return $_[1] + $_[2] };
 
 package main;
+use warnings;
 use lib ('lib');
 use Test;
 
