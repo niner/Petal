@@ -1,58 +1,61 @@
-Changes
-MANIFEST
-Makefile.PL
-README
-lib/Doc/Overview.pm
-lib/Petal.pm
-lib/Petal/Cache/Disk.pm
-lib/Petal/Cache/Memory.pm
-lib/Petal/Canonicalizer/XHTML.pm
-lib/Petal/Canonicalizer/XML.pm
-lib/Petal/CodeGenerator.pm
-lib/Petal/Hash.pm
-lib/Petal/Hash/Encode_HTML.pm
-lib/Petal/Hash/Encode_XML.pm
-lib/Petal/Hash/FALSE.pm
-lib/Petal/Hash/SET.pm
-lib/Petal/Hash/String.pm
-lib/Petal/Hash/TRUE.pm
-lib/Petal/Hash/UpperCase.pm
-lib/Petal/Hash/VAR.pm
-lib/Petal/Parser/HTMLWrapper.pm
-lib/Petal/Parser/XMLWrapper.pm
-t/001_Include.t
-t/002_Set_Modifier.t
-t/003_More_Include.t
-t/004_Misc_Tests.t
-t/005_If_Nested_Tag.t
-t/006_Nested_Mods.t
-t/007_String_Modifier.t
-t/008_Quoted_Params.t
-t/009_Style_AndAmp.t
-t/010_XHTML.t
-t/011_Delete_Attr.t
-t/012_Prefix.t
-t/013_Declaration.t
-t/014_Interpolate.t
-t/CVS/Entries
-t/CVS/Repository
-t/CVS/Root
-t/data/decl.xml
-t/data/delete_attribute.xml
-t/data/if.html
-t/data/if.xml
-t/data/include/included.xml
-t/data/include/index.xml
-t/data/interpolate.xml
-t/data/multiple_includes/includes/footer.tmpl
-t/data/multiple_includes/includes/header.tmpl
-t/data/multiple_includes/register_form.tmpl
-t/data/multiple_includes/test.tmpl
-t/data/nested_modifiers/test1.xml
-t/data/nested_modifiers/test2.xml
-t/data/prefix.xml
-t/data/quoted_params.xml
-t/data/set_modifier/index.xml
-t/data/string.xml
-t/data/style_andamp.html
-t/data/xhtml.html
+0	./MANIFEST
+4	./Changes
+4	./lib/Petal/Cache/Memory.pm
+8	./lib/Petal/Cache/Disk.pm
+8	./lib/Petal/CodeGenerator.pm
+4	./lib/Petal/Hash.pm
+8	./lib/Petal/Canonicalizer/XHTML.pm
+12	./lib/Petal/Canonicalizer/XML.pm
+8	./lib/Petal/Hash/Encode_HTML.pm
+4	./lib/Petal/Hash/Encode_XML.pm
+4	./lib/Petal/Hash/FALSE.pm
+4	./lib/Petal/Hash/SET.pm
+4	./lib/Petal/Hash/String.pm
+4	./lib/Petal/Hash/TRUE.pm
+4	./lib/Petal/Hash/UpperCase.pm
+4	./lib/Petal/Hash/VAR.pm
+4	./lib/Petal/Parser/CVS/Root
+4	./lib/Petal/Parser/CVS/Repository
+4	./lib/Petal/Parser/CVS/Entries
+16	./lib/Petal/Parser/CVS
+4	./lib/Petal/Parser/HTMLWrapper.pm
+4	./lib/Petal/Parser/XMLWrapper.pm
+24	./lib/Petal.pm
+4	./t/data/include/included.xml
+20	./t/data/include/index.xml
+4	./t/data/decl.xml
+4	./t/data/delete_attribute.xml
+4	./t/data/if.html
+4	./t/data/if.xml
+4	./t/data/interpolate.xml
+4	./t/data/prefix.xml
+4	./t/data/quoted_params.xml
+4	./t/data/string.xml
+4	./t/data/style_andamp.html
+4	./t/data/xhtml.html
+4	./t/data/multiple_includes/includes/footer.tmpl
+4	./t/data/multiple_includes/includes/header.tmpl
+4	./t/data/multiple_includes/register_form.tmpl
+4	./t/data/multiple_includes/test.tmpl
+4	./t/data/nested_modifiers/test1.xml
+4	./t/data/nested_modifiers/test2.xml
+4	./t/data/set_modifier/index.xml
+24	./t/data/set_modifier
+4	./t/data/dummy_data.xml
+4	./t/001_Include.t
+4	./t/002_Set_Modifier.t
+4	./t/003_More_Include.t
+4	./t/004_Misc_Tests.t
+4	./t/005_If_Nested_Tag.t
+4	./t/006_Nested_Mods.t
+4	./t/007_String_Modifier.t
+4	./t/008_Quoted_Params.t
+4	./t/009_Style_AndAmp.t
+4	./t/010_XHTML.t
+4	./t/011_Delete_Attr.t
+4	./t/012_Prefix.t
+4	./t/013_Declaration.t
+4	./t/014_Interpolate.t
+4	./t/015_Dummy_Data.t
+4	./Makefile.PL
+4	./README

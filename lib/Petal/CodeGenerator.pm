@@ -174,9 +174,8 @@ sub _attr
     
     $variable =~ s/\'/\\\'/g;
     push @code, ("    " x $indent . "if (\$hash->{'$variable'}) {");
-    push @code, ("    " x ++$indent . "push \@res, $attribute . '=\"' . \$hash->{'$variable'} . '\"'");
+    push @code, ("    " x ++$indent . "push \@res, \"$attribute\" . '=\"' . \$hash->{'$variable'} . '\"'");
     push @code, ("    " x --$indent . "}");
-    $indent++;
 }
 
 

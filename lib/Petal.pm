@@ -129,7 +129,7 @@ $MEMORY_CACHE - If set to FALSE, Petal will not use the Petal::Disk::Memory modu
 our $MEMORY_CACHE = 1;
 
 
-our $VERSION = '0.6';
+our $VERSION = '0.61';
 
 
 =head2 Example
