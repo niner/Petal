@@ -16,47 +16,58 @@ our $PI_RE = '^<\?(?:\s|\r|\n)*(attr|include|var|if|condition|else|repeat|loop|f
 use vars qw /$petal_object $tokens $variables @code $indent $token_name %token_hash $token $my_array/;
 
 
+sub indent_increment
+{
+    my $class = shift;
+    $indent++;
+}
+
+
+sub indent_decrement
+{
+    my $class = shift;
+    $indent--;
+}
+
+
 # these _xxx_res primitives have been contributed by Fergal Daly <fergal@esatclear.ie>
 # they speed up string construction a little bit
 sub _init_res
 {
-	return '$res = ""';
+    return '$res = ""';
 }
 
 
 sub _add_res
 {
-	my $class = shift;
-
-	my $thing = shift;
-
-	return qq{\$res .= $thing};
+    my $class = shift;
+    my $thing = shift;
+    return qq{\$res .= $thing};
 }
 
 
 sub _final_res
 {
-	return q{$res};
+    return q{$res};
 }
 
 
 sub _get_res
 {
-	return q{$res};
+    return q{$res};
 }
 
 sub add_code
 {
-	my $class = shift;
-
-	push(@code, "    " x $indent . shift);
+    my $class = shift;
+    push(@code, "    " x $indent . shift);
 }
 
 sub comp_expr
 {
-	my $self = shift;
-	my $expr = shift;
-	return "\$hash->get ('$expr')";
+    my $self = shift;
+    my $expr = shift;
+    return "\$hash->get ('$expr')";
 }
 
 
