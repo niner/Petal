@@ -517,9 +517,16 @@ sub _attributes
 	next unless (defined $string);
 	next if ($string =~ /^\s*$/);
 	my ($attr, $expr) = $string =~ /^\s*((?:\w|\:)+)\s+(.*?)\s*$/;
+        if (not defined $attr or not defined $expr)
+        {
+            warn "Attributes expression '$string' does not seem valid - Skipped";
+            next;
+        }
+        
 	$expr = $class->_encode_backslash_semicolon ($expr);
 	$att->{$attr} = "<?attr name=\"$attr\" value=\"$expr\"?>";
     }
+
     return 1;
 }
 

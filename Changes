@@ -1,5 +1,9 @@
 Revision history for Petal.
 
+1.10_08
+	- Fixed metal:use-macro not being parsed in XHTML output mode
+	- Fixed unnecessary warning
+
 1.10_07
 	- Added incomplete METAL implementation
 
