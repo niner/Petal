@@ -909,9 +909,9 @@ directory list use an arrayref.
 
 Defines the format of the template files.  Recognised values are:
 
-  'HTML'  - Petal will use HTML::TreeBuilder to parse the template
-  'XHTML' - Alias for 'HTML'
-  'XML'   - Petal will use XML::Parser to parse the template
+  'HTML'  - Alias for 'XHTML'
+  'XHTML' - Petal will use Petal::Parser to parse the template
+  'XML'   - Petal will use Petal::Parser to parse the template
 
 
 =head2 output => 'HTML' | 'XHTML' | 'XML' (default: 'XML')

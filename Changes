@@ -2,6 +2,7 @@ Revision history for Petal.
 
 2.16
     - Added Cookbook.pod documentation and associated tests from William McKee
+    - Removed references to HTML::TreeBuilder and XML::Parser (William McKee)
 
 2.15 Wed Jan  5 15:31:00 2005
     - Fixed some 'used of uninitialized values' warnings
