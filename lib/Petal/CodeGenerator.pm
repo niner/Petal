@@ -171,6 +171,7 @@ sub _eval
     push @code, ("    " x $indent . "push \@res, eval {");    
     $indent++;
     push @code, ("    " x $indent . "my \@res = ();");
+    push @code, ("    " x $indent . "local %SIG;");
     push @code, ("    " x $indent . "\$SIG{__DIE__} = sub { \$\@ = shift };");
 }
 

@@ -557,7 +557,6 @@ The 3 Petal syntaxes, L<Petal::Doc::Inline>, L<Petal::Doc::PIs>,
 L<Petal::Doc::TAL> plus the Expression Syntax
 L<Petal::Doc::Petales>.
 
-Any extra questions? jhiver@mkdoc.com. Ooops, no,
-actually the mailing lis
+Any extra questions? jhiver@mkdoc.com.
 
 =cut

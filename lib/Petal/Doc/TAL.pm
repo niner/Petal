@@ -11,7 +11,7 @@ __END__
 
 =head1 NAME
 
-Petal::Syntax::TAL - Template Attribute Language
+Petal::Syntax::TAL - Template Attribute Language7
 
 
 =head1 SYNOPSIS
@@ -22,7 +22,8 @@ This is an article, not a module.
 =head1 SUMMARY
 
 This functionality is directly and shamelessly stolen from the excellent
-TAL specification, which is available here: http://www.zope.org/Wikis/DevSite/Projects/ZPT/TAL.
+TAL specification, which is available here:
+http://www.zope.org/Wikis/DevSite/Projects/ZPT/TAL.
 
 
 =head1 NAMESPACE
