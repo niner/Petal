@@ -85,7 +85,7 @@ our $CURRENT_INCLUDES = 0;
 
 
 # this is for CPAN
-our $VERSION = '1.04';
+our $VERSION = '1.06';
 
 
 # The CodeGenerator class backend to use.
@@ -490,7 +490,7 @@ sub _file_data_ref
 	}
 	else
 	{
-	    decode_entities ($res);
+	    Petal::Entities::decode_entities ($res);
 	}	
     }
     

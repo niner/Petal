@@ -1,7 +1,8 @@
 Revision history for Petal.
 
-1.06
+1.06 Wed Aug 20 17:41:21 2003
 	- Fixed 'lots of includes' performance issues
+	- Fixed a bug pointed out by Fergal concerning entities
 
 1.05 Tue Aug 19 15:39:16 2003
 	- Fixed silly warning bug
