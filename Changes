@@ -1,5 +1,8 @@
 Revision history for Petal.
 
+2.16
+    - Added Cookbook.pod documentation and associated tests from William McKee
+
 2.15 Wed Jan  5 15:31:00 2005
     - Fixed some 'used of uninitialized values' warnings
     - Added support for non-alphanumeric xml attribute names in tal:attributes
