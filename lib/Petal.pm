@@ -17,6 +17,7 @@ Join the Petal mailing list:
 
   http://lists.webarch.co.uk/mailman/listinfo/petal
 
+
 =head1 SUMMARY
 
 Petal is a XML based templating engine that is able to process any
@@ -38,6 +39,25 @@ pages.
 To properly understand Petal, I would recomment that you quick-read the
 present documentation, then go read the Petal::Expressions article, and
 then read the present documentation properly.
+
+
+=head1 NAMESPACE
+
+Although this is not mandatory, Petal templates should include use the namespace
+http://purl.org/petal/1.0/, preferably as an attribute of the first element
+of the XML template which you are processing.
+
+Example:
+
+    <html xml:lang="en"
+          lang="en-"
+          xmlns="http://www.w3.org/1999/xhtml"
+          petal:xmlns="http://purl.org/petal/1.0/">
+
+      Blah blah blah...
+      Content of the file
+      More blah blah...
+    </html>
 
 =cut
 package Petal;
@@ -133,7 +153,7 @@ $MEMORY_CACHE - If set to FALSE, Petal will not use the Petal::Disk::Memory modu
 our $MEMORY_CACHE = 1;
 
 
-our $VERSION = '0.74';
+our $VERSION = '0.75';
 
 
 # this is for XML namespace support. Can't touch this :-)

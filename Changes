@@ -1,5 +1,9 @@
 Revision history for Petal.
 
+0.75 Sun Oct 20 17:21:14 2002
+	- Added namespace support, i.e. xmlns:foo="http://purl.org/petal/1.0/"
+	- Added tests
+
 0.74 Mon Sep 30 14:35:25 2002
 	- Done some more optimization on Petal::Hash
 	- Fixed petal:set='foo string:"Hello"' bug
