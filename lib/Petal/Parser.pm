@@ -1,16 +1,15 @@
 # ------------------------------------------------------------------
-# Petal::Parser::HTMLWrapper - Fires Petal::Canonicalizer events
+# Petal::Parser - Fires Petal::Canonicalizer events
 # ------------------------------------------------------------------
-# A Wrapper class for HTML::Parser that is meant to be used for
-# Petal::Canonicalizer. This module should happily parse the million
-# gadzillon HTML pages out there which are not valid XML...
+# A Wrapper class for MKDoc::XML:TreeBuilder which is meant to be
+# used for Petal::Canonicalizer.
 # ------------------------------------------------------------------
-package Petal::Parser::HTMLWrapper;
+package Petal::Parser;
+use MKDoc::XML::TreeBuilder;
+use MKDoc::XML::Decode;
 use strict;
 use warnings;
 use Carp;
-use HTML::TreeBuilder;
-use HTML::Parser;
 
 use Petal::Canonicalizer::XML;
 use Petal::Canonicalizer::XHTML;
@@ -23,7 +22,8 @@ use vars qw /@NodeStack @MarkedData $Canonicalizer
 sub sillyness
 {
     $Petal::NS,
-    $Petal::NS_URI;
+    $Petal::NS_URI,
+    $Petal::XI_NS_URI;
 }
 
 
@@ -45,25 +45,11 @@ sub process
     local @NameSpaces = ();
     $data_ref = (ref $data_ref) ? $data_ref : \$data_ref;
     
-    my $tree = HTML::TreeBuilder->new;
-    $tree->p_strict (0);
-    $tree->no_space_compacting (1);
-    $tree->ignore_unknown (0);
-    $tree->store_comments(1);
-    $tree->ignore_ignorable_whitespace(0);
-    
-    eval
-    {
-	$tree->parse ($$data_ref);
-	my @nodes = $tree->guts();
-	$tree->elementify();
-	$self->generate_events ($_) for (@nodes);
-    };
+    my @top_nodes = MKDoc::XML::TreeBuilder->process_data ($$data_ref);
+    for (@top_nodes) { $self->generate_events ($_) }
     
     @MarkedData = ();
     @NodeStack  = ();
-    $tree->delete;
-    carp $@ if (defined $@ and $@);
 }
 
 
@@ -80,19 +66,26 @@ sub generate_events
     
     if (ref $tree)
     {
-	my $tag  = $tree->tag;
-	my $attr = { $tree->all_external_attr() };
+	my $tag  = $tree->{_tag};	
+	my $attr = { map { /^_/ ? () : ( $_ => MKDoc::XML::Decode->process ($tree->{$_}) ) } keys %{$tree} };
 	
 	if ($tag eq '~comment')
 	{
-	    generate_events_comment ($tree->attr ('text'));
+	    generate_events_comment ($tree->{text});
 	}
 	else
 	{
+	    # decode attributes
+	    for (keys %{$tree})
+	    {
+		$tree->{$_} = MKDoc::XML::Decode->process ( $tree->{$_} )
+		   unless (/^_/);
+	    }
+	    
 	    push @NodeStack, $tree;
 	    generate_events_start ($tag, $attr);
 	    
-	    foreach my $content ($tree->content_list())
+	    foreach my $content (@{$tree->{_content}})
 	    {
 		$self->generate_events ($content);
 	    }
@@ -103,6 +96,7 @@ sub generate_events
     }
     else
     {
+	$tree = MKDoc::XML::Decode->process ( $tree );
 	generate_events_text ($tree);
     }
 }
@@ -110,11 +104,11 @@ sub generate_events
 
 sub generate_events_start
 {
-    $_ = shift;
+    local $_ = shift;
     $_ = "<$_>";
-    %_ = %{shift()};
+    local %_ = %{shift()};
     delete $_{'/'};
-    
+
     # process the Petal namespace...
     my $ns = (scalar @NameSpaces) ? $NameSpaces[$#NameSpaces] : $Petal::NS;
     foreach my $key (keys %_)
@@ -128,7 +122,7 @@ sub generate_events_start
 	    $ns =~ s/^xmlns\://;
 	}
     }
-
+    
     push @NameSpaces, $ns;
     local ($Petal::NS) = $ns;
     
@@ -155,8 +149,8 @@ sub generate_events_start
 
 sub generate_events_end
 {
-    $_ = shift;
-    $_ = "</$_>";
+    local $_ = shift;
+    local $_ = "</$_>";
     local ($Petal::NS) = pop (@NameSpaces);
     local ($Petal::XI_NS) = pop (@XI_NameSpaces);
     $Canonicalizer->EndTag();
@@ -168,8 +162,7 @@ sub generate_events_text
     my $data = shift;
     $data =~ s/\&/&amp;/g;
     $data =~ s/\</&lt;/g;
-    $_ = $data;
-    
+    local $_ = $data;
     local ($Petal::NS) = $NameSpaces[$#NameSpaces];
     local ($Petal::XI_NS) = $XI_NameSpaces[$#XI_NameSpaces];
     $Canonicalizer->Text();
@@ -181,11 +174,9 @@ sub generate_events_comment
     my $data = shift;
     $data =~ s/\&/&amp;/g;
     $data =~ s/\</&lt;/g;
-    $_ = '<!--' . $data . '-->';
+    local $_ = '<!--' . $data . '-->';
     $Canonicalizer->Text();    
 }
-
-
 
 
 1;
