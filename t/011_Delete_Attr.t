@@ -1,33 +1,25 @@
-package main;
+#!/usr/bin/perl
 use warnings;
+use strict;
 use lib ('lib');
-use Test;
-
-BEGIN {print "1..6\n";}
-END {print "not ok 1\n" unless $loaded;}
+use Test::More 'no_plan';
 use Petal;
-$loaded = 1;
-print "ok 1\n";
 
 $Petal::BASE_DIR = './t/data/';
 $Petal::DISK_CACHE = 0;
 $Petal::MEMORY_CACHE = 0;
 $Petal::TAINT = 1;
-$Petal::INPUT = 'XML';
-$Petal::OUTPUT = 'XML';
 
 my $template = new Petal ('delete_attribute.xml');
 my $string = $template->process;
-($string =~ /type/) ? print "not ok 2\n" : print "ok 2\n";
+unlike ($string, qr /type/);
 
 $Petal::OUTPUT = 'HTML';
 $template = new Petal ('delete_attribute.xml');
 $string = $template->process;
-($string =~ /type/) ? print "not ok 3\n" : print "ok 3\n";
-
-($string =~ /\Qbar="0"\E/) ? print "ok 4\n" : print "not ok 4\n";
-
+unlike ($string, qr /type/);
+like ($string, qr/\Qbar="0"\E/);
 
 $string = $template->process ('nothing' => '');
-($string =~ /type/) ? print "ok 5\n" : print "not ok 5\n";
-($string =~ /\Qbar="0"\E/) ? print "ok 6\n" : print "not ok 6\n";
+like ($string, qr/type/);
+like ($string, qr/\Qbar="0"\E/);

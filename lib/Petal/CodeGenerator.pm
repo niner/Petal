@@ -7,7 +7,7 @@
 # code that can be turned into a subroutine using eval().
 # ------------------------------------------------------------------
 package Petal::CodeGenerator;
-use Petal::XML_Encode_Decode;
+use MKDoc::XML::Decode;
 use strict;
 use warnings;
 use Carp;
@@ -138,7 +138,7 @@ sub process
 	    %token_hash = (@atts1, @atts2); 
 	    foreach my $key (%token_hash)
 	    {
-		$token_hash{$key} = Petal::XML_Encode_Decode::decode_backslash_semicolon ($token_hash{$key})
+		$token_hash{$key} = $class->_decode_backslash_semicolon ($token_hash{$key})
 		    if (defined $token_hash{$key});
 	    }
 	    
@@ -203,12 +203,8 @@ sub _include
 	$class->add_code ("my \$res = eval { Petal->new ('$path')->process (\$hash->new()) };");
     
     $class->add_code ("\$res = \"<!--\\n\$\@\\n-->\" if (defined \$\@ and \$\@);");
-    $class->add_code ("if (scalar keys \%Encode::) {");
-    $class->indent_increment();
     $class->add_code ("\$res = Encode::decode (\$Petal::ENCODE_CHARSET, \$res) if (\$Petal::ENCODE_CHARSET);");
-    $class->add_code ("Encode::_utf8_on (\$res) if (Encode->can ('_utf8_on'));");
-    $class->indent_decrement();
-    $class->add_code ("}");
+    $class->add_code ("\$res = Petal->_utf8_on (\$res);");
     $class->add_code ("\$res;");
     $class->indent_decrement();
     $class->add_code ("} || '';");
@@ -443,6 +439,15 @@ sub _tokenize
     }
     push @{$tokens}, (@tags);
     return $tokens;
+}
+
+
+sub _decode_backslash_semicolon
+{
+    my $class = shift;
+    my $data  = shift;
+    $data =~ s/&($MKDoc::XML::Decode::XML_Decode_Pattern)\\;/$MKDoc::XML::Decode::XML_Decode{$1}/go;
+    return $data;
 }
 
 

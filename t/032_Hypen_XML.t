@@ -1,18 +1,9 @@
-#!C:/perl/bin/perl -w
+#!/usr/bin/perl
 use warnings;
-use lib ('lib');
-use Test;
-
-BEGIN {print "1..9\n";}
-END {print "not ok 1\n" unless $loaded;}
-use Petal;
-$loaded = 1;
-print "ok 1\n";
-
 use strict;
-my $loaded = 1;
-
-$|=1;
+use lib ('lib');
+use Test::More 'no_plan';
+use Petal;
 
 $Petal::DISK_CACHE = 0;
 $Petal::MEMORY_CACHE = 0;
@@ -28,58 +19,22 @@ my $string;
 
 
 {
-    $Petal::INPUT = "XML";
     $Petal::OUTPUT = "XML";
     $template = new Petal ('hypen.xml');
     
     $string = $template->process(); 
-    $loaded++;
-    $string =~ /<foo-bar/ ? print "ok $loaded\n" : print "not ok $loaded\n";	
-
-    $loaded++;
-    $string =~ /<\/foo-bar/ ? print "ok $loaded\n" : print "not ok $loaded\n";
+    like ($string => qr/<foo-bar/);
+    like ($string => qr/<\/foo-bar/);
 }
 
 
 {
-    $Petal::INPUT = "XML";
     $Petal::OUTPUT = "XHTML";
     $template = new Petal ('hypen.xml');
     
     $string = $template->process(); 
-    $loaded++;
-    $string =~ /<foo-bar/ ? print "ok $loaded\n" : print "not ok $loaded\n";	
-
-    $loaded++;
-    $string =~ /<\/foo-bar/ ? print "ok $loaded\n" : print "not ok $loaded\n";
-}
-
-
-{
-    $Petal::INPUT = "XHTML";
-    $Petal::OUTPUT = "XML";
-    $template = new Petal ('hypen.xml');
-    
-    $string = $template->process(); 
-    $loaded++;
-    $string =~ /<foo-bar/ ? print "ok $loaded\n" : print "not ok $loaded\n";	
-
-    $loaded++;
-    $string =~ /<\/foo-bar/ ? print "ok $loaded\n" : print "not ok $loaded\n";
-}
-
-
-{
-    $Petal::INPUT = "XHTML";
-    $Petal::OUTPUT = "XHTML";
-    $template = new Petal ('hypen.xml');
-    
-    $string = $template->process(); 
-    $loaded++;
-    $string =~ /<foo-bar/ ? print "ok $loaded\n" : print "not ok $loaded\n";	
-
-    $loaded++;
-    $string =~ /<\/foo-bar/ ? print "ok $loaded\n" : print "not ok $loaded\n";
+    like ($string => qr/<foo-bar/);
+    like ($string => qr/<\/foo-bar/);
 }
 
 

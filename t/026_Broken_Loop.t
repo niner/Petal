@@ -1,14 +1,18 @@
 #!/usr/bin/perl
-use Test::More 'no_plan';
 use warnings;
-use lib 'lib';
-
+use strict;
+use lib ('lib');
+use Test::More 'no_plan';
 use Petal;
+
+
 $Petal::DISK_CACHE = 0;
 $Petal::MEMORY_CACHE = 0;
+$Petal::TAINT = 1;
 
-my $data_dir = ('t/data');
+my $data_dir = 't/data';
 my $file     = 'children.xml';
+
 my $child1   = {
    dir        => 'ltr',
    lang       => 'en',

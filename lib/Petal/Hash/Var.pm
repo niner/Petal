@@ -5,7 +5,6 @@
 # This module is redistributed under the same license as Perl
 # itself.
 # ------------------------------------------------------------------
-
 package Petal::Hash::Var;
 
 use strict;
@@ -15,11 +14,6 @@ use Carp;
 use UNIVERSAL qw( isa );
 use Scalar::Util qw( blessed );
 
-#our $STRING_RE_DOUBLE = qq |(?<!\\\\)\\".*?(?<!\\\\)\\"|;
-#our $STRING_RE_SINGLE = qq |(?<!\\\\)\\'.*?(?<!\\\\)\\'|;
-#our $STRING_RE        = "(?:$STRING_RE_SINGLE|$STRING_RE_DOUBLE)";
-#our $VARIABLE_RE      = "(?:--)?[A-Za-z\_][^ \t]*";
-#our $TOKEN_RE         = "(?:$STRING_RE|$VARIABLE_RE)";
 
 our $STRING_RE_DOUBLE  = qr/(?<!\\)\".*?(?<!\\)\"/;
 our $STRING_RE_SINGLE  = qr/(?<!\\)\'.*?(?<!\\)\'/;
@@ -33,12 +27,13 @@ our $TOKEN_RE          = qr/(?:$STRING_RE|$VARIABLE_RE)/;
 our $PATH_SEPARATOR_RE = qr/(?:\/|\.)/;
 our $INTEGER_KEY_RE    = qr/^\d+$/;
 
+
 sub process
 {
     my $class    = shift;
     my $hash     = shift;
     my $argument = shift;
-
+    
     my @tokens = $argument =~ /($TOKEN_RE)/gsm;
     my $path   = shift (@tokens) or confess "bad syntax for $class: $argument (\$path)";
     my @path   = split( /$PATH_SEPARATOR_RE/, $path );
@@ -69,15 +64,17 @@ sub process
 	    $args[$i] = $arg;
 	}
     }
-
+    
     my $current = $hash;
     my $current_path = '';
     while (@path)
     {
 	my $next = shift (@path);
+	$next = ($next =~ /:/) ? $hash->fetch ($next) : $next;
+	
 	my $has_path_tokens = scalar @path;
 	my $has_args        = scalar @args;
-
+	
 	if (blessed $current)
 	{
 	  ACCESS_OBJECT:

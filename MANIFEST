@@ -14,8 +14,7 @@ lib/Petal/Hash.pm
 lib/Petal/Hash/String.pm
 lib/Petal/Hash/Test.pm
 lib/Petal/Hash/Var.pm
-lib/Petal/Parser/HTMLWrapper.pm
-lib/Petal/Parser/XMLWrapper.pm
+lib/Petal/Parser.pm
 lib/Petal/XML_Encode_Decode.pm
 t/001_Include.t
 t/002_Set_Modifier.t
@@ -64,11 +63,13 @@ t/052_Opt_language.t
 t/053_Opt_taint.t
 t/054_Opt_cache.t
 t/055_Opt_maxinc.t
+t/056_Basic.t
 t/benchmark.pl
 t/data/access_obj_array.html
 t/data/access_obj_hash.html
 t/data/attributes_andquot.xml
 t/data/autoload.xml
+t/data/basic.xml
 t/data/benchmark.html
 t/data/canonical_error.html
 t/data/children.xml

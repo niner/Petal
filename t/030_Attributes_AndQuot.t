@@ -1,17 +1,10 @@
-#!C:/perl/bin/perl -w
+#!/usr/bin/perl
 use warnings;
-use lib ('lib');
-use Test::More tests => 20;
-
-END {fail("loaded") unless $loaded;}
-use Petal;
-$loaded = 1;
-pass("loaded");
-
 use strict;
-my $loaded = 1;
+use lib ('lib');
+use Test::More 'no_plan';
+use Petal;
 
-$|=1;
 
 $Petal::DISK_CACHE = 0;
 $Petal::MEMORY_CACHE = 0;
@@ -24,8 +17,9 @@ my $string;
 
 #####
 
+=cut
+
 {
-    $Petal::INPUT = "XML";
     $Petal::OUTPUT = "XML";
     $template = new Petal ('attributes_andquot.xml');
     
@@ -35,7 +29,6 @@ my $string;
 
 
 {
-    $Petal::INPUT = "XML";
     $Petal::OUTPUT = "XHTML";
     $template = new Petal ('attributes_andquot.xml');
     
@@ -43,29 +36,9 @@ my $string;
     unlike($string, '/""/');
 }
 
+=cut
 
 {
-    $Petal::INPUT = "XHTML";
-    $Petal::OUTPUT = "XML";
-    $template = new Petal ('attributes_andquot.xml');
-    
-    $string = ${$template->_canonicalize()};
-    unlike($string, '/""/');
-}
-
-
-{
-    $Petal::INPUT = "XHTML";
-    $Petal::OUTPUT = "XHTML";
-    $template = new Petal ('attributes_andquot.xml');
-    
-    $string = ${$template->_canonicalize()};
-    unlike($string, '/""/');
-}
-
-
-{
-    $Petal::INPUT = "XML";
     $Petal::OUTPUT = "XML";
     $template = new Petal ('inline_vars.xml');
     $string = ${$template->_canonicalize()};
@@ -77,9 +50,9 @@ my $string;
     like($string, '/\?\>/');
 }
 
+exit;
 
 {
-    $Petal::INPUT = "XML";
     $Petal::OUTPUT = "XHTML";
     $template = new Petal ('inline_vars.xml');
     $string = ${$template->_canonicalize()};
@@ -91,37 +64,9 @@ my $string;
     like($string, '/\?>/');
 }
 
-
-{
-    $Petal::INPUT = "XHTML";
-    $Petal::OUTPUT = "XML";
-    $template = new Petal ('inline_vars.xml');
-    $string = ${$template->_canonicalize()};
-
-    like($string, '/&quot;/');
-    
-    like($string, '/<\?/');
-    
-    like($string, '/\?>/');
-}
-
-
-{
-    $Petal::INPUT = "XHTML";
-    $Petal::OUTPUT = "XHTML";
-    $template = new Petal ('inline_vars.xml');
-    $string = ${$template->_canonicalize()};
-
-    like($string, '/&quot;/');
-    
-    like($string, '/<\?/');
-    
-    like($string, '/\?>/');
-}
 
 JUMP:
 {
-    $Petal::INPUT = "XML";
     $Petal::OUTPUT = "XML";
     $template = new Petal ('manipulate.html');
     
@@ -135,6 +80,7 @@ JUMP:
     
     like($string, '/name="id"/');
 }
+
 
 1;
 

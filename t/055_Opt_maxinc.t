@@ -82,8 +82,7 @@ $data_dir = File::Spec->catdir('t', 'data', 'include');
 $file     = 'index_xinclude.xml';
 @args     = ();
 
-$template = new Petal (file => $file, base_dir => $data_dir, max_includes => 1,
-input => 'XML', output => 'XML');
+$template = new Petal (file => $file, base_dir => $data_dir, max_includes => 1, input => 'XML', output => 'XML');
 
 $@ = '';
 $output = eval { $template->process(@args) };

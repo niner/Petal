@@ -1,22 +1,15 @@
 #!/usr/bin/perl
-#
-package main;
 use warnings;
+use strict;
 use lib ('lib');
-use Test;
-
-BEGIN {print "1..4\n";}
-END {print "not ok 1\n" unless $loaded;}
+use Test::More 'no_plan';
 use Petal;
-$loaded = 1;
-print "ok 1\n";
 
 my $template_file = 'loop_error.xml';
 $Petal::DISK_CACHE = 0;
 $Petal::MEMORY_CACHE = 0;
 $Petal::TAINT = 1;
 $Petal::BASE_DIR = 't/data';
-$Petal::INPUT = "HTML";
 $Petal::OUTPUT = "XHTML";
 my $template = new Petal ($template_file);
 
@@ -34,13 +27,12 @@ my %hash = (
 
 my $str = undef;
 eval { $str = $template->process(%hash) };
-# print STDERR $str;
 
 # shouldn't be any "num=[...]" that don't have numbers inside
-($str !~ /num=\[\D+\]/) ? print "ok 2\n" : print "not ok 2\n";
+unlike ($str, qr/num=\[\D+\]/);
 
 # shouldn't be any "chr=[...]" that don't have chars inside
-($str !~ /chr=\[\W+\]/) ? print "ok 3\n" : print "not ok 3\n";
+unlike ($str, qr/chr=\[\W+\]/);
 
 # shouldn't be any "stf=[...]" that don't have 'stuff' inside
-($str !~ /stf=\[[^\W]+\]/) ? print "ok 4\n" : print "not ok 4\n";
+unlike ($str, qr/stf=\[[^\W]+\]/);

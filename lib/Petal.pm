@@ -8,8 +8,7 @@ package Petal;
 use Petal::Hash;
 use Petal::Cache::Disk;
 use Petal::Cache::Memory;
-use Petal::Parser::XMLWrapper;
-use Petal::Parser::HTMLWrapper;
+use Petal::Parser;
 use Petal::Canonicalizer::XML;
 use Petal::Canonicalizer::XHTML;
 use Petal::Functions;
@@ -20,6 +19,8 @@ use warnings;
 use Carp;
 use Safe;
 use Data::Dumper;
+use Encode;
+use MKDoc::XML::DecodeHO;
 
 
 # these are used as local variables when the XML::Parser
@@ -43,9 +44,9 @@ our $WARN_UNINIT = 0;
 # What do we use to parse input?
 our $INPUT  = 'XML';
 our $INPUTS = {
-    'XML'   => 'Petal::Parser::XMLWrapper',
-    'HTML'  => 'Petal::Parser::HTMLWrapper',
-    'XHTML' => 'Petal::Parser::HTMLWrapper',
+    'XML'     => 'Petal::Parser',
+    'HTML'    => 'Petal::Parser',
+    'XHTML'   => 'Petal::Parser',
 };
 
 
@@ -145,13 +146,14 @@ sub main::lcode
 
 sub load_code_generator
 {
-	if (not $CodeGeneratorLoaded)
-	{
-	    eval "require $CodeGenerator";
-	    confess "Failed to load $CodeGenerator, $@" if $@;
-	    $CodeGeneratorLoaded = 1;
-	}
+    if (not $CodeGeneratorLoaded)
+    {
+	eval "require $CodeGenerator";
+	confess "Failed to load $CodeGenerator, $@" if $@;
+	$CodeGeneratorLoaded = 1;
+    }
 }
+
 
 # Instanciates a new Petal object.
 sub new
@@ -340,7 +342,6 @@ sub process
 	$res = $coderef->($hash);
 	
 	$Petal::ENCODE_CHARSET and do {
-	    require "Encode.pm";
 	    $res = Encode::encode ($Petal::ENCODE_CHARSET, $res);
 	};
     };
@@ -473,25 +474,15 @@ sub _file_data_ref
     close FP;
     no bytes;
     
-    if ($] > 5.007 and $Petal::DECODE_CHARSET)
-    {
-	require "Encode.pm";
+    $Petal::DECODE_CHARSET and do {
 	$res = Encode::decode ($Petal::DECODE_CHARSET, $res);
-    }
+    };
     
     if ($OUTPUT eq 'HTML' or $OUTPUT eq 'XHTML')
     {
-	if ($] > 5.007)
-	{
-	    require "Encode.pm";
-	    Encode::_utf8_on ($res);
-	    Petal::Entities::decode_entities ($res);
-	    Encode::_utf8_off ($res);
-	}
-	else
-	{
-	    Petal::Entities::decode_entities ($res);
-	}	
+	Encode::_utf8_on ($res);
+	$res = MKDoc::XML::DecodeHO->process ($res);
+	Encode::_utf8_off ($res);
     }
     
     # kill template comments
@@ -588,6 +579,15 @@ sub _canonicalize
     my $data_ref = $self->_file_data_ref;
     my $parser = $parser_type->new;
     return $canonicalizer_type->process ($parser, $data_ref);
+}
+
+
+sub _utf8_on
+{
+    my $class = shift;
+    my $res   = shift;
+    Encode::_utf8_on ($res);
+    return $res;
 }
 
 

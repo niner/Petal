@@ -24,11 +24,9 @@ my @args = (
 
 
 # Confirm input format defaults to XML
-
 my $template = new Petal (file => $file, base_dir => $data_dir);
 
 is($template->input, 'XML', "input format defaults to 'XML'");
-#          "\$Petal::INPUT is used as default input format");
 
 $@ = '';
 my $output = eval {
@@ -38,20 +36,17 @@ my $output = eval {
 ok($@, "Template processing fails (as expected)");
 
 
-# Confirm input option can be used to change format
-
-$template = new Petal (file => $file, base_dir => $data_dir, input => 'HTML');
-
-is($template->input, 'HTML',
-          "input option overrides default");
+# Confirm that it works with something that's good enough
+$template = new Petal (file => 'if.xml', base_dir => $data_dir, input => 'HTML');
+is ($template->input, 'HTML', "input option overrides default");
 
 $@ = '';
 $output = eval {
   $template->process(@args);
 };
 
-ok(!$@, "Template processed successfully");
-like($output, qr{^\s*
+ok (!$@, "Template processed successfully");
+like ($output, qr{^\s*
   <div>\s*
   <p\s+class=.error.\s*>Altitude\stoo\slow!</p>\s*
   </div>

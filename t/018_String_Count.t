@@ -1,22 +1,16 @@
 #!/usr/bin/perl
-#
-package main;
 use warnings;
+use strict;
 use lib ('lib');
-use Test::More tests => 3;
-
-END {fail("loaded") unless $loaded;}
+use Test::More 'no_plan';
 use Petal;
-$loaded = 1;
-pass("loaded");
 
 my $template_file = 'string_count.html';
 $Petal::DISK_CACHE = 0;
 $Petal::MEMORY_CACHE = 0;
 $Petal::TAINT = 1; 
 $Petal::BASE_DIR = 't/data';
-$Petal::INPUT = "HTML";
-$Petal::OUTPUT = "XHTML";
+
 my $template = new Petal ($template_file);
 
 my $hash = {

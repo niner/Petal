@@ -16,7 +16,7 @@
 # ------------------------------------------------------------------
 package Petal::Canonicalizer::XML;
 use Petal::Hash::String;
-use Petal::XML_Encode_Decode;
+use MKDoc::XML::Encode;
 use strict;
 use warnings;
 
@@ -173,7 +173,7 @@ sub StartTag
 		$command =~ s/^\$//;
 		$command =~ s/^\{//;
 		$command =~ s/\}$//;
-		$command = Petal::XML_Encode_Decode::encode_backslash_semicolon ($command);
+		$command = $class->_encode_backslash_semicolon ($command);
 		$command = "<?var name=\"$command\"?>";
 		$text =~ s/\Q$var\E/$command/g;
 	    }
@@ -299,7 +299,7 @@ sub Text
 	$command =~ s/^\$//;
 	$command =~ s/^\{//;
 	$command =~ s/\}$//;
-	$command = Petal::XML_Encode_Decode::encode_backslash_semicolon ($command);
+	$command = $class->_encode_backslash_semicolon ($command);
 	$command = "<?var name=\"$command\"?>";
 	$text =~ s/\Q$var\E/$command/g;
     }
@@ -361,7 +361,7 @@ sub _on_error
     my $att   = shift;
     my $expr  = delete $att->{"$petal:on-error"} || return;
     
-    $expr = Petal::XML_Encode_Decode::encode_backslash_semicolon ($expr);
+    $expr = $class->_encode_backslash_semicolon ($expr);
     push @Result, "<?eval?>";
     $NodeStack[$#NodeStack]->{'on-error'} = $expr;
     return 1;
@@ -384,7 +384,7 @@ sub _define
                 delete $att->{"$petal:def"}    ||
                 delete $att->{"$petal:define"} || return;
     
-    $expr = Petal::XML_Encode_Decode::encode_backslash_semicolon ($expr);
+    $expr = $class->_encode_backslash_semicolon ($expr);
     push @Result, map { "<?var name=\"set: $_\"?>" } $class->_split_expression ($expr);
     return 1;
 }
@@ -405,7 +405,7 @@ sub _condition
     my $expr  = delete $att->{"$petal:if"}        ||
                 delete $att->{"$petal:condition"} || return;
     
-    $expr = Petal::XML_Encode_Decode::encode_backslash_semicolon ($expr);
+    $expr = $class->_encode_backslash_semicolon ($expr);
     my @new = map { "<?if name=\"$_\"?>" } $class->_split_expression ($expr);
     push @Result, @new;
     $NodeStack[$#NodeStack]->{condition} = scalar @new;
@@ -434,7 +434,7 @@ sub _repeat
     my @new = ();
     foreach $expr (@exprs)
     {
-	$expr = Petal::XML_Encode_Decode::encode_backslash_semicolon ($expr);
+	$expr = $class->_encode_backslash_semicolon ($expr);
 	push @new, "<?for name=\"$expr\"?>"
     }
     push @Result, @new;
@@ -459,7 +459,7 @@ sub _replace
                delete $att->{"$petal:outer"}   || return;
     
     my @new = map {
-	$_ = Petal::XML_Encode_Decode::encode_backslash_semicolon ($_);
+	$_ = $class->_encode_backslash_semicolon ($_);
 	"<?var name=\"$_\"?>";
     } split /(\s|\r|\n)*\;(\s|\r|\n)*/ms, $expr;
     
@@ -491,7 +491,7 @@ sub _attributes
 	next unless (defined $string);
 	next if ($string =~ /^\s*$/);
 	my ($attr, $expr) = $string =~ /^\s*((?:\w|\:)+)\s+(.*?)\s*$/;
-	$expr = Petal::XML_Encode_Decode::encode_backslash_semicolon ($expr);
+	$expr = $class->_encode_backslash_semicolon ($expr);
 	$att->{$attr} = "<?attr name=\"$attr\" value=\"$expr\"?>";
     }
     return 1;
@@ -514,7 +514,7 @@ sub _content
                delete $att->{"$petal:contents"} ||
 	       delete $att->{"$petal:inner"}    || return;
     my @new = map {
-	$_ = Petal::XML_Encode_Decode::encode_backslash_semicolon ($_);
+	$_ = $class->_encode_backslash_semicolon ($_);
 	"<?var name=\"$_\"?>";
     } $class->_split_expression ($expr);
     push @Result, @new;
@@ -542,7 +542,7 @@ sub _xinclude
 	$att = { map { $_ =~ /^$petal:/ ? () : $_ => $att->{$_} } keys %{$att} };
 	
 	my $expr = delete $att->{'href'};
-	$expr = Petal::XML_Encode_Decode::encode_backslash_semicolon ($expr);
+	$expr = $class->_encode_backslash_semicolon ($expr);
 	push @Result, "<?include file=\"$expr\"?>";
     }
     return 1;
@@ -559,6 +559,15 @@ sub _is_xinclude
     my $tag = shift;
     my $xi = quotemeta ($Petal::XI_NS);
     return $tag =~ /^$xi:/
+}
+
+
+sub _encode_backslash_semicolon
+{
+    my $class = shift;
+    my $data  = shift;
+    $data =~ s/($MKDoc::XML::Encode::XML_Encode_Pattern)/&$MKDoc::XML::Encode::XML_Encode{$1}\\;/go;
+    return $data;
 }
 
 

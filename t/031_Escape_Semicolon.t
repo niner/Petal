@@ -1,16 +1,10 @@
-#!C:/perl/bin/perl -w
+#!/usr/bin/perl
 use warnings;
-use lib ('lib');
-use Test::More tests => 5;
-
-use Petal;
-pass("loaded");
-
 use strict;
+use lib ('lib');
+use Test::More 'no_plan';
+use Petal;
 
-#$SIG{__WARN__} = \&Carp::confess;
-
-$|=1;
 
 $Petal::DISK_CACHE = 0;
 $Petal::MEMORY_CACHE = 0;
@@ -21,11 +15,9 @@ my $template;
 my $string;
 
 
-
 #####
 
 {
-    $Petal::INPUT = "XML";
     $Petal::OUTPUT = "XML";
     $template = new Petal ('test_attributes2.xml');
     
@@ -35,28 +27,9 @@ my $string;
 
 
 {
-    $Petal::INPUT = "XML";
     $Petal::OUTPUT = "XHTML";
     $template = new Petal ('test_attributes2.xml');
 
-    $string = $template->process(); 
-    unlike($string, '/\\\\;/');
-}
-
-{
-    $Petal::INPUT = "XHTML";
-    $Petal::OUTPUT = "XML";
-    $template = new Petal ('test_attributes2.xml');
-    
-    $string = $template->process(); 
-    unlike($string, '/\\\\;/');
-}
-
-{
-    $Petal::INPUT = "XHTML";
-    $Petal::OUTPUT = "XHTML";
-    $template = new Petal ('test_attributes2.xml');
-    
     $string = $template->process(); 
     unlike($string, '/\\\\;/');
 }

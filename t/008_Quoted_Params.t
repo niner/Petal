@@ -1,20 +1,20 @@
+#!/usr/bin/perl
+use warnings;
+use strict;
 package Foo;
-sub param { shift; return shift }
+sub param { return $_[1] };
 
 package main;
-use warnings;
 use lib ('lib');
-use Test::More tests => 2;
+use Test::More 'no_plan';
 use Petal;
-pass("loaded");
 
 $Petal::BASE_DIR = './t/data/';
 $Petal::DISK_CACHE = 0;
 $Petal::MEMORY_CACHE = 0;
 $Petal::TAINT = 1;
-$Petal::INPUT = 'XML';
-my $template = new Petal ('quoted_params.xml');
 
+my $template = new Petal ('quoted_params.xml');
 my $cgi = bless {}, 'Foo';
 
 eval {

@@ -1,8 +1,8 @@
 package Petal::Hash;
+use MKDoc::XML::Encode;
 use strict;
 use warnings;
 use Carp;
-use Petal::XML_Encode_Decode;
 
 our $MODIFIERS = {};
 
@@ -139,19 +139,10 @@ sub __FETCH
 	my $res = $self->fetch ($key);
 	if (defined $res and not ref $res)
 	{
-	    $res = $self->_xml_encode ($res);
+	    $res = MKDoc::XML::Encode->process ($res);
 	}
 	return $res;
     }
-}
-
-
-# encodes the 4 xml entities &amp; &lt; &gt; and &quot;.
-sub _xml_encode
-{
-    my $self = shift;
-    my $data = join '', @_;
-    return Petal::XML_Encode_Decode::encode ($data);
 }
 
 

@@ -10,6 +10,7 @@ use strict;
 use warnings;
 use File::Spec;
 use Digest::MD5 qw /md5_hex/;
+use Encode;
 use Carp;
 
 
@@ -153,7 +154,6 @@ sub cached
 	close FP;
     }
     $Petal::DECODE_CHARSET and do {
-	require "Encode.pm";
 	$res = Encode::decode ($Petal::DECODE_CHARSET, $res);
     };
     
