@@ -26,6 +26,14 @@ use Digest::MD5 qw /md5_hex/;
 use Carp;
 
 
+# kill silly warnings
+sub sillyness
+{
+    + $Petal::INPUT &&
+    + $Petal::OUTPUT;
+}
+
+
 =head1 GLOBALS
 
 =head2 $TMP_DIR
@@ -116,7 +124,7 @@ sub compute_key
     my $class = shift;
     my $file = shift;
     
-    my $key = md5_hex ($file . ";INPUT=" . $Petal::INPUT . ";OUTPUT=" . $Petal::OUTUT);
+    my $key = md5_hex ($file . ";INPUT=" . $Petal::INPUT . ";OUTPUT=" . $Petal::OUTPUT);
     $key = $PREFIX . "_" . $Petal::VERSION . "_" . $key if (defined $PREFIX);
     return $key;
 }

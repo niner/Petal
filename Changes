@@ -9,6 +9,7 @@ Revision history for Petal.
 	- Fixed Petal::CodeGenerator bug
 	- Fixed a bug that prevented __is_last__ from being accessed
 	- Applied William's patch to reduce amount of issued warnings
+	- Changed the cache modules w/ new $Petal::INPUT and $Petal::OUTPUT
         - Implemented $Petal::INPUT and $Petal::OUTPUT for XHTML
 
 0.5 Sat Aug  3 19:56:13 2002
