@@ -6,20 +6,20 @@ use Petal;
 
 $Petal::DISK_CACHE   = 0;
 $Petal::MEMORY_CACHE = 0;
-$Petal::BASE_DIR     = ('t/data');
-my $file             = 'attribute_strip.html';
+$Petal::BASE_DIR     = ('t/data/html_errors');
+my $file             = 'not_xml.html';
 
 {
     my $t = new Petal ( file => $file );
     my $s = $t->process();
-    like ($s, qr/test/);
+    like ($s, qr/\<pre\>/);
+    like ($s, qr/\<\/pre\>/);
 }
 
+$file             = 'no_var.html';
 
-$Petal::OUTPUT = 'XHTML';
 {
     my $t = new Petal ( file => $file );
     my $s = $t->process();
-    like ($s, qr/test/);
+    like ($s, qr/Cannot fetch/);
 }
-

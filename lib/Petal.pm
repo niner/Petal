@@ -38,6 +38,10 @@ BEGIN
 use vars qw /@tokens @nodeStack/;
 
 
+# HTML errors?
+our $HTML_ERRORS = 1;
+
+
 # Encode / Decode info...
 our $DECODE_CHARSET = 'utf8';
 our $ENCODE_CHARSET = 'utf8'; # deprecated
@@ -361,7 +365,7 @@ sub process
 	$res = $coderef->($hash);
     };
     
-    $self->_handle_error ($@) if (defined $@ and $@);
+    $res = $self->_handle_error ($@) if (defined $@ and $@);
     return $res;
 }
 
@@ -407,6 +411,29 @@ sub _handle_error
 {
     my $self = shift;
     my $error = shift;
+
+    $Petal::HTML_ERRORS and do {
+        my $res  = '<pre>';
+        $res    .= "Error: $error\n";
+        $res    .= "=============\n";
+        $res    .= "\n\n";
+        $res    .= "Petal object dump:\n";
+        $res    .= "==================\n";
+	$res    .= Dumper ($self);
+        $res    .= "\n\n";
+	$res    .= "Stack trace:\n";
+	$res    .= "============\n";
+	$res    .= Carp::longmess();
+	$res    .= "\n\n";
+        $res    .= "Template perl code dump:\n";
+        $res    .= "========================\n";
+
+        my $dump = eval { $self->_code_with_line_numbers() };
+        $res    .= ($dump) ? $dump : "(no dump available)";
+        
+        $res .= '</pre>';
+        return $res;
+    };
     
     $Petal::DEBUG_DUMP and do {
 	my $tmpdir  = File::Spec->tmpdir();

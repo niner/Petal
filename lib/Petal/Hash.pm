@@ -105,8 +105,18 @@ sub get
     my $fresh  = $key =~ s/^\s*fresh\s+//;
     delete $self->{__petal_hash_cache__}->{$key} if ($fresh);
     exists $self->{__petal_hash_cache__}->{$key} and return $self->{__petal_hash_cache__}->{$key};
-    
-    my $res = $self->__FETCH ($key);
+
+    my $res = undef;   
+    if ($Petal::HTML_ERRORS)
+    {
+        $res = eval { $self->__FETCH ($key) };
+        $@ and return "[ Cannot fetch $key. <!-- $@ --> ]";
+    }
+    else
+    {
+        $res = $self->__FETCH ($key);
+    }
+
     $self->{__petal_hash_cache__}->{$key} = $res;
     return $res;
 }
