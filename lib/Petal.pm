@@ -495,7 +495,7 @@ what, but will set the result into the hash. For instance:
 
 Could be rewritten:
 
-  <?petal:var name=":set newVariableNameForBar"?>
+  <?petal:var name=":set newVariableNameForBar foo.bar"?>
   <?petal:var name="newVariableNameForBar"?>
 
 This is mainly intended so that if you have a.very.very.long.expression,
