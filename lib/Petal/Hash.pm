@@ -94,7 +94,6 @@ sub new
 	bless { @_ }, $thing;
     
     $self->{__petal_hash_cache__}  = {};
-    $self->{repeat} = bless {}, 'Petal::Hash_Repeat';
     return $self;
 }
 
