@@ -286,32 +286,10 @@ sub _include_compute_path
 sub process
 {
     my $self = shift;
+    $self->_process_absolutize_pathes();
     
-    # sets $BASE_DIR, @BASE_DIR and $self->{base_dir} to absolute paths once
-    # because File::Spec::rel2abs() can be quite expensive
-    $BASE_DIR = File::Spec->rel2abs ($BASE_DIR) if (defined $BASE_DIR and substr ($BASE_DIR, 0, 1) ne '/');
-    
-    @BASE_DIR = ( map { substr ($_, 0, 1) ne '/' ? File::Spec->rel2abs ($_) : $_ }
-		  map { defined $_ ? $_ : () } @BASE_DIR );
-
-    if ($self->{base_dir})
-    {
-	if (ref $self->{base_dir})
-	{
-	    $self->{base_dir} = [
-		map { substr ($_, 0, 1) ne '/' ? File::Spec->rel2abs ($_) : $_ }
-		map { defined $_ ? $_ : () } @{$self->{base_dir}}
-	       ] if (defined $self->{base_dir});
-	}
-	else
-	{
-	    $self->{base_dir} = File::Spec->rel2abs ($self->{base_dir}) unless (substr ($self->{base_dir}, 0, 1) ne '/');
-	}
-    }
-    
-    # ok, from there on we need to override any global
-    # variable with stuff that might have been specified
-    # when constructing the object
+    # ok, from there on we need to override any global variable with stuff
+    # that might have been specified when constructing the object
     local $TAINT              = defined $self->{taint}              ? $self->{taint}              : $TAINT;
     local $ERROR_ON_UNDEF_VAR = defined $self->{error_on_undef_var} ? $self->{error_on_undef_var} : $ERROR_ON_UNDEF_VAR;
     local $DISK_CACHE         = defined $self->{disk_cache}         ? $self->{disk_cache}         : $DISK_CACHE;
@@ -348,6 +326,40 @@ sub process
     
     $self->_handle_error ($@) if (defined $@ and $@);
     return $res;
+}
+
+
+# File::Spec->rel2abs() is pretty slow since it uses Cwd which does a
+# super-ugly backtick. Hence this method absolutizes base directories
+# only once. It is necessary to work with absolute base directories to
+# avoid cache conflicts.
+sub _process_absolutize_pathes
+{
+    my $self = shift;
+    
+    $BASE_DIR = File::Spec->rel2abs ($BASE_DIR) unless (
+	File::Spec->file_name_is_absolute ($BASE_DIR)
+	 );
+    
+    @BASE_DIR = ( map { File::Spec->file_name_is_absolute ($BASE_DIR) ? $_ : File::Spec->rel2abs ($_) }
+		  map { defined $_ ? $_ : () } @BASE_DIR );
+    
+    if ($self->{base_dir})
+    {
+	if (ref $self->{base_dir})
+	{
+	    $self->{base_dir} = [
+		map { File::Spec->file_name_is_absolute ($BASE_DIR) ? $_ : File::Spec->rel2abs ($_) }
+		map { defined $_ ? $_ : () } @{$self->{base_dir}}
+	       ] if (defined $self->{base_dir});
+	}
+	else
+	{
+	    $self->{base_dir} = File::Spec->rel2abs ($self->{base_dir}) unless (
+		File::Spec->file_name_is_absolute ($self->{base_dir})
+		 );
+	}
+    }
 }
 
 

@@ -1,5 +1,10 @@
 Revision history for Petal.
 
+1.10_02
+	- Changed Petal to ignore Encode if Perl < 5.007
+	- Fixed a @BASE_DIR inconsistency in process()
+	- Fixed potential caching bug on non Unix platforms
+
 1.10_01
 	- Changed Petal's parsing backend to MKDoc::XML::TreeBuilder
 	- Added prefixes in path expressions, i.e. /foo/var:bar
