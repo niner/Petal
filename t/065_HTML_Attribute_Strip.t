@@ -16,6 +16,13 @@ my $file             = 'attribute_strip.html';
 }
 
 
+{
+    my $file  = 'attribute_strip2.html';
+    my $t = new Petal ( file => $file );
+    my $s = $t->process();
+    like ($s, qr/Keyword\(s\)/);
+}
+
 $Petal::OUTPUT = 'XHTML';
 {
     my $t = new Petal ( file => $file );

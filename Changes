@@ -1,5 +1,8 @@
 Revision history for Petal.
 
+2.05 Mon Apr  5 14:14:46 2004
+    - Fixed broken test
+
 2.04 Thu Mar 18 17:33:45 2004
     - Added broken attributes parsing test
     - Updated MKDoc::XML dependency
