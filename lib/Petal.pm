@@ -21,6 +21,7 @@ use Scalar::Util;
 use strict;
 use warnings;
 use MKDoc::XML::Decode;
+use Petal::I18N;
 
 
 BEGIN
@@ -123,6 +124,9 @@ our $XI_NS_URI = 'http://www.w3.org/2001/XInclude';
 our $MT_NS       = 'metal';
 our $MT_NS_URI   = 'http://xml.zope.org/namespaces/metal';
 our $MT_NAME_CUR = 'main';
+
+# translation service, optional
+our $TranslationService = undef;
 
 
 # Displays the canonical template for template.xml.
@@ -333,18 +337,19 @@ sub process
     
     # ok, from there on we need to override any global variable with stuff
     # that might have been specified when constructing the object
-    local $TAINT              = defined $self->{taint}              ? $self->{taint}              : $TAINT;
-    local $ERROR_ON_UNDEF_VAR = defined $self->{error_on_undef_var} ? $self->{error_on_undef_var} : $ERROR_ON_UNDEF_VAR;
-    local $DISK_CACHE         = defined $self->{disk_cache}         ? $self->{disk_cache}         : $DISK_CACHE;
-    local $MEMORY_CACHE       = defined $self->{memory_cache}       ? $self->{memory_cache}       : $MEMORY_CACHE;
-    local $MAX_INCLUDES       = defined $self->{max_includes}       ? $self->{max_includes}       : $MAX_INCLUDES;
-    local $INPUT              = defined $self->{input}              ? $self->{input}              : $INPUT;
-    local $OUTPUT             = defined $self->{output}             ? $self->{output}             : $OUTPUT;
+    local $TAINT              = defined $self->{taint}               ? $self->{taint}               : $TAINT;
+    local $ERROR_ON_UNDEF_VAR = defined $self->{error_on_undef_var}  ? $self->{error_on_undef_var}  : $ERROR_ON_UNDEF_VAR;
+    local $DISK_CACHE         = defined $self->{disk_cache}          ? $self->{disk_cache}          : $DISK_CACHE;
+    local $MEMORY_CACHE       = defined $self->{memory_cache}        ? $self->{memory_cache}        : $MEMORY_CACHE;
+    local $MAX_INCLUDES       = defined $self->{max_includes}        ? $self->{max_includes}        : $MAX_INCLUDES;
+    local $INPUT              = defined $self->{input}               ? $self->{input}               : $INPUT;
+    local $OUTPUT             = defined $self->{output}              ? $self->{output}              : $OUTPUT;
     local $BASE_DIR           = defined $self->{base_dir} ? do { ref $self->{base_dir} ? undef : $self->{base_dir} } : $BASE_DIR;
     local @BASE_DIR           = defined $self->{base_dir} ? do { ref $self->{base_dir} ? @{$self->{base_dir}} : () } : @BASE_DIR;
-    local $LANGUAGE           = defined $self->{default_language}   ? $self->{default_language}   : $LANGUAGE;
-    local $DEBUG_DUMP         = defined $self->{debug_dump}         ? $self->{debug_dump}         : $DEBUG_DUMP;
-    local $DECODE_CHARSET     = defined $self->{decode_charset}     ? $self->{decode_charset}     : $DECODE_CHARSET;
+    local $LANGUAGE           = defined $self->{default_language}    ? $self->{default_language}    : $LANGUAGE;
+    local $DEBUG_DUMP         = defined $self->{debug_dump}          ? $self->{debug_dump}          : $DEBUG_DUMP;
+    local $DECODE_CHARSET     = defined $self->{decode_charset}      ? $self->{decode_charset}      : $DECODE_CHARSET;
+    local $TranslationService = defined $self->{translation_service} ? $self->{translation_service} : $TranslationService;
     # local $ENCODE_CHARSET     = defined $self->{encode_charset}     ? $self->{encode_charset}     : $ENCODE_CHARSET;
     
     # prevent infinite includes from happening...
@@ -364,8 +369,10 @@ sub process
 	die "\$hash is undefined\n\n" unless $hash;
 	$res = $coderef->($hash);
     };
-    
-    $res = $self->_handle_error ($@) if (defined $@ and $@);
+   
+    if (defined $@ and $@) { $res = $self->_handle_error ($@) }
+    elsif (defined $TranslationService) { $res = Petal::I18N->process ($res) } 
+
     return $res;
 }
 
