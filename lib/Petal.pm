@@ -101,7 +101,7 @@ our $CURRENT_INCLUDES = 0;
 
 
 # this is for CPAN
-our $VERSION = '2.11';
+our $VERSION = '2.12';
 
 
 # The CodeGenerator class backend to use.
@@ -851,9 +851,8 @@ What will happen is that the C<$template> object will try to find a file named
 C<fr-CA>, then C<fr>, then will default to <en>. It should work fine for
 includes, too!
 
-NOTE: There is now *EXPERIMENTAL, LIMITED* support for ZPT-like i18n
-attributes, which should provide a much nicer framework. See L<Petal::I18N> for
-details.
+NOTE: There is now beta support for ZPT-like i18n attributes, which should
+provide a much nicer framework. See L<Petal::I18N> for details.
 
 
 TIP:

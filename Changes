@@ -1,9 +1,11 @@
 Revision history for Petal.
 
-2.12
+2.12 Fri Aug  6 13:58:55 2004
     - Added namespace support to Petal::I18N
     - Added Petal::TranslationService::Noop
     - Added Petal::TranslationService::Gettext
+    - Revamped Petal::I18N docs
+    - Added some I18N tests
 
 2.11 Fri Jul 23 13:10:30 2004
     - Applied Warren Smith's dereferencing patch
