@@ -71,7 +71,8 @@ sub StartTag
     my $tag = $_;
     ($tag) = $tag =~ /^<\s*((?:\w|:)*)/;
     my $att = { %_ };
-    
+
+    $class->_on_error ($tag, $att);
     $class->_define ($tag, $att);
     $class->_condition ($tag, $att);
     $class->_repeat ($tag, $att);
@@ -223,6 +224,12 @@ sub EndTag
     my $repeat = $node->{repeat} || '0';
     my $condition = $node->{condition} || '0';
     push @Petal::Canonicalizer::XML::Result, map { '<?end?>' } 1 .. ($repeat+$condition);
+
+    if (exists $node->{'on-error'})
+    {
+	my $expression = $node->{'on-error'};
+	push @Petal::Canonicalizer::XML::Result, "<?endeval errormsg=\"$expression\"?>";
+    }
 }
 
 

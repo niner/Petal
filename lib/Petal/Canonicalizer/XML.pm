@@ -148,6 +148,7 @@ sub StartTag
     ($tag) = $tag =~ /^<\s*((?:\w|:)*)/;
     my $att = { %_ };
     
+    $class->_on_error ($tag, $att);
     $class->_define ($tag, $att);
     $class->_condition ($tag, $att);
     $class->_repeat ($tag, $att);
@@ -244,7 +245,7 @@ sub EndTag
     
     unless (defined $node->{replace} and $node->{replace})
     {
-	if (defined $node->{'omit-tag'})
+	if (exists $node->{'omit-tag'})
 	{
 	    my $expression = $node->{'omit-tag'};
 	    push @Result, "<?if name=\"$expression\"?><?else?></$tag><?end?>";
@@ -252,12 +253,21 @@ sub EndTag
 	else
 	{
 	    push @Result, "</$tag>";
-	}
+	}	
     }
     
     my $repeat = $node->{repeat} || '0';
     my $condition = $node->{condition} || '0';
     push @Result, map { '<?end?>' } 1 .. ($repeat+$condition);
+
+    unless (defined $node->{replace} and $node->{replace})
+    {
+	if (exists $node->{'on-error'})
+	{
+	    my $expression = $node->{'on-error'};
+	    push @Result, "<?endeval errormsg=\"$expression\"?>";
+	}
+    }
 }
 
 
@@ -327,6 +337,27 @@ sub _split_expression
     return map { s/^(\s|\n|\r)+//sm;
 		 s/(\s|\n|\r)+$//sm;
 		 ($_ eq '') ? () : $_ } @tokens;
+}
+
+
+# _condition;
+# -----------
+#   Rewrites <tag petal:if="[expression]"> statements into
+#   <?petal:if name="[expression]"?><tag>
+sub _on_error
+{
+    my $class = shift;
+    return if ($class->_is_inside_content_or_replace());
+    
+    my $petal = quotemeta ($Petal::NS);
+    my $tag   = shift;
+    my $att   = shift;
+    my $expr  = delete $att->{"$petal:on-error"} || return;
+    
+    $expr = Petal::XML_Encode_Decode::encode_backslash_semicolon ($expr);
+    push @Result, "<?eval?>";
+    $NodeStack[$#NodeStack]->{'on-error'} = $expr;
+    return 1;
 }
 
 

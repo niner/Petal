@@ -16,7 +16,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $PI_RE = '^<\?(?:\s|\r|\n)*(attr|include|var|if|condition|else|repeat|loop|foreach|for|end|eval|endeval).*?\?>$';
+our $PI_RE = '^<\?(?:\s|\r|\n)*(attr|include|var|if|condition|else|repeat|loop|foreach|for|eval|endeval|end).*?\?>$';
 use vars qw /$petal_object $tokens $variables @code $indent $token_name %token_hash $token $my_array/;
 
 
@@ -179,7 +179,7 @@ sub _eval
 # -----------------
 #   process a <?endeval errormsg="..."?> statement
 sub _endeval
-{
+{   
     my $variable = $token_hash{'errormsg'} or
        confess "Cannot parse $token : 'errormsg' attribute is not defined";
     
