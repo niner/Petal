@@ -241,7 +241,7 @@ sub fetch
     foreach my $modifier (keys %{$MODIFIERS})
     {
 	if ($key =~ /^\Q$modifier\E/)
-	{    
+	{
 	    $mod = $modifier;
 	    $key =~ s/^\Q$modifier\E//;
 	    last;

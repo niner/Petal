@@ -144,8 +144,8 @@ sub StartTag
 		my $expression = $att->{"$petal:omit-tag"};
 		$Petal::Canonicalizer::XML::NodeStack[$#Petal::Canonicalizer::XML::NodeStack]->{'omit-tag'} = $expression;
 		push @Petal::Canonicalizer::XML::Result, (defined $att_str and $att_str) ?
-		    "<?if name=\"$expression\"?><?else?><$tag $att_str /><?end?>" :
-		    "<?if name=\"$expression\"?><?else?><$tag /><?end?>";
+		    "<?if name=\"false:$expression\"?><$tag $att_str /><?end?>" :
+		    "<?if name=\"false:$expression\"?><$tag /><?end?>";
 	    }
 	    else
 	    {
@@ -159,8 +159,8 @@ sub StartTag
 		my $expression = $att->{"$petal:omit-tag"};
 		$Petal::Canonicalizer::XML::NodeStack[$#Petal::Canonicalizer::XML::NodeStack]->{'omit-tag'} = $expression;
 		push @Petal::Canonicalizer::XML::Result, (defined $att_str and $att_str) ?
-		    "<?if name=\"$expression\"?><?else?><$tag $att_str><?end?>" :
-		    "<?if name=\"$expression\"?><?else?><$tag><?end?>";
+		    "<?if name=\"false:$expression\"?><$tag $att_str><?end?>" :
+		    "<?if name=\"false:$expression\"?><$tag><?end?>";
 	    }
 	    else
 	    {
@@ -213,7 +213,7 @@ sub EndTag
 	if (defined $node->{'omit-tag'})
 	{
 	    my $expression = $node->{'omit-tag'};
-	    push @Petal::Canonicalizer::XML::Result, "<?if name=\"not:$expression\"?><?else?></$tag><?end?>";
+	    push @Petal::Canonicalizer::XML::Result, "<?if name=\"false:$expression\"?></$tag><?end?>";
 	}
 	else
 	{
