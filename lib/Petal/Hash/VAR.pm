@@ -30,7 +30,7 @@ use Carp;
 our $STRING_RE_DOUBLE = qq |(?<!\\\\)\\".*?(?<!\\\\)\\"|;
 our $STRING_RE_SINGLE = qq |(?<!\\\\)\\'.*?(?<!\\\\)\\'|;
 our $STRING_RE        = "(?:$STRING_RE_SINGLE|$STRING_RE_DOUBLE)";
-our $VARIABLE_RE      = "[A-Za-z][A-Za-z0-9_\\.:\/]+";
+our $VARIABLE_RE      = "[A-Za-z\_][A-Za-z0-9\_\\.:\/]+";
 our $TOKEN_RE         = "(?:$STRING_RE|$VARIABLE_RE)";
 
 
@@ -40,7 +40,7 @@ sub process
     my $class = shift;
     my $hash  = shift;
     my $argument = shift;
-    
+   
     my @tokens = $argument =~ /($TOKEN_RE)/gsm;
     my $path   = shift (@tokens) or confess "bad syntax for $class: $argument (\$path)";
     my @path = split /\/|\./, $path;    
@@ -63,7 +63,6 @@ sub process
 	    $args[$i] = $arg;
 	}
     }
-    
     
     my $current = $hash;
     while (@path)

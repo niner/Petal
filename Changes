@@ -1,5 +1,9 @@
 Revision history for Petal.
 
+0.6
+	- Applied William's patch to reduce amount of issued warnings
+	- Fixed a bug that prevents __is_last__ to be accessed
+
 0.5 Sat Aug  3 19:56:13 2002
 	- Added tests
 	- Modifiers are now 'modifier:' rather than ':modifier'

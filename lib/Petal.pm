@@ -179,14 +179,17 @@ Example:
 sub process
 {
     my $self = shift;
-    
+   
     # make the hash highly magical
     my $hash = (@_ == 1 and ref $_[0] eq 'HASH') ?
         new Petal::Hash (%{$_[0]}) :
         new Petal::Hash (@_);
     
     my $coderef = $self->_code_memory_cached;
-    return $coderef->($hash);
+    my $res = undef;
+    eval { $res = $coderef->($hash) };
+    if (defined $@ and $@) { confess $@ . "\n===\n\n" . $self->_code_with_line_numbers }
+    return $res;
 }
 
 
@@ -197,7 +200,7 @@ sub process
 sub _code_with_line_numbers
 {
     my $self = shift;
-    my $code = shift;
+    my $code = $self->_code_disk_cached;
     my $count = 0;
     return join "\n", map { ++$count; "$count. $_" } split /\n/, $code;
 }
