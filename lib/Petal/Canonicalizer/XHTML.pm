@@ -150,7 +150,7 @@ sub StartTag
 	{
 	    if (defined $att->{"$petal:omit-tag"})
 	    {
-		my $expression = $att->{"$petal:omit-tag"} = 'string:1';
+		my $expression = $att->{"$petal:omit-tag"} || 'string:1';
 		$Petal::Canonicalizer::XML::NodeStack[$#Petal::Canonicalizer::XML::NodeStack]->{'omit-tag'} = $expression;
 		push @Petal::Canonicalizer::XML::Result, (defined $att_str and $att_str) ?
 		    "<?if name=\"false:$expression\"?><$tag $att_str /><?end?>" :

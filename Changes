@@ -1,6 +1,13 @@
 Revision history for Petal.
 
-1.10_04 Tue Sep 30 11:30:36 BST 2003
+1.10_06
+	- Fixed Petal dying on <--! <?pi?> --> comments
+	- Fixed generate_events_comment incorrectly encoding entities
+
+1.10_05
+	- Changed the rules for when HTML entities are decoded
+
+1.10_04
 	- Fixed infinite recursion on non-existent modifiers
  
 1.10_03

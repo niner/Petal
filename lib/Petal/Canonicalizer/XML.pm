@@ -42,7 +42,7 @@ sub process
     
     # grab the <!...> tags which the parser is going to strip
     # in order to reinclude them afterwards
-    my @decls = $$data_ref =~ /(<!.*?>)/gsm;
+    # my @decls = $$data_ref =~ /(<!.*?>)/gsm;
     
     # take the existing processing instructions out and replace
     # them with temporary xml-friendly handlers
@@ -110,10 +110,10 @@ sub _compute_unique_string
 {
     my $class = shift;
     my $data_ref = shift;
-    my $string = '[--' . (join '', map { chr (ord ('a') + int rand 26) } 1..20) . '--]';
+    my $string = '[-' . (join '', map { chr (ord ('a') + int rand 26) } 1..20) . '-]';
     while (index ($$data_ref, $string) >= 0)
     {
-	$string = '[--' . (join '', map { chr (ord ('a') + int rand 26) } 1..20) . '--]';
+	$string = '[-' . (join '', map { chr (ord ('a') + int rand 26) } 1..20) . '-]';
     }
     return $string;
 }

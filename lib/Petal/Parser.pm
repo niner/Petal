@@ -172,8 +172,8 @@ sub generate_events_text
 sub generate_events_comment
 {
     my $data = shift;
-    $data =~ s/\&/&amp;/g;
-    $data =~ s/\</&lt;/g;
+    # $data =~ s/\&/&amp;/g;
+    # $data =~ s/\</&lt;/g;
     local $_ = '<!--' . $data . '-->';
     $Canonicalizer->Text();    
 }

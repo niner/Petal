@@ -19,6 +19,7 @@ use Carp;
 use Safe;
 use Data::Dumper;
 use MKDoc::XML::DecodeHO;
+use Scalar::Util;
 use strict;
 use warnings;
 
@@ -86,7 +87,7 @@ our $CURRENT_INCLUDES = 0;
 
 
 # this is for CPAN
-our $VERSION = '1.10_04';
+our $VERSION = '1.10_05';
 
 
 # The CodeGenerator class backend to use.
@@ -424,16 +425,16 @@ sub _code_with_line_numbers
     # add line numbers
     my $count = 0;
     @lines = map {
-      my $cur_line = $_;
-      $count++;
-
-      # space padding so the line numbers nicely line up with each other
-      my $line_num = sprintf("%" . length(scalar(@lines)) . "d", $count);
-
-      # put line number and line back together
-      "${line_num}. ${cur_line}";
+	my $cur_line = $_;
+	$count++;
+	
+	# space padding so the line numbers nicely line up with each other
+	my $line_num = sprintf ("%" . length(scalar(@lines)) . "d", $count);
+	
+	# put line number and line back together
+	"${line_num}. ${cur_line}";
     } @lines;
-
+    
     return join("\n", @lines);
 }
 
@@ -493,7 +494,7 @@ sub _file_data_ref
 	$res = Petal::Encode::p_decode ($Petal::DECODE_CHARSET, $res);
     };
     
-    if ($OUTPUT eq 'HTML' or $OUTPUT eq 'XHTML')
+    if ($OUTPUT eq 'HTML' or $OUTPUT eq 'XHTML' or $INPUT eq 'HTML' or $INPUT eq 'XHTML')
     {
 	Petal::Encode->p_utf8_on ($res);
 	$res = MKDoc::XML::DecodeHO->process ($res);
@@ -517,9 +518,7 @@ sub _code_disk_cached
     my $code = (defined $DISK_CACHE and $DISK_CACHE) ? Petal::Cache::Disk->get ($file) : undef;
     unless (defined $code)
     {
-	my $data_ref = $self->_file_data_ref;
-	$data_ref    = $self->_canonicalize;
-
+	my $data_ref = $self->_canonicalize;
 	load_code_generator();
 	$code = $CodeGenerator->process ($data_ref, $self);
 	Petal::Cache::Disk->set ($file, $code) if (defined $DISK_CACHE and $DISK_CACHE);
@@ -530,8 +529,7 @@ sub _code_disk_cached
 
 # $self->_code_memory_cached;
 # ---------------------------
-#   Returns the Perl code data, using the disk cache if
-#   possible
+# Returns the Perl code data, using the disk cache if possible
 sub _code_memory_cached
 {
     my $self = shift;
@@ -540,31 +538,41 @@ sub _code_memory_cached
     unless (defined $code)
     {
 	my $code_perl = $self->_code_disk_cached;
-        my $VAR1 = undef;
+	my $VAR1 = undef;
 	
-	if ($TAINT)
-	{
-	    # important line, don't remove
-	    ($code_perl) = $code_perl =~ m/^(.+)$/s;
-	    my $cpt = Safe->new ("Petal::CPT");
-	    $cpt->permit ('entereval');
-	    $cpt->permit ('leaveeval');
-	    $cpt->permit ('require');
-	    $cpt->reval($code_perl);
-	    confess ($@ . "\n" . $self->_code_with_line_numbers) if $@;
-	    
-	    # remove silly warning '"Petal::CPT::VAR1" used only once'
-	    $Petal::CPT::VAR1 if (0);
-	    $code = $Petal::CPT::VAR1;
-	}
-	else
-	{
-	    eval "$code_perl";
-	    confess ($@ . "\n" . $self->_code_with_line_numbers) if $@;
-	    $code = $VAR1;
-	}
+	eval "$code_perl";
+	confess ($@ . "\n" . $self->_code_with_line_numbers) if $@;
+	$code = $VAR1;
 	
-        Petal::Cache::Memory->set ($file, $code) if (defined $MEMORY_CACHE and $MEMORY_CACHE);
+=cut
+
+#($code_perl) = $code_perl =~ m/^(.+)$/s;
+#if ($TAINT)
+#{
+#   # important line, don't remove
+#	    ($code_perl) = $code_perl =~ m/^(.+)$/s;
+#	    my $cpt = Safe->new ("Petal::CPT");
+#	    $cpt->permit ('entereval');
+#	    $cpt->permit ('leaveeval');
+#	    $cpt->permit ('require');
+#	    $cpt->reval ($code_perl);
+#	    confess ($@ . "\n" . $self->_code_with_line_numbers) if $@;
+#	    
+#	    # remove silly warning '"Petal::CPT::VAR1" used only once'
+#	    $Petal::CPT::VAR1 if (0);
+#	    $code = $Petal::CPT::VAR1;
+#	}
+#	else
+#	{
+#	    eval "$code_perl";
+#	    confess ($@ . "\n" . $self->_code_with_line_numbers) if $@;
+#	    $code = $VAR1;
+#	}
+
+=cut
+	
+Petal::Cache::Memory->set ($file, $code) if (defined $MEMORY_CACHE and $MEMORY_CACHE);
+
     }
     return $code;
 }
