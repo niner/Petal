@@ -26,5 +26,11 @@ $hash{'fields'} = [
 ];
 
 
-my $html = $template->process(%hash);
-print $html;
+eval { $template->process(%hash) };
+(defined $@ and $@) ? print "not ok 2\n" : print "ok 2\n";
+# print $template->process (%hash);
+
+
+$Petal::INPUT = "XML";
+eval { $template->process(%hash) };
+(defined $@ and $@) ? print "not ok 3\n" : print "ok 3\n";
