@@ -1,6 +1,17 @@
+package Petal::Syntax::TAL;
+use strict;
+use warnings;
+
+
+1;
+
+
+__END__
+
+
 =head1 NAME
 
-Petal::Syntax::TAL - Template Attribute Language explained
+Petal::Syntax::TAL - Template Attribute Language
 
 
 =head1 SYNOPSIS
@@ -230,3 +241,10 @@ defaults):
   * petal:attributes - petal:att, petal:attr, petal:atts
   * petal:content    - petal:inner
   * petal:replace    - petal:outer
+
+=head1 AUTHOR
+
+Copyright 2002 - Jean-Michel Hiver <jhiver@mkdoc.com> 
+
+This module is free software and is distributed under the
+same license as Perl itself.
