@@ -1,5 +1,11 @@
 Revision history for Petal.
 
+0.82 Mon Jan 27 15:03:21 2003
+	- Added limited support for XIncludes
+	- Added infinite recursion protection
+	- Fixed a documentation bug
+	- Fixed a omit-tag bug
+
 0.81 Wed Dec 11 14:19:24 2002
 	- fixed silly documentation bug
 

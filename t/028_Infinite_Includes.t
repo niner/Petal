@@ -4,7 +4,7 @@ package main;
 use lib ('lib');
 use Test;
 
-BEGIN {print "1..5\n";}
+BEGIN {print "1..2\n";}
 END {print "not ok 1\n" unless $loaded;}
 use Petal;
 $loaded = 1;
@@ -20,4 +20,4 @@ $Petal::OUTPUT = "XML";
 
 my $template = new Petal ($template_file);
 my $string = $template->process();
-print $string;
+($string =~ /ERROR/) ? print "ok 2\n" : print "not ok 2\n";

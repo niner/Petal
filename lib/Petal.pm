@@ -184,7 +184,7 @@ our $XI_NS_URI = 'http://www.w3.org/2001/XInclude';
 =cut
 
 
-=head1 FUNCTIONS (For debugging or if you're curious)
+=head1 TOY FUNCTIONS (For debugging or if you're curious)
 
 =head2 perl -MPetal -e canonical template.xml
 
