@@ -71,9 +71,11 @@ t/061_Metal_Use.t
 t/062_Metal_Self_Include.t
 t/063_Nbsp.t
 t/064_Metal_Double_Include.t
+t/065_HTML_Attribute_Strip.t
 t/benchmark.pl
 t/data/access_obj_array.html
 t/data/access_obj_hash.html
+t/data/attribute_strip.html
 t/data/attributes_andquot.xml
 t/data/autoload.xml
 t/data/basic.xml

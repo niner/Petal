@@ -12,7 +12,7 @@ my $file             = 'attribute_strip.html';
 {
     my $t = new Petal ( file => $file );
     my $s = $t->process();
-    ok ($s !~ /test/);
+    like ($s, qr/test/);
 }
 
 
@@ -20,6 +20,6 @@ $Petal::OUTPUT = 'XHTML';
 {
     my $t = new Petal ( file => $file );
     my $s = $t->process();
-    ok ($s !~ /test/);
+    like ($s, qr/test/);
 }
 
