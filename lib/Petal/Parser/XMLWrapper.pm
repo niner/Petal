@@ -77,8 +77,6 @@ sub Text
     local ($Petal::NS) = $NameSpaces[$#NameSpaces];
     s/\&/\&amp;/g;
     s/\</\&lt\;/g;
-    s/\>/\&gt\;/g;
-    s/\"/\&quot\;/g;
     $Canonicalizer->Text();
 }
 

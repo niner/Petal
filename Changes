@@ -1,5 +1,8 @@
 Revision history for Petal.
 
+0.76 Mon Oct 21 13:05:46 2002
+	- Fixed '"' being converted to '&quot;' by Petal::Parser::XMLWrapper
+
 0.75 Sun Oct 20 17:21:14 2002
 	- Added namespace support, i.e. xmlns:foo="http://purl.org/petal/1.0/"
 	- Added tests
