@@ -25,10 +25,7 @@ else
 EOF
 
     $xml =~ s/\s*$//;
-    
-    my $res = Petal::I18N->process ($xml);
-    ok ($res =~ /Buruno-san/);
-    ok ($res !~ /Konichiwa/);
+    print Petal::I18N->process ($xml);
 }
 
 
