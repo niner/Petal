@@ -40,6 +40,7 @@ our $PREFIX = 'petal_cache';
 sub get
 {
     my $class = shift;
+    warn "FOO";
     my $file  = shift;
     my $key   = $class->compute_key ($file);
     return $class->cached ($key) if ($class->is_ok ($file));
@@ -127,6 +128,7 @@ sub current_mtime
 {
     my $class = shift;
     my $file = shift;
+    $file =~ s/#.*$//;
     my $mtime = (stat($file))[9];
     return $mtime;
 }

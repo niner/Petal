@@ -87,6 +87,7 @@ sub current_mtime
 {
     my $class = shift;
     my $file = shift;
+    $file =~ s/#.*$//;
     my $mtime = (stat($file))[9];
     return $mtime;
 }

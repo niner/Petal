@@ -7,6 +7,8 @@ use Petal;
 
 $|=1;
 
+$Petal::DISK_CACHE   = 0;
+$Petal::MEMORY_CACHE = 0;
 
 # exists_filename tests
 {

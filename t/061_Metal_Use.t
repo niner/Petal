@@ -14,6 +14,5 @@ my $file     = 'metal_use_macro.xml';
     my $s = $t->process();
     like ($s, qr/This is some stuff which should appear/);
     like ($s, qr/<test>Foo<\/test>/);
-    print $s;
 }
 

@@ -262,6 +262,13 @@ sub _include_compute_path
 {
     my $self  = shift;
     my $file  = shift;
+    
+    # this is for metal self-includes
+    if ($file =~ /^#/)
+    {
+	$file = $self->{file} . $file;
+    }
+    
     return $file unless ($file =~ /^\./);
     
     my $path = $self->{file};
@@ -472,6 +479,25 @@ sub _file
 }
 
 
+sub _macro
+{
+    my $self = shift;
+    my $file = $self->_file;
+    $file =~ s/^.*#// || return;
+    return $file;
+}
+
+
+sub _file_path_with_macro
+{
+    my $self  = shift;
+    my $file  = $self->_file_path;
+    my $macro = $self->_macro;
+    my $res   = $macro ? "$file#$macro" : $file;
+    return $res;
+}
+
+
 # $self->_file_path;
 # ------------------
 #   computes the file of the absolute path where the template
@@ -538,12 +564,10 @@ sub _file_data_ref
 sub _code_disk_cached
 {
     my $self = shift;
-    my $file = $self->_file_path;
-    my $code = (defined $DISK_CACHE and $DISK_CACHE) ? Petal::Cache::Disk->get ($file) : undef;
+    my $code = (defined $DISK_CACHE and $DISK_CACHE) ? Petal::Cache::Disk->get ($self->_file_path_with_macro) : undef;
     unless (defined $code)
     {
-	my $macro = $self->{file};
-	($macro =~ /#/) ? do { $macro =~ s/^.*#// } : do { $macro = $MT_NAME_CUR };
+	my $macro = $self->_macro() || $MT_NAME_CUR;
 	
 	local ($MT_NAME_CUR);
 	$MT_NAME_CUR = $macro;
@@ -551,8 +575,9 @@ sub _code_disk_cached
 	my $data_ref = $self->_canonicalize;
 	load_code_generator();
 	$code = $CodeGenerator->process ($data_ref, $self);
-	Petal::Cache::Disk->set ($file, $code) if (defined $DISK_CACHE and $DISK_CACHE);
+	Petal::Cache::Disk->set ($self->_file_path_with_macro, $code) if (defined $DISK_CACHE and $DISK_CACHE);
     }
+    
     return $code;
 }
 
@@ -563,8 +588,7 @@ sub _code_disk_cached
 sub _code_memory_cached
 {
     my $self = shift;
-    my $file = $self->_file_path;
-    my $code = (defined $MEMORY_CACHE and $MEMORY_CACHE) ? Petal::Cache::Memory->get ($file) : undef;
+    my $code = (defined $MEMORY_CACHE and $MEMORY_CACHE) ? Petal::Cache::Memory->get ($self->_file_path_with_macro) : undef;
     unless (defined $code)
     {
 	my $code_perl = $self->_code_disk_cached;
@@ -573,12 +597,13 @@ sub _code_memory_cached
 	eval "$code_perl";
 	confess ($@ . "\n" . $self->_code_with_line_numbers) if $@;
 	$code = $VAR1;
-
-	Petal::Cache::Memory->set ($file, $code) if (defined $MEMORY_CACHE and $MEMORY_CACHE);	
+	
+	Petal::Cache::Memory->set ($self->_file_path_with_macro, $code) if (defined $MEMORY_CACHE and $MEMORY_CACHE);	
     }
     
-     return $code;
+    return $code;
 }
+
 
 =cut
 
