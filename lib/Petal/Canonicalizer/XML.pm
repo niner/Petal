@@ -56,6 +56,7 @@ sub process
     
     $parser->process ($class, $data_ref);
     
+    $header ||= '';
     my $res = $header . (join '', @Result);
     $class->_processing_instructions_in (\$res, $pis);
     
