@@ -1,5 +1,8 @@
 Revision history for Petal.
 
+0.72
+	- Fixed loop scoping bug
+
 0.71 Thu Sep 12 14:39:58 2002
 	- Fixed warning in Petal::Canonicalizer::XML.pm
 	- Updated documentation

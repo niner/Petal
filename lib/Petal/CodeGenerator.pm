@@ -15,7 +15,7 @@ use strict;
 use warnings;
 use Carp;
 
-use vars qw /$petal_object $tokens $variables @code $indent $token_name %token_hash $token/;
+use vars qw /$petal_object $tokens $variables @code $indent $token_name %token_hash $token $my_array/;
 
 
 =head1 METHODS
@@ -40,6 +40,7 @@ sub process
     local $token_name = undef;
     local %token_hash = ();
     local $token = undef;
+    local $my_array = {};
     
     push @code, "    " x $indent . "\$VAR1 = sub {";
     $indent++;
@@ -47,7 +48,8 @@ sub process
     push @code, "    " x $indent . "my \@res = ();";
 
     # WLM's changes - predefine @array var
-    push @code, "    " x $indent . "my \@array;";
+    # this is actually a BUG, it scews scoping with nested loops
+    # push @code, "    " x $indent . "my \@array;";
     
     foreach $token (@{$tokens})
     {
@@ -217,7 +219,16 @@ sub _for
     $variables->{$tmp} = 1;
     
     $variable =~ s/\'/\\\'/g;
-    push @code, ("    " x $indent . "\@array = \@{\$hash->{'$variable'}};");
+    unless (defined $my_array->{$indent})
+    {
+	push @code, ("    " x $indent . "my \@array = \@{\$hash->{'$variable'}};");
+	$my_array->{$indent} = 1;
+    }
+    else
+    {
+	push @code, ("    " x $indent . "\@array = \@{\$hash->{'$variable'}};");
+    }
+    
     push @code, ("    " x $indent . "for (my \$i=0; \$i < \@array; \$i++) {");
     $indent++;
     push @code, ("    " x $indent . "my \$hash = new Petal::Hash (\%{\$hash});");

@@ -4,7 +4,7 @@ package main;
 use lib ('lib');
 use Test;
 
-BEGIN {print "1..3\n";}
+BEGIN {print "1..2\n";}
 END {print "not ok 1\n" unless $loaded;}
 use Petal;
 $loaded = 1;
@@ -24,11 +24,6 @@ my %hash = (
 	    'array_of_chars'     => [qw/ a b c /],
 );
 
-eval { $template->process(%hash) };
-(defined $@ and $@) ? print "not ok 2\n" : print "ok 2\n";
-# print $template->process (%hash);
-
-
-$Petal::INPUT = "XML";
-eval { $template->process(%hash) };
-(defined $@ and $@) ? print "not ok 3\n" : print "ok 3\n";
+my $str = undef;
+eval { $str = $template->process(%hash) };
+($str =~ /num = \[\d+\]/) ? print "ok 2\n" : print "not ok 2\n";
