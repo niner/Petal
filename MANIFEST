@@ -89,6 +89,8 @@ t/081_Petal_I18NProcessor.t
 t/082_Petal_Gettext.t
 t/083_test_attributes_chars.t
 t/084_Cookbook.t
+t/085_lang_include_memcache.t
+t/086_lang_include_diskcache.t
 t/benchmark.pl
 t/data/access_obj_array.html
 t/data/access_obj_hash.html
