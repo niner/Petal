@@ -12,4 +12,8 @@ $Petal::TAINT = 1;
 $Petal::BASE_DIR = 't/data';
 
 my $template = new Petal ($template_file);
-unlike ($template->process() => qr/^\<\!/);
+my $string = $template->process();
+
+like ($string => qr/<!-- This is a comment -->/);
+unlike ($string => qr/<!--? This is a petal comment -->/);
+
