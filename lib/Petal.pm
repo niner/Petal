@@ -61,6 +61,10 @@ our $OUTPUTS = {
 our $TAINT = undef;
 
 
+# don't confess() errors if we access an undefined template variable
+our $ERROR_ON_UNDEF_VAR = 1;
+
+
 # where are our templates supposed to be?
 our @BASE_DIR = ('.');
 our $BASE_DIR = undef; # for backwards compatibility...
@@ -80,7 +84,7 @@ our $CURRENT_INCLUDES = 0;
 
 
 # this is for CPAN
-our $VERSION = '0.961';
+our $VERSION = '1.00';
 
 
 # The CodeGenerator class backend to use.
@@ -187,13 +191,14 @@ sub language
 }
 
 
-sub default_language { exists $_[0]->{default_language} ? $_[0]->{default_language} : $LANGUAGE     }
-sub input            { exists $_[0]->{input}            ? $_[0]->{input}            : $INPUT        }
-sub output           { exists $_[0]->{output}           ? $_[0]->{output}           : $OUTPUT       }
-sub taint            { exists $_[0]->{taint}            ? $_[0]->{taint}            : $TAINT        }
-sub disk_cache       { exists $_[0]->{disk_cache}       ? $_[0]->{disk_cache}       : $DISK_CACHE   }
-sub memory_cache     { exists $_[0]->{memory_cache}     ? $_[0]->{memory_cache}     : $MEMORY_CACHE }
-sub max_includes     { exists $_[0]->{max_includes}     ? $_[0]->{max_includes}     : $MAX_INCLUDES }
+sub default_language   { exists $_[0]->{default_language}   ? $_[0]->{default_language}   : $LANGUAGE           }
+sub input              { exists $_[0]->{input}              ? $_[0]->{input}              : $INPUT              }
+sub output             { exists $_[0]->{output}             ? $_[0]->{output}             : $OUTPUT             }
+sub taint              { exists $_[0]->{taint}              ? $_[0]->{taint}              : $TAINT              }
+sub error_on_undef_var { exists $_[0]->{error_on_undef_var} ? $_[0]->{error_on_undef_var} : $ERROR_ON_UNDEF_VAR }
+sub disk_cache         { exists $_[0]->{disk_cache}         ? $_[0]->{disk_cache}         : $DISK_CACHE         }
+sub memory_cache       { exists $_[0]->{memory_cache}       ? $_[0]->{memory_cache}       : $MEMORY_CACHE       }
+sub max_includes       { exists $_[0]->{max_includes}       ? $_[0]->{max_includes}       : $MAX_INCLUDES       }
 
 
 sub base_dir
@@ -283,18 +288,19 @@ sub process
     # ok, from there on we need to override any global
     # variable with stuff that might have been specified
     # when constructing the object
-    local $TAINT          = defined $self->{taint}            ? $self->{taint}          : $TAINT;
-    local $DISK_CACHE     = defined $self->{disk_cache}       ? $self->{disk_cache}     : $DISK_CACHE;
-    local $MEMORY_CACHE   = defined $self->{memory_cache}     ? $self->{memory_cache}   : $MEMORY_CACHE;
-    local $MAX_INCLUDES   = defined $self->{max_includes}     ? $self->{max_includes}   : $MAX_INCLUDES;
-    local $INPUT          = defined $self->{input}            ? $self->{input}          : $INPUT;
-    local $OUTPUT         = defined $self->{output}           ? $self->{output}         : $OUTPUT;
-    local $BASE_DIR       = defined $self->{base_dir} ? do { ref $self->{base_dir} ? undef : $self->{base_dir} } : $BASE_DIR;
-    local @BASE_DIR       = defined $self->{base_dir} ? do { ref $self->{base_dir} ? @{$self->{base_dir}} : undef } : @BASE_DIR;
-    local $LANGUAGE       = defined $self->{default_language} ? $self->{default_language} : $LANGUAGE;
-    local $DEBUG_DUMP     = defined $self->{debug_dump}       ? $self->{debug_dump}     : $DEBUG_DUMP;
-    local $DECODE_CHARSET = defined $self->{decode_charset}   ? $self->{decode_charset} : $DECODE_CHARSET;
-    local $ENCODE_CHARSET = defined $self->{encode_charset}   ? $self->{encode_charset} : $ENCODE_CHARSET;
+    local $TAINT              = defined $self->{taint}              ? $self->{taint}              : $TAINT;
+    local $ERROR_ON_UNDEF_VAR = defined $self->{error_on_undef_var} ? $self->{error_on_undef_var} : $ERROR_ON_UNDEF_VAR;
+    local $DISK_CACHE         = defined $self->{disk_cache}         ? $self->{disk_cache}         : $DISK_CACHE;
+    local $MEMORY_CACHE       = defined $self->{memory_cache}       ? $self->{memory_cache}       : $MEMORY_CACHE;
+    local $MAX_INCLUDES       = defined $self->{max_includes}       ? $self->{max_includes}       : $MAX_INCLUDES;
+    local $INPUT              = defined $self->{input}              ? $self->{input}              : $INPUT;
+    local $OUTPUT             = defined $self->{output}             ? $self->{output}             : $OUTPUT;
+    local $BASE_DIR           = defined $self->{base_dir} ? do { ref $self->{base_dir} ? undef : $self->{base_dir} } : $BASE_DIR;
+    local @BASE_DIR           = defined $self->{base_dir} ? do { ref $self->{base_dir} ? @{$self->{base_dir}} : undef } : @BASE_DIR;
+    local $LANGUAGE           = defined $self->{default_language}   ? $self->{default_language}   : $LANGUAGE;
+    local $DEBUG_DUMP         = defined $self->{debug_dump}         ? $self->{debug_dump}         : $DEBUG_DUMP;
+    local $DECODE_CHARSET     = defined $self->{decode_charset}     ? $self->{decode_charset}     : $DECODE_CHARSET;
+    local $ENCODE_CHARSET     = defined $self->{encode_charset}     ? $self->{encode_charset}     : $ENCODE_CHARSET;
     
     # prevent infinite includes from happening...
     my $current_includes = $CURRENT_INCLUDES;
@@ -837,6 +843,12 @@ language-country or language.
 If set to C<true>, makes perl taint mode happy.
 
 
+=head2 error_on_undef_var => I<true> | I<false> (default: I<true>)
+
+If set to C<true>, Petal will confess() errors when trying to access undefined
+template variables, otherwise an empty string will be returned.
+
+
 =head2 disk_cache => I<true> | I<false> (default: I<true>)
 
 If set to C<false>, Petal will not use the C<Petal::Cache::Disk> module.
@@ -887,17 +899,18 @@ If you want to use an option throughout your entire program and don't want to
 have to pass it to the constructor each time, you can set them globally. They
 will then act as defaults unless you override them in the constructor.
 
-  $Petal::BASE_DIR          (use base_dir option)
-  $Petal::INPUT             (use input option)
-  $Petal::OUTPUT            (use output option)
-  $Petal::TAINT             (use taint option)
-  $Petal::DISK_CACHE        (use disk_cache option)
-  $Petal::MEMORY_CACHE      (use memory_cache option)
-  $Petal::MAX_INCLUDES      (use max_includes option)
-  $Petal::LANGUAGE          (use default_language option)
-  $Petal::DEBUG_DUMP        (use debug_dump option)
-  $Petal::ENCODE_CHARSET    (use encode_charset option)
-  $Petal::DECODE_CHARSET    (use decode_charset option)
+  $Petal::BASE_DIR           (use base_dir option)
+  $Petal::INPUT              (use input option)
+  $Petal::OUTPUT             (use output option)
+  $Petal::TAINT              (use taint option)
+  $Petal::ERROR_ON_UNDEF_VAR (use error_on_undef_var option)
+  $Petal::DISK_CACHE         (use disk_cache option)
+  $Petal::MEMORY_CACHE       (use memory_cache option)
+  $Petal::MAX_INCLUDES       (use max_includes option)
+  $Petal::LANGUAGE           (use default_language option)
+  $Petal::DEBUG_DUMP         (use debug_dump option)
+  $Petal::ENCODE_CHARSET     (use encode_charset option)
+  $Petal::DECODE_CHARSET     (use decode_charset option)
 
 
 =head1 TAL SYNTAX

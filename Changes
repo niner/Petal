@@ -1,7 +1,8 @@
 Revision history for Petal.
 
-1.00 Aniversary release!
-	- Applied Steve Purkis' error on undef patch
+1.00 Tue Jul 15 20:35:19 BST 2003
+	- Applied Steve's 'error on undef' patch
+	- Happy Birthday Petal!
 
 0.96 Mon Jun 30 13:34:22 2003
 	- Fixed include + unicode + encode bug

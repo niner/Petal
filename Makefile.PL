@@ -7,6 +7,7 @@ WriteMakefile(
     'PREREQ_PM'		=> {
         'HTML::TreeBuilder' => '3.12',
         'XML::Parser'       => '2.31',
+	'CGI'               => '2.97',
     },
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM => 'lib/Petal.pm', # retrieve abstract from module

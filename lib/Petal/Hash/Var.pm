@@ -33,8 +33,6 @@ our $TOKEN_RE          = qr/(?:$STRING_RE|$VARIABLE_RE)/;
 our $PATH_SEPARATOR_RE = qr/(?:\/|\.)/;
 our $INTEGER_KEY_RE    = qr/^\d+$/;
 
-our $ERROR_ON_UNDEF_VAR = 1;
-
 sub process
 {
     my $class    = shift;
@@ -120,7 +118,7 @@ sub process
 	else
 	{
 	    # ... or we cannot find the next value
-	    if ($ERROR_ON_UNDEF_VAR)
+	    if ($Petal::ERROR_ON_UNDEF_VAR)
 	    {
 		# let's croak and return
 		my $warnstr = "Cannot find value for '$next' at '$current_path': $next cannot be retrieved\n";
@@ -129,6 +127,7 @@ sub process
 		$warnstr   .= ", near $argument)";
 		confess $warnstr;
 	    }
+	    return '';
 	}
 
 	$current_path .= "/$next";
