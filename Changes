@@ -1,6 +1,7 @@
 Revision history for Petal.
 
 0.72
+	- Fixed another loop scoping bug
 	- Fixed loop scoping bug
 
 0.71 Thu Sep 12 14:39:58 2002

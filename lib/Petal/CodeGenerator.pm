@@ -46,10 +46,6 @@ sub process
     $indent++;
     push @code, "    " x $indent . "my \$hash = shift;";
     push @code, "    " x $indent . "my \@res = ();";
-
-    # WLM's changes - predefine @array var
-    # this is actually a BUG, it scews scoping with nested loops
-    # push @code, "    " x $indent . "my \@array;";
     
     foreach $token (@{$tokens})
     {
@@ -76,7 +72,9 @@ sub process
 		
 		/^end$/ and do
                 {
+		    delete $my_array->{$indent};
                     $indent--;
+		    
                     push @code, ("    " x $indent . "}");
                     last CASE;
                 };

@@ -33,7 +33,7 @@ my %hash = (
 
 my $str = undef;
 eval { $str = $template->process(%hash) };
-print STDERR $str;
+# print STDERR $str;
 
 # shouldn't be any "num=[...]" that don't have numbers inside
 ($str !~ /num=\[\D+\]/) ? print "ok 2\n" : print "not ok 2\n";
