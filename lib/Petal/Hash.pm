@@ -163,6 +163,7 @@ sub __FETCH
     }
     else
     {
+        # can anyone explain why keys beginning with 'text' are not allowed???
 	$key =~ s/^\s*text\s*//;
 	return $self->fetch ($key);
     }
