@@ -54,7 +54,9 @@ sub process
         if ($token =~ /^<\?petal:.*?\?>$/)
         {
 	    ($token_name) = $token =~ /<\?petal:\s*([a-z]+)/;
-	    %token_hash   = $token =~ /(\S+)\=\"(.*?)\"/gos;
+	    my @atts1 = $token =~ /(\S+)\=\"(.*?)\"/gos;
+	    my @atts2 = $token =~ /(\S+)\=\'(.*?)\'/gos;
+	    %token_hash = (@atts1, @atts2); 
 	    
           CASE:
             for ($token_name)

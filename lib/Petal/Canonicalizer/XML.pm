@@ -390,7 +390,14 @@ sub _attributes
 	next unless (defined $string);
 	next if ($string =~ /^\s*$/);
 	my ($attr, $expr) = $string =~ /^\s*((?:\w|\:)+)\s+(.*?)\s*$/;
-	$att->{$attr} = "<?petal:attr name=\"$attr\" value=\"$expr\"?>";
+	if ($expr =~ /\"/)
+	{
+	    $att->{$attr} = "<?petal:attr name=\"$attr\" value=\'$expr\'?>";
+	}
+	else
+	{
+	    $att->{$attr} = "<?petal:attr name=\"$attr\" value=\"$expr\"?>";
+	}
 	# $att->{$attr} = "<?petal:var name=\"$expr\"?>";
     }
     return 1;
