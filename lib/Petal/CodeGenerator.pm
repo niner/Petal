@@ -11,6 +11,7 @@ Petal::CodeGenerator - Turns canonicalized XML files into Perl code.
 
 =cut
 package Petal::CodeGenerator;
+use Petal::XML_Encode_Decode;
 use strict;
 use warnings;
 use Carp;
@@ -55,6 +56,11 @@ sub process
 	    my @atts1 = $token =~ /(\S+)\=\"(.*?)\"/gos;
 	    my @atts2 = $token =~ /(\S+)\=\'(.*?)\'/gos;
 	    %token_hash = (@atts1, @atts2); 
+	    foreach my $key (%token_hash)
+	    {
+		$token_hash{$key} = Petal::XML_Encode_Decode::decode_backslash_semicolon ($token_hash{$key})
+		    if (defined $token_hash{$key});
+	    }
 	    
           CASE:
             for ($token_name)
@@ -105,8 +111,7 @@ sub process
 #   process a <?petal:include file="/foo/blah.html"?> file
 sub _include
 {
-    my $class = shift;
-    
+    my $class = shift;    
     my $token_hash_args = join ", ", map { $_ . ' => "' . quotemeta ($token_hash{$_}) . '"' } keys %token_hash;
     push @code, ("    " x $indent . "push \@res, Petal->new ( $token_hash_args )->process (\$hash);");
 }

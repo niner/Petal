@@ -1,5 +1,5 @@
 <html xml:lang="en-gb" lang="en-gb" xmlns="http://www.w3.org/1999/xhtml">
-  <head>
+  <head petal:set='test_encoding string:Hello, "World"'>
 
 
 

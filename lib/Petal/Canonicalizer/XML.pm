@@ -18,6 +18,7 @@ Might be canonicalized to something like
 =cut
 package Petal::Canonicalizer::XML;
 use Petal::Hash::String;
+use Petal::XML_Encode_Decode;
 use strict;
 use warnings;
 
@@ -140,7 +141,6 @@ Is rewritten
 sub StartTag
 {
     my $class = shift;
-    
     push @NodeStack, {};
     return if ($class->_is_inside_content_or_replace());
     
@@ -173,6 +173,7 @@ sub StartTag
 		$command =~ s/^\$//;
 		$command =~ s/^\{//;
 		$command =~ s/\}$//;
+		$command = Petal::XML_Encode_Decode::encode_backslash_semicolon ($command);
 		$command = "<?petal:var name=\"$command\"?>";
 		$text =~ s/\Q$var\E/$command/g;
 	    }
@@ -188,16 +189,15 @@ sub StartTag
 	    my $value = $att->{$key};
 	    if ($value =~ /^<\?petal:attr/)
 	    {
-		push @att_str, $value;
+		push @att_str, $value;  # Petal::XML_Encode_Decode::encode_backslash_semicolon ??
 	    }
 	    else
 	    {
-		push @att_str, $key . '=' . "\"$value\"";
+		push @att_str, $key . '=' . "\"$value\""; # Petal::XML_Encode_Decode::encode_backslash_semicolon ??
 	    }
 	}
 	
 	my $att_str = join " ", @att_str;
-	# my $att_str = join " ", map { $_ . '=' . "\"$att->{$_}\"" } grep (!/^petal:/, keys %{$att});
 	push @Result, (defined $att_str and $att_str) ? "<$tag $att_str>" : "<$tag>";
 	$class->_content ($tag, $att);
     }
@@ -255,6 +255,7 @@ sub Text
 	$command =~ s/^\$//;
 	$command =~ s/^\{//;
 	$command =~ s/\}$//;
+	$command = Petal::XML_Encode_Decode::encode_backslash_semicolon ($command);
 	$command = "<?petal:var name=\"$command\"?>";
 	$text =~ s/\Q$var\E/$command/g;
     }
@@ -293,8 +294,9 @@ sub _split_expression
     my $class = shift;
     my $expression = shift;
     my @tokens = map { (defined $_ and $_) ? $_ : () }
-                 split /(\s|\r|\n)*\;(\s|\r|\n)*/ms, $expression;
-
+                 split /(\s|\r|\n)*(?<!\\)\;(\s|\r|\n)*/ms,
+		 $expression;
+    
     return map { s/^(\s|\n|\r)+//sm;
 		 s/(\s|\n|\r)+$//sm;
 		 ($_ eq '') ? () : $_ } @tokens;
@@ -315,6 +317,7 @@ sub _define
                delete $att->{'petal:def'}    ||
                delete $att->{'petal:define'} || return;
     
+    $expr = Petal::XML_Encode_Decode::encode_backslash_semicolon ($expr);
     push @Result, map { "<?petal:var name=\"set: $_\"?>" } $class->_split_expression ($expr);
     return 1;
 }
@@ -333,6 +336,7 @@ sub _condition
     my $expr = delete $att->{'petal:if'}        ||
                delete $att->{'petal:condition'} || return;
 
+    $expr = Petal::XML_Encode_Decode::encode_backslash_semicolon ($expr);
     my @new = map { "<?petal:if name=\"$_\"?>" } $class->_split_expression ($expr);
     push @Result, @new;
     $NodeStack[$#NodeStack]->{condition} = scalar @new;
@@ -359,6 +363,7 @@ sub _repeat
     my @new = ();
     foreach $expr (@exprs)
     {
+	$expr = Petal::XML_Encode_Decode::encode_backslash_semicolon ($expr);
 	push @new, "<?petal:for name=\"$expr\"?>"
     }
     push @Result, @new;
@@ -379,7 +384,12 @@ sub _replace
     my $att = shift;
     my $expr = delete $att->{'petal:replace'} ||
                delete $att->{'petal:outer'}   || return;
-    my @new = map { "<?petal:var name=\"$_\"?>" } split /(\s|\r|\n)*\;(\s|\r|\n)*/ms, $expr;
+    
+    my @new = map {
+	$_ = Petal::XML_Encode_Decode::encode_backslash_semicolon ($_);
+	"<?petal:var name=\"$_\"?>";
+    } split /(\s|\r|\n)*\;(\s|\r|\n)*/ms, $expr;
+    
     push @Result, @new;
     $NodeStack[$#NodeStack]->{replace} = 'true';
     return 1;
@@ -406,15 +416,8 @@ sub _attributes
 	next unless (defined $string);
 	next if ($string =~ /^\s*$/);
 	my ($attr, $expr) = $string =~ /^\s*((?:\w|\:)+)\s+(.*?)\s*$/;
-	if ($expr =~ /\"/)
-	{
-	    $att->{$attr} = "<?petal:attr name=\"$attr\" value=\'$expr\'?>";
-	}
-	else
-	{
-	    $att->{$attr} = "<?petal:attr name=\"$attr\" value=\"$expr\"?>";
-	}
-	# $att->{$attr} = "<?petal:var name=\"$expr\"?>";
+	$expr = Petal::XML_Encode_Decode::encode_backslash_semicolon ($expr);
+	$att->{$attr} = "<?petal:attr name=\"$attr\" value=\"$expr\"?>";
     }
     return 1;
 }
@@ -433,7 +436,10 @@ sub _content
     my $expr = delete $att->{'petal:content'}  ||
                delete $att->{'petal:contents'} ||
 	       delete $att->{'petal:inner'}    || return;
-    my @new = map { "<?petal:var name=\"$_\"?>" } $class->_split_expression ($expr);
+    my @new = map {
+	$_ = Petal::XML_Encode_Decode::encode_backslash_semicolon ($_);
+	"<?petal:var name=\"$_\"?>";
+    } $class->_split_expression ($expr);
     push @Result, @new;
     $NodeStack[$#NodeStack]->{content} = 'true';
     return 1;
