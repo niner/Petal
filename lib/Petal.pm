@@ -673,10 +673,14 @@ includes, too!
 
 TIP:
 
-If you feel that 'en' should not be the default language, you can change the
-C<$Petal::LANGUAGE> variable to whatever you want.
+If you feel that 'en' should not be the default language, you can specify a
+different default:
 
-    local $Petal::LANGUAGE = 'fr'; # vive la France!
+    my $template = new Petal (
+        file             => 'hello_world',
+        language         => 'zh',
+        default_language => 'fr' # vive la France!
+    );
 
 
 TRAP:
@@ -684,79 +688,109 @@ TRAP:
 If you do specify the C<lang> option, you MUST use a path to a template
 directory, not a file directory.
 
-Reversely, if you do not specify a C<lang> option, you MUST use a path to a
+Conversely, if you do not specify a C<lang> option, you MUST use a path to a
 template file, not a directory.
 
 
 =head1 OPTIONS
 
-=head2 C<$Petal::INPUT> - default: 'XML'
+When you create a Petal template object you can specify various options using
+name => value pairs as arguments to the constructor.  For example:
 
-Acceptable values are
+  my $template = Petal->new(
+    file     => 'gerbils.html',
+    base_dir => '/var/www/petshop',
+    input    => 'HTML',
+    output   => 'HTML',
+  );
+
+The recognized options are:
+
+
+=head2 file => I<filename>
+
+The template filename.  This option is mandatory and has no default.
+
+Note: If you also use 'language' this option should point to a directory.
+
+
+=head2 base_dir => I<pathname> | [ I<pathname list> ] (default: '.')
+
+The directories listed in this option will be searched in turn to locate the
+template file.  A single directory can be specified as a scalar.  For a
+directory list use an arrayref.
+
+
+=head2 input => 'HTML' | 'XHTML' | 'XML' (default: 'XML')
+
+Defines the format of the template files.  Recognised values are:
 
   'HTML'  - Petal will use HTML::TreeBuilder to parse the template
   'XHTML' - Alias for 'HTML'
   'XML'   - Petal will use XML::Parser to parse the template
 
-Example:
 
-  local $Petal::INPUT = 'XHTML';
+=head2 output => 'HTML' | 'XHTML' | 'XML' (default: 'XML')
 
-
-=head2 C<$Petal::OUTPUT> - default: 'XML'
-
-Currently acceptable values are
+Defines the format of the data generated as a result of processing the template
+files.  Recognised values are:
 
   'HTML'  - Petal will output XHTML, self-closing certain tags
   'XHTML' - Alias for 'HTML'
   'XML'   - Petal will output generic XML 
 
-Example:
 
-  local $Petal::OUTPUT = 'XHTML';
+=head2 language => I<language code>
 
-
-=head2 @Petal::BASE_DIR - Default: ('.')
-
-Sets the base directories in which Petal looks for templates.
-
-Petal will try to fetch the template file starting from the beginning of the
-list until it finds one base directory which has the requested file.
-
-Example:
-
-  local @Petal::BASE_DIR = ('.', 'templates', '/www/templates');
+For internationalized applications, you can use the 'file' option to point to a
+I<directory> and select a language-specific template within that directory
+using the 'language' option.  Languages are selected using a two letter code
+(eg: 'fr') optionally followed by a hyphen and a two letter country code (eg:
+'fr-CA').
 
 
-=head2 C<$Petal::TAINT> - default: I<FALSE>
+=head2 default_language => I<language code> (default: 'en')
 
-If set to C<TRUE>, makes perl taint mode happy.
-
-
-=head2 C<$Petal::DISK_CACHE> - Default: I<TRUE>
-
-If set to C<FALSE>, Petal will not use the C<Petal::Cache::Disk> module.
+This language code will be used if no template matches the selected
+language-country or language.
 
 
-=head2 C<$Petal::MEMORY_CACHE> - Default: I<TRUE>
+=head2 taint => I<true> | I<false> (default: I<false>)
 
-If set to C<FALSE>, Petal will not use the C<Petal::Cache::Memory> module.
-
-
-=head2 C<$Petal::MAX_INCLUDES> - Default: I<30>
-
-C<$MAX_INCLUDES> - The maximum number of recursive includes before Petal stops
-processing.  This is to prevent from accidental infinite recursions.
+If set to C<true>, makes perl taint mode happy.
 
 
-=head2 C<$Petal::LANGUAGE> - Default: I<en>
+=head2 disk_cache => I<true> | I<false> (default: I<true>)
 
-Fallback template language when using Petal in multi-language mode.
+If set to C<false>, Petal will not use the C<Petal::Cache::Disk> module.
 
 
-Example:
+=head2 memory_cache => I<true> | I<false> (default: I<true>)
 
-    local $Petal::LANGUAGE = 'fr';
+If set to C<false>, Petal will not use the C<Petal::Cache::Memory> module.
+
+
+=head2 max_includes => I<number> (default: 30)
+
+The maximum number of recursive includes before Petal stops processing.  This
+is to guard against accidental infinite recursions.
+
+
+=head2 Global Variables
+
+Earlier versions of Petal used global variables rather than constructor
+arguments to set the options described above.  That method of setting options
+is now deprecated, but you may encounter older code which uses the following
+variables:
+
+  $Petal::BASE_DIR          (use base_dir option)
+  $Petal::INPUT             (use input option)
+  $Petal::OUTPUT            (use output option)
+  $Petal::TAINT             (use taint option)
+  $Petal::DISK_CACHE        (use disk_cache option)
+  $Petal::MEMORY_CACHE      (use memory_cache option)
+  $Petal::MAX_INCLUDES      (use max_includes option)
+  $Petal::LANGUAGE          (use default_language option)
 
 
 =head1 TAL SYNTAX
