@@ -1,6 +1,5 @@
 Makefile.PL
 README
-test.pl
 Changes
 MANIFEST
 lib/Petal/Hash/Encode_XML.pm
