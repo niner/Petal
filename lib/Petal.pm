@@ -497,7 +497,7 @@ sub _code_memory_cached
 	my $code_perl = $self->_code_disk_cached;
         my $VAR1 = undef;
 	
-	if (0) # if ($TAINT) - doesn't work with repeat object
+	if ($TAINT)
 	{
 	    # important line, don't remove
 	    ($code_perl) = $code_perl =~ m/^(.+)$/s;

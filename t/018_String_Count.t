@@ -37,7 +37,7 @@ my $hash = {
 				],
 };
 
-# print $template->_code_with_line_numbers();
+# warn $template->_code_with_line_numbers();
 my $html = $template->process($hash);
 like($html, '/1 - William/');
 like($html, '/2 - Elizabeth/');

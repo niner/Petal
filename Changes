@@ -1,6 +1,8 @@
 Revision history for Petal.
 
-1.04
+1.04 Sun Aug 17 19:57:40 2003
+	- Fixed repeat object and safe issues
+	- Added Test::Harness and Scalar::Util dependencies
 	- Fixed a bug in the way <?var is handled
 	- Fixed "\n" bug in _handle_error
 

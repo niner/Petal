@@ -1,26 +1,3 @@
-# ------------------------------------------------------------------
-# Petal::Hash - Context for petal objects
-# ------------------------------------------------------------------
-# Author: Jean-Michel Hiver
-# Description: This class manages the context objects, which holds
-# objects which are accessable from the template.
-# ------------------------------------------------------------------
-package Petal::Hash_Repeat;
-use strict;
-use warnings;
-
-our $CUR = undef;
-our $MAX = undef;
-
-sub number { $CUR + 1 }
-sub index  { $CUR }
-sub even   { not $CUR % 2 }
-sub odd    { $CUR % 2 }
-sub start  { not $CUR }
-sub end    { $CUR == $MAX }
-sub inner  { $CUR and $CUR < $MAX }
-
-
 package Petal::Hash;
 use strict;
 use warnings;

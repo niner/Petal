@@ -384,26 +384,42 @@ sub _for
     {
 	$class->add_code("\@array = \@{".$class->comp_expr($variable)."};");
     }
-    
-    $class->add_code ("local \$Petal::Hash_Repeat::MAX = \@array - 1;");
-    $class->add_code ("local \$Petal::Hash_Repeat::CUR = undef;");
+
+        
     $class->add_code ("for (my \$i=0; \$i < \@array; \$i++) {");
     $class->indent_increment();
-    $class->add_code ("my \$hash = \$hash->new();");
-    $class->add_code ("\$Petal::Hash_Repeat::CUR = \$i;");
-    $class->add_code ("\$hash->{__count__}    = sub { \$hash->{repeat}->number() };");
-    $class->add_code ("\$hash->{__is_first__} = sub { \$hash->{repeat}->start()  };");
-    $class->add_code ("\$hash->{__is_last__}  = sub { \$hash->{repeat}->end()    };");
-    $class->add_code ("\$hash->{__is_inner__} = sub { \$hash->{repeat}->inner()  };");
-    $class->add_code ("\$hash->{__even__}     = sub { \$hash->{repeat}->even()   };");
-    $class->add_code ("\$hash->{__odd__}      = sub { \$hash->{repeat}->odd()    };");
-    $class->add_code ("\$hash->{'$as'} = \$array[\$i];");
+    $class->add_code ("my \$hash   = \$hash->new();");
     
-#    $class->add_code("my \$hash = \$hash->new();");
-#    $class->add_code("my \$count= \$i + 1;");
-#    $class->add_code("\$hash->{__count__}    = \$count;");
-#    $class->add_code("\$hash->{__is_first__} = (\$count == 1);");
-#    $class->add_code("\$hash->{__is_last__}  = (\$count == \@array);");    
+    # compute various might-be-useful variables
+    $class->add_code ("my \$number = \$i + 1;");
+    $class->add_code ("my \$odd    = \$number % 2;");
+    $class->add_code ("my \$even   = \$i % 2;");
+    $class->add_code ("my \$start  = (\$i == 0);");
+    $class->add_code ("my \$end    = (\$i == \@array);");
+    $class->add_code ("my \$inner  = (\$i and \$i < \@array);");
+    
+    # backwards compatibility
+    $class->add_code ("\$hash->{__count__}    = \$number;");
+    $class->add_code ("\$hash->{__is_first__} = \$start;");
+    $class->add_code ("\$hash->{__is_last__}  = \$end;");
+    $class->add_code ("\$hash->{__is_inner__} = \$inner;");
+    $class->add_code ("\$hash->{__even__}     = \$even;");
+    $class->add_code ("\$hash->{__odd__}      = \$odd;");
+    
+    # new repeat style object
+    $class->add_code ("\$hash->{repeat} = {");
+    $class->indent_increment();
+    $class->add_code ("index  => \$i,");
+    $class->add_code ("number => \$number,");
+    $class->add_code ("even   => \$even,");
+    $class->add_code ("odd    => \$odd,");
+    $class->add_code ("start  => \$start,");
+    $class->add_code ("end    => \$end,");
+    $class->add_code ("inner  => \$inner,");
+    $class->add_code ("};");
+    $class->indent_decrement();
+    
+    $class->add_code ("\$hash->{'$as'} = \$array[\$i];");
 }
 
 
