@@ -45,6 +45,7 @@ t/023_Loop_Error.t
 t/024_Namespaces.t
 t/025_Omit_Tag.t
 t/027_Eval.t
+t/028_Infinite_Includes.t
 t/data/autoload.xml
 t/data/canonical_error.html
 t/data/comments.xml
@@ -58,6 +59,8 @@ t/data/if.html
 t/data/if.xml
 t/data/include/included.xml
 t/data/include/index.xml
+t/data/include/index_xinclude.xml
+t/data/infinite_includes.xml
 t/data/interpolate.xml
 t/data/loop_error.xml
 t/data/method_param.xml
@@ -77,3 +80,4 @@ t/data/string.xml
 t/data/string_count.html
 t/data/style_andamp.html
 t/data/xhtml.html
+t/data/xhtml_omit_tag.html
