@@ -3,7 +3,7 @@ use warnings;
 use lib ('lib');
 use Test;
 
-BEGIN {print "1..4\n";}
+BEGIN {print "1..6\n";}
 END {print "not ok 1\n" unless $loaded;}
 use Petal;
 $loaded = 1;
@@ -26,3 +26,8 @@ $string = $template->process;
 ($string =~ /type/) ? print "not ok 3\n" : print "ok 3\n";
 
 ($string =~ /\Qbar="0"\E/) ? print "ok 4\n" : print "not ok 4\n";
+
+
+$string = $template->process ('nothing' => '');
+($string =~ /type/) ? print "ok 5\n" : print "not ok 5\n";
+($string =~ /\Qbar="0"\E/) ? print "ok 6\n" : print "not ok 6\n";

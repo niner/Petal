@@ -211,7 +211,7 @@ sub _include
     $class->add_code ("}");
     $class->add_code ("\$res;");
     $class->indent_decrement();
-    $class->add_code ("};");
+    $class->add_code ("} || '';");
 }
 
 
@@ -233,7 +233,7 @@ sub _var
     $variables->{$tmp} = 1;
     
     $variable =~ s/\'/\\\'/g;
-    $class->add_code($class->_add_res($class->comp_expr($variable).";"));
+    $class->add_code($class->_add_res($class->comp_expr($variable)." || '';"));
 }
 
 
@@ -304,7 +304,7 @@ sub _attr
     my $class = shift;
     my $attribute = $token_hash{name} or
         confess "Cannot parse $token : 'name' attribute is not defined";
-
+    
     my $variable = $token_hash{value} or
         confess "Cannot parse $token : 'value' attribute is not defined";
     
@@ -319,14 +319,15 @@ sub _attr
     $variable =~ s/\'/\\\'/g;
     $class->add_code('{');
     $class->indent_increment();
-    $class->add_code("my \$value = ".$class->comp_expr($variable).";");
-    $class->add_code("if (defined(\$value) and length(\$value)) {");
+    $class->add_code ("my \$value = " . $class->comp_expr($variable) . ";");
+    $class->add_code ("if (defined(\$value)) {");
+    # $class->add_code ("if (defined(\$value) and length(\$value)) {");
     $class->indent_increment();
-    $class->add_code($class->_add_res(qq{"$attribute=\\"\$value\\""}));
+    $class->add_code ($class->_add_res (qq {"$attribute=\\"\$value\\""}) );
     $class->indent_decrement();
-    $class->add_code("}");
+    $class->add_code ("}");
     $class->indent_decrement();
-    $class->add_code("}");
+    $class->add_code ("}");
 }
 
 

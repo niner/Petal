@@ -134,7 +134,7 @@ sub process
 	$current_path .= "/$next";
     }
     
-    return '' unless (defined $current);
+    # return '' unless (defined $current);
     return $current;
 }
 

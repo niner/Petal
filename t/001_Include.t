@@ -39,7 +39,6 @@ like($petal->process, '/Hello, &quot;World&quot;/', "find hello");
     $Petal::OUTPUT = "XML";
     $petal = new Petal ('index_xinclude.xml');
     like($petal->process, '/__INCLUDED__/', "XML - XML find included");
-    
     $Petal::INPUT  = "XHTML";
     $Petal::OUTPUT = "XML";
     my $petal = new Petal ('index_xinclude.xml');

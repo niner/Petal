@@ -1,6 +1,7 @@
 Revision history for Petal.
 
-1.01
+1.01 Mon Jul 28 14:06:09 2003
+	- "empty string" expression deleting attributes bugfix
 	- Applied Fergal's attr.patch
 	- Applied Fergal's die.patch
 	- Changed Petal::Hash::Var to evaluate coderefs
@@ -8,7 +9,7 @@ Revision history for Petal.
 	- Changed copyright notice 
 	- Updated documentation 
 
-1.00 Tue Jul 15 20:35:19 BST 2003
+1.00 Tue Jul 15 20:35:19 2003
 	- Applied Steve's 'error on undef' patch
 	- Happy Birthday Petal!
 
