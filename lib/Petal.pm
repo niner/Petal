@@ -507,7 +507,7 @@ sub _code_memory_cached
 	    $cpt->permit ('require');
 	    
 	    $cpt->reval($code_perl);
-	    die $@ if ($@);
+	    confess($self->_code_with_line_numbers."\n$@") if $@;
 	    
 	    # remove silly warning '"Petal::CPT::VAR1" used only once'
 	    $Petal::CPT::VAR1 if (0);
@@ -516,7 +516,7 @@ sub _code_memory_cached
 	else
 	{
 	    eval "$code_perl";
-	    confess $@ if (defined $@ and $@);
+	    confess $self->_code_with_line_numbers."\n$@" if $@;
 	    $code = $VAR1;
 	}
 	
