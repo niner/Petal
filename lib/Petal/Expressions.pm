@@ -239,7 +239,7 @@ expression:
   string:$foo/bar, ${baz/buz/blah}
 
 Petal::Hash will compute it once, and then for subsequent accesses to that
-expression returns always the same value. This is almost never a problem, even
+expression always return the same value. This is almost never a problem, even
 for loops because a new Petal::Hash object is used for each iteration in order
 to support proper scoping.
 
