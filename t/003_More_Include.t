@@ -16,8 +16,8 @@ my $template_file = 'register_form.tmpl';
 my $template = new Petal ($template_file);
 
 # $template::PARSER does not work, but $Petal::PARSER does!
-$Petal::PARSER = 'HTML';
-($Petal::PARSER eq 'HTML') ? print "ok 2\n" : print "not ok 2\n";
+$Petal::INPUT = 'HTML';
+($Petal::INPUT eq 'HTML') ? print "ok 2\n" : print "not ok 2\n";
 
 my $data_ref = $template->_file_data_ref;
 $data_ref  = $template->_canonicalize;

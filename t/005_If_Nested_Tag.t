@@ -19,7 +19,7 @@ my $template = new Petal ($template_file);
 ($template->process (error => 'Some error message') =~ /Some error message/) ? print "ok 3\n" : print "not ok 3\n";
 
 
-$Petal::PARSER = 'HTML';
+$Petal::INPUT = 'HTML';
 $template_file = 'if.html';
 $template = new Petal ($template_file); 
 

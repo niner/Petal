@@ -51,6 +51,8 @@ use Petal::Cache::Disk;
 use Petal::Cache::Memory;
 use Petal::Parser::XMLWrapper;
 use Petal::Parser::HTMLWrapper;
+use Petal::Canonicalizer::XML;
+use Petal::Canonicalizer::XHTML;
 use strict;
 use warnings;
 use Carp;
@@ -66,22 +68,36 @@ use vars qw /@tokens @nodeStack/;
 
 =head2 Description
 
-$PARSER - Currently acceptable values are
+$INPUT - Currently acceptable values are
 
-  'XML'  - Petal will use XML::Parser to parse the template
-  'HTML' - Petal will use HTML::TreeBuilder to parse the template
-  'ANY'  - Petal will try with XML::Parser first, then with
-           HTML::TreeBuilder if XML::Parser fails to parse the source
-           template file.
+  'XML'   - Petal will use XML::Parser to parse the template
+  'HTML'  - Petal will use HTML::TreeBuilder to parse the template
+  'XHTML' - Alias for 'HTML'
 
 This variable defaults to 'XML'.
 
 =cut
-our $PARSER = 'XML';
-our $PARSERS = {
-    'XML'  => 'Petal::Parser::XMLWrapper',
-    'HTML' => 'Petal::Parser::HTMLWrapper',
-    'ANY'  => [ 'Petal::Parser::XMLWrapper', 'Petal::Parser::HTMLWrapper' ],
+our $INPUT  = 'XML';
+our $INPUTS = {
+    'XML'   => 'Petal::Parser::XMLWrapper',
+    'HTML'  => 'Petal::Parser::HTMLWrapper',
+    'XHTML' => 'Petal::Parser::HTMLWrapper',
+};
+
+
+=pod
+
+$OUTPUT - Currently acceptable values are
+
+  'XML'   - Petal will output generic XML
+  'XHTML' - Same as XML except for tags like <br /> or <input />
+
+=cut
+our $OUTPUT  = 'XML';
+our $OUTPUTS = {
+    'XML'   => 'Petal::Canonicalizer::XML',
+    'HTML'  => 'Petal::Canonicalizer::XHTML',
+    'XHTML' => 'Petal::Canonicalizer::XHTML',
 };
 
 
@@ -318,6 +334,9 @@ sub _code_memory_cached
 	    my $cpt = Safe->new ("Petal::CPT");
 	    $cpt->reval($code_perl);
 	    die $@ if ($@);
+	    
+	    # remove silly warning '"Petal::CPT::VAR1" used only once'
+	    $Petal::CPT::VAR1 if (0);
 	    $code = $Petal::CPT::VAR1;
 	}
 	else
@@ -351,25 +370,12 @@ sub _memory_cache
 sub _canonicalize
 {
     my $self = shift;
-    my $parser_type = $PARSER;
-    my $parser_module_name = shift || $PARSERS->{$parser_type};
-    if (ref $parser_module_name)
-    {
-	foreach my $modname ( @{$parser_module_name} )
-	{
-	    my $result;
-	    eval { $result = $self->_canonicalize ($modname) };
-	    if (defined $@ and $@) { warn "BAD TEMPLATE: $@" }
-	    else                   { return $result          }
-	}
-	confess "No suitable parse module could be found";
-    }
-    else
-    {
-	my $parser = $parser_module_name->new;
-	my $data_ref = $self->_file_data_ref;
-	return Petal::Canonicalizer->process ($parser, $data_ref);
-    }
+    my $parser_type        = $INPUTS->{$INPUT}   || confess "unknown \$Petal::INPUT = $INPUT";
+    my $canonicalizer_type = $OUTPUTS->{$OUTPUT} || confess "unknown \$Petal::OUTPUT = $OUTPUT";
+    
+    my $data_ref = $self->_file_data_ref;
+    my $parser = $parser_type->new;
+    return $canonicalizer_type->process ($parser, $data_ref);
 }
 
 

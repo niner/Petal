@@ -15,7 +15,7 @@ $Petal::BASE_DIR = './t/data/';
 $Petal::DISK_CACHE = 0;
 $Petal::MEMORY_CACHE = 0;
 $Petal::TAINT = 1;
-$Petal::PARSER = 'HTML';
+$Petal::INPUT = 'HTML';
 my $template = new Petal ('string.xml');
 
 my $string = $template->process (

@@ -16,7 +16,7 @@ $Petal::TAINT = 1;
 my $template_file = 'test.tmpl';
 my $template = new Petal ($template_file);
 
-$Petal::PARSER = 'HTML';
+$Petal::INPUT = 'HTML';
 
 my $hash = {
 	first_name => "William",

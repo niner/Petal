@@ -1,15 +1,22 @@
 =head1 NAME
 
-Petal::Canonicalizer - a class which builds a canonical
-XML file from a XML / HTML / whatever parser's events. The canonical
-file can then be sent to the Petal::CodeGenerator module.
+Petal::Canonicalizer::XML - Builds an XML canonical Petal file
 
 =head1 DESCRIPTION
 
 This modules mainly implements the XML::Parser 'Stream' interface.
+It receives XML events and builds Petal canonical data, i.e.
+
+  <foo petal:if="bar">Hello</foo>
+
+Might be canonicalized to something like
+
+  <?petal:if name="bar"?>
+    <foo>Hello</foo>
+  <?petal:end?>
 
 =cut
-package Petal::Canonicalizer;
+package Petal::Canonicalizer::XML;
 use strict;
 use warnings;
 
@@ -33,14 +40,14 @@ sub process
     
     # take the existing processing instructions out and replace
     # them with temporary xml-friendly handlers
-    my $pis = _processing_instructions_out ($data_ref);
-    local @Result;
-    local @NodeStack;
+    my $pis = $class->_processing_instructions_out ($data_ref);
+    local @Result = ();
+    local @NodeStack = ();
     
-    $parser->process ($data_ref);
+    $parser->process ($class, $data_ref);
     
     my $res = join '', @Result;
-    _processing_instructions_in (\$res, $pis);
+    $class->_processing_instructions_in (\$res, $pis);
     return \$res;
 }
 
@@ -59,8 +66,9 @@ sub process
 #   them separately
 sub _processing_instructions_out
 {
+    my $class = shift;
     my $data_ref = shift;
-    my %pis = map { $_ => _compute_unique_string ($data_ref) } $$data_ref =~ /(<\?.*?\?>)/gsm;
+    my %pis = map { $_ => $class->_compute_unique_string ($data_ref) } $$data_ref =~ /(<\?.*?\?>)/gsm;
     
     while (my ($key, $value) = each %pis) {
 	$$data_ref =~ s/\Q$key\E/$value/gsm;
@@ -77,6 +85,7 @@ sub _processing_instructions_out
 #   pointed by $data_ref
 sub _processing_instructions_in
 {
+    my $class = shift;
     my $data_ref = shift;
     my $pis = shift;
     while (my ($key, $value) = each %{$pis}) {
@@ -90,6 +99,7 @@ sub _processing_instructions_in
 #   computes a string which does not exist in $$data_ref
 sub _compute_unique_string
 {
+    my $class = shift;
     my $data_ref = shift;
     my $string = '[--' . (join '', map { chr (ord ('a') + int rand 26) } 1..20) . '--]';
     while (index ($$data_ref, $string) >= 0)
@@ -97,29 +107,6 @@ sub _compute_unique_string
 	$string = '[--' . (join '', map { chr (ord ('a') + int rand 26) } 1..20) . '--]';
     }
     return $string;
-}
-
-
-=head1 XML::Parser functions
-
-These are meant to implement the XML::Parser 'Stream' interface
-
-=head2 StartDocument
-
-Initializes the local variables @Result and @NodeStack.
-
-@NodeStack keeps track of the current parsing state (so that the state
-of the parent nodes can be remembered without having to build a full
-DOM tree).
-
-@Result keeps the results, so that join '', @result will represent the
-canonical data to return when the parsing is over.
-
-=cut
-sub StartDocument
-{
-    @Result = ();
-    @NodeStack = ();
 }
 
 
@@ -140,23 +127,25 @@ Is rewritten
 =cut
 sub StartTag
 {
+    my $class = shift;
+    
     push @NodeStack, {};
-    return if (_is_inside_content_or_replace());
+    return if ($class->_is_inside_content_or_replace());
     
     my $tag = $_;
     ($tag) = $tag =~ /^<\s*(\w*)/;
     my $att = { %_ };
     
-    _define ($tag, $att);
-    _condition ($tag, $att);
-    _repeat ($tag, $att);
-    _replace ($tag, $att);
+    $class->_define ($tag, $att);
+    $class->_condition ($tag, $att);
+    $class->_repeat ($tag, $att);
+    $class->_replace ($tag, $att);
     
     # if a petal:replace attribute was set, then at this point _is_inside_content_or_replace()
     # should return TRUE and this code should not be executed
-    unless (_is_inside_content_or_replace())
+    unless ($class->_is_inside_content_or_replace())
     {
-	_attributes ($tag, $att);
+	$class->_attributes ($tag, $att);
 	
 	# for every attribute which is not a petal: attribute,
 	# we need to convert $variable into <?petal:var name="variable"?>
@@ -178,7 +167,7 @@ sub StartTag
 	}
 	my $att_str = join " ", map { $_ . '=' . "\"$att->{$_}\"" } grep (!/^petal:/, keys %{$att});
 	push @Result, (defined $att_str and $att_str) ? "<$tag $att_str>" : "<$tag>";
-	_content ($tag, $att);
+	$class->_content ($tag, $att);
     }
 }
 
@@ -200,6 +189,7 @@ If the starting LI used a loop, i.e. <li petal:loop="element list">
 =cut
 sub EndTag
 {
+    my $class = shift;
     my ($tag) = $_ =~ /^<\/\s*(\w*)/;
     my $node = pop (@NodeStack);
     
@@ -218,7 +208,8 @@ Turns all variables such as $foo:bar into <?petal var name=":foo bar"?>
 =cut
 sub Text
 {
-    return if (_is_inside_content_or_replace());
+    my $class = shift;
+    return if ($class->_is_inside_content_or_replace());
     my $text = $_;
     my @vars = $text =~ /((?<!\\)\$(?:\w|\.|\:|\/)+)/g;
     my %vars = map { $_ => 1 } @vars;
@@ -240,6 +231,7 @@ sub Text
 #   'content' or a 'replace' attribute set.
 sub _is_inside_content_or_replace
 {
+    my $class = shift;
     for (my $i=@NodeStack - 1; $i >= 0; $i--)
     {
 	return 1 if ( defined $NodeStack[$i]->{replace} or
@@ -257,6 +249,7 @@ sub _is_inside_content_or_replace
 #   into ("href document.uri", "lang document.lang", "xml:lang document.lang")
 sub _split_expression
 {
+    my $class = shift;
     return map { s/^(\s|\n|\r)+//sm;
 		 s/(\s|\n|\r)+$//sm;
 		 (defined $_ and $_) ? $_ : () } split /(\s|\r|\n)*\;(\s|\r|\n)*/ms, shift;
@@ -269,14 +262,15 @@ sub _split_expression
 #   canonical <?petal:var name=":set [name] [expression]"?>
 sub _define
 {
-    return if (_is_inside_content_or_replace());
+    my $class = shift;
+    return if ($class->_is_inside_content_or_replace());
     my $tag = shift;
     my $att = shift;
     my $expr = delete $att->{'petal:set'}    ||
                delete $att->{'petal:def'}    ||
                delete $att->{'petal:define'} || return;
     
-    push @Result, map { "<?petal:var name=\"set: $_\"?>" } _split_expression ($expr);
+    push @Result, map { "<?petal:var name=\"set: $_\"?>" } $class->_split_expression ($expr);
     return 1;
 }
 
@@ -287,13 +281,14 @@ sub _define
 #   <?petal:if name="[expression]"?><tag>
 sub _condition
 {
-    return if (_is_inside_content_or_replace());
+    my $class = shift;
+    return if ($class->_is_inside_content_or_replace());
     my $tag = shift;
     my $att = shift;
     my $expr = delete $att->{'petal:if'}        ||
                delete $att->{'petal:condition'} || return;
 
-    my @new = map { "<?petal:if name=\"$_\"?>" } _split_expression ($expr);
+    my @new = map { "<?petal:if name=\"$_\"?>" } $class->_split_expression ($expr);
     push @Result, @new;
     $NodeStack[$#NodeStack]->{condition} = scalar @new;
     return 1;
@@ -306,7 +301,8 @@ sub _condition
 #   <?petal:loop name="[name] [expression]"?><tag>
 sub _repeat
 {
-    return if (_is_inside_content_or_replace());
+    my $class = shift;
+    return if ($class->_is_inside_content_or_replace());
     my $tag = shift;
     my $att = shift;
     my $expr = delete $att->{'petal:for'}     ||
@@ -314,7 +310,7 @@ sub _repeat
                delete $att->{'petal:loop'}    ||
                delete $att->{'petal:repeat'}  || return;
     
-    my @exprs = _split_expression ($expr);
+    my @exprs = $class->_split_expression ($expr);
     my @new = ();
     foreach $expr (@exprs)
     {
@@ -333,7 +329,8 @@ sub _repeat
 #   All the descendent nodes of 'tag' will be skipped
 sub _replace
 {
-    return if (_is_inside_content_or_replace());
+    my $class = shift;
+    return if ($class->_is_inside_content_or_replace());
     my $tag = shift;
     my $att = shift;
     my $expr = delete $att->{'petal:replace'} ||
@@ -351,7 +348,8 @@ sub _replace
 #   as <tag name1="<?var name="[expression]"?>
 sub _attributes
 {
-    return if (_is_inside_content_or_replace());
+    my $class = shift;
+    return if ($class->_is_inside_content_or_replace());
     my $tag = shift;
     my $att = shift;
     my $expr = delete $att->{'petal:att'}        ||
@@ -359,7 +357,7 @@ sub _attributes
                delete $att->{'petal:atts'}       ||
 	       delete $att->{'petal:attributes'} || return;
     
-    foreach my $string (_split_expression ($expr))
+    foreach my $string ($class->_split_expression ($expr))
     {
 	next unless (defined $string);
 	next if ($string =~ /^\s*$/);
@@ -376,13 +374,14 @@ sub _attributes
 #   All the descendent nodes of 'tag' will be skipped
 sub _content
 {
-    return if (_is_inside_content_or_replace());
+    my $class = shift;
+    return if ($class->_is_inside_content_or_replace());
     my $tag = shift;
     my $att = shift;
     my $expr = delete $att->{'petal:content'}  ||
                delete $att->{'petal:contents'} ||
 	       delete $att->{'petal:inner'}    || return;
-    my @new = map { "<?petal:var name=\"$_\"?>" } _split_expression ($expr);
+    my @new = map { "<?petal:var name=\"$_\"?>" } $class->_split_expression ($expr);
     push @Result, @new;
     $NodeStack[$#NodeStack]->{content} = 'true';
     return 1;

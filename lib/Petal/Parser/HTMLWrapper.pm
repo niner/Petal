@@ -13,12 +13,14 @@ package Petal::Parser::HTMLWrapper;
 use strict;
 use warnings;
 use Carp;
-
-use Petal::Canonicalizer;
 use HTML::TreeBuilder;
 use HTML::Parser;
 
-use vars qw /@NodeStack @MarkedData/;
+use Petal::Canonicalizer::XML;
+use Petal::Canonicalizer::XHTML;
+
+
+use vars qw /@NodeStack @MarkedData $Canonicalizer/;
 
 
 sub new
@@ -32,6 +34,7 @@ sub new
 sub process
 {
     my $self = shift;
+    local $Canonicalizer = shift;
     my $data_ref = shift;
     
     local @MarkedData = ();
@@ -107,7 +110,7 @@ sub generate_events_start
     %_ = %{shift()};
     delete $_{'petal:mark'};
     delete $_{'/'};
-    Petal::Canonicalizer::StartTag();
+    $Canonicalizer->StartTag();
 }
 
 
@@ -115,7 +118,7 @@ sub generate_events_end
 {
     $_ = shift;
     $_ = "</$_>";
-    Petal::Canonicalizer::EndTag();
+    $Canonicalizer->EndTag();
 }
 
 
@@ -127,7 +130,7 @@ sub generate_events_text
     $data =~ s/\>/&gt;/g;
     $data =~ s/\"/&quot;/g;
     $_ = $data;
-    Petal::Canonicalizer::Text();    
+    $Canonicalizer->Text();    
 }
 
 

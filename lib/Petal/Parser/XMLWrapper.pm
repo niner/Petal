@@ -12,9 +12,11 @@ package Petal::Parser::XMLWrapper;
 use strict;
 use warnings;
 
-use Petal::Canonicalizer;
+use Petal::Canonicalizer::XML;
+use Petal::Canonicalizer::XHTML;
 use XML::Parser;
 
+use vars qw /$Canonicalizer/;
 
 sub new
 {
@@ -27,16 +29,23 @@ sub new
 sub process
 {
     my $self = shift;
+    local $Canonicalizer = shift;
+    
     my $data_ref = shift;
     $data_ref = (ref $data_ref) ? $data_ref : \$data_ref;
     
     my $parser = new XML::Parser (
 	Style => 'Stream',
-	Pkg   => 'Petal::Canonicalizer'
+	Pkg   => ref $self,
        );
     
     $parser->parse ($$data_ref);
 }
+
+
+sub StartTag      { $Canonicalizer->StartTag() }
+sub EndTag        { $Canonicalizer->EndTag()   }
+sub Text          { $Canonicalizer->Text()     }
 
 
 1;
