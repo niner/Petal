@@ -58,6 +58,8 @@ use base qw /Petal::Canonicalizer::XML/;
 #   <?petal:if name="blah"?><foo>...
 sub StartTag
 {
+    Petal::load_code_generator(); # we will use it later
+
     my $class = shift;
     push @Petal::Canonicalizer::XML::NodeStack, {};
     return if ($class->_is_inside_content_or_replace());

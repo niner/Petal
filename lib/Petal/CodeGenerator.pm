@@ -59,6 +59,33 @@ sub comp_expr
 	return "\$hash->get ('$expr')";
 }
 
+
+# $class->code_header();
+# ----------------------
+# This generates the beginning of the anonymous subroutine.
+sub code_header
+{
+    my $class = shift;
+    $class->add_code("\$VAR1 = sub {");
+    $indent++;
+    $class->add_code("my \$hash = shift;");
+    $class->add_code("my ".$class->_init_res.";");
+    $class->add_code('local $^W = 0;') unless $Petal::WARN_UNINIT;
+}
+
+
+# $class->code_footer();
+# ----------------------
+# This generates the tail of the anonymous subroutine
+sub code_footer
+{
+    my $class = shift;
+    $class->add_code("return ". $class->_final_res() .";");
+    $indent--;
+    $class->add_code("};");
+}
+
+
 # $class->process ($data_ref, $petal_object);
 # -------------------------------------------
 # This (too big) subroutine converts the canonicalized template
@@ -79,12 +106,8 @@ sub process
     local $token = undef;
     local $my_array = {};
     
-    $class->add_code("\$VAR1 = sub {");
-    $indent++;
-    $class->add_code("my \$hash = shift;");
-    $class->add_code("my ".$class->_init_res.";");
-    $class->add_code('local $^W = 0;') unless $Petal::WARN_UNINIT;
-    
+    $class->code_header();
+
     foreach $token (@{$tokens})
     {
         if ($token =~ /$PI_RE/)
@@ -137,10 +160,7 @@ sub process
         }
     }
     
-    $class->add_code("return ". $class->_final_res() .";");
-    $indent--;
-    $class->add_code("};");
-    
+    $class->code_footer();
     return join "\n", @code;
 }
 

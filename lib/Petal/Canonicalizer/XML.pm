@@ -134,6 +134,8 @@ sub _compute_unique_string
 #   <?petal:if name="blah"?><foo>...
 sub StartTag
 {
+    Petal::load_code_generator(); # we will use it later
+
     my $class = shift;
     push @NodeStack, {};
     return if ($class->_is_inside_content_or_replace());

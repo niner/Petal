@@ -6,7 +6,6 @@
 # ------------------------------------------------------------------
 package Petal;
 use Petal::Hash;
-use Petal::CodeGenerator;
 use Petal::Cache::Disk;
 use Petal::Cache::Memory;
 use Petal::Parser::XMLWrapper;
@@ -77,7 +76,7 @@ our $VERSION = '0.94';
 # The CodeGenerator class backend to use.
 # Change this only if you know what you're doing.
 our $CodeGenerator = 'Petal::CodeGenerator';
-
+our $CodeGeneratorLoaded = 0;
 
 # Default language for multi-language mode.
 # Change if you feel that English isn't a fair default.
@@ -129,6 +128,15 @@ sub main::lcode
     print Petal->new ($file)->_code_with_line_numbers;
 }
 
+sub load_code_generator
+{
+	if (not $CodeGeneratorLoaded)
+	{
+	    eval "require $CodeGenerator";
+	    confess "Failed to load $CodeGenerator, $@" if $@;
+	    $CodeGeneratorLoaded = 1;
+	}
+}
 
 # Instanciates a new Petal object.
 sub new
@@ -398,6 +406,8 @@ sub _code_disk_cached
     {
 	my $data_ref = $self->_file_data_ref;
 	$data_ref    = $self->_canonicalize;
+
+	load_code_generator();
 	$code = $CodeGenerator->process ($data_ref, $self);
 	Petal::Cache::Disk->set ($file, $code) if (defined $DISK_CACHE and $DISK_CACHE);
     }
