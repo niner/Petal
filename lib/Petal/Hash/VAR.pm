@@ -94,7 +94,7 @@ sub process
 	    if (scalar @path == 0 and scalar @args > 0)
 	    {
 		confess "Cannot invoke $next on $argument"
-		    unless ($current->can ($next));
+		    unless ($current->can ($next) or $current->can ('AUTOLOAD'));
 		
 		$current = $current->$next (@args);
 	    }

@@ -1,5 +1,10 @@
 Revision history for Petal.
 
+0.63
+	- Fixed Petal not invoking methods which are defined via AUTOLOAD
+	- Changed Petal::Canonicalizer::_split_expression to work with Perl 5.8.0
+	- Changed Petal::Canonicalizer::_split_expression to remove warnings
+
 0.62 Fri Aug 16 11:17:10 2002
 	- Added tests
 	- Fixed entity bug due to XML::Parser expanding entities

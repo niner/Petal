@@ -282,9 +282,13 @@ sub _is_inside_content_or_replace
 sub _split_expression
 {
     my $class = shift;
+    my $expression = shift;
+    my @tokens = map { (defined $_ and $_) ? $_ : () }
+                 split /(\s|\r|\n)*\;(\s|\r|\n)*/ms, $expression;
+    
     return map { s/^(\s|\n|\r)+//sm;
 		 s/(\s|\n|\r)+$//sm;
-		 (defined $_ and $_) ? $_ : () } split /(\s|\r|\n)*\;(\s|\r|\n)*/ms, shift;
+		 $_ } @tokens;
 }
 
 
