@@ -161,6 +161,7 @@ If the starting LI used a loop, i.e. <li petal:loop="element list">
 sub EndTag
 {
     my $class = shift;
+    return if ($class->_is_inside_content_or_replace ( 'endtag' ));
     my ($tag) = $_ =~ /^<\/\s*((?:\w|:)*)/;
     my $node = pop (@Petal::Canonicalizer::XML::NodeStack);
     

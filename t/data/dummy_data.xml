@@ -1,0 +1,8 @@
+<xml>
+  <test petal:if="something" petal:content="somestuff">
+    <a href="dummy">dummy</a>
+  </test>
+  <test petal:if="something" petal:replace="somestuff">
+    <a href="dummy">dummy</a>
+  </test>
+</xml>

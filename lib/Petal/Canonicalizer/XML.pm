@@ -212,6 +212,8 @@ If the starting LI used a loop, i.e. <li petal:loop="element list">
 sub EndTag
 {
     my $class = shift;
+    return if ($class->_is_inside_content_or_replace ( 'endtag' ));
+    
     my ($tag) = $_ =~ /^<\/\s*((?:\w|:)*)/;
     my $node = pop (@NodeStack);
     
@@ -253,12 +255,16 @@ sub Text
 #   'content' or a 'replace' attribute set.
 sub _is_inside_content_or_replace
 {
-    my $class = shift;
+    my $class  = shift;
+    my $endtag = shift;
+    my $tmp    = undef;
+    $tmp = pop (@NodeStack) if ($endtag);
     for (my $i=@NodeStack - 1; $i >= 0; $i--)
     {
 	return 1 if ( defined $NodeStack[$i]->{replace} or
 		      defined $NodeStack[$i]->{content} )
     }
+    push @NodeStack, $tmp if (defined $tmp);
     return;
 }
 
