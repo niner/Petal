@@ -5,6 +5,22 @@
 # Description: This class manages the context objects, which holds
 # objects which are accessable from the template.
 # ------------------------------------------------------------------
+package Petal::Hash_Repeat;
+use strict;
+use warnings;
+
+our $CUR = undef;
+our $MAX = undef;
+
+sub number { $CUR + 1 }
+sub index  { $CUR }
+sub even   { not $CUR % 2 }
+sub odd    { $CUR % 2 }
+sub start  { not $CUR }
+sub end    { $CUR == $MAX }
+sub inner  { $CUR and $CUR < $MAX }
+
+
 package Petal::Hash;
 use strict;
 use warnings;
@@ -101,6 +117,7 @@ sub new
 	bless { @_ }, $thing;
     
     $self->{__petal_hash_cache__}  = {};
+    $self->{repeat} = bless {}, 'Petal::Hash_Repeat';
     return $self;
 }
 
@@ -117,6 +134,17 @@ sub get
     my $res = $self->__FETCH ($key);
     $self->{__petal_hash_cache__}->{$key} = $res;
     return $res;
+}
+
+
+sub delete_cached
+{
+    my $self  = shift;
+    my $regex = shift;
+    for (keys %{$self->{__petal_hash_cache__}})
+    {
+	/$regex/ and delete $self->{__petal_hash_cache__}->{$_};
+    }
 }
 
 

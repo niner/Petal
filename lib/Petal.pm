@@ -497,7 +497,7 @@ sub _code_memory_cached
 	my $code_perl = $self->_code_disk_cached;
         my $VAR1 = undef;
 	
-	if ($TAINT)
+	if (0) # if ($TAINT) - doesn't work with repeat object
 	{
 	    # important line, don't remove
 	    ($code_perl) = $code_perl =~ m/^(.+)$/s;
@@ -505,9 +505,10 @@ sub _code_memory_cached
 	    $cpt->permit ('entereval');
 	    $cpt->permit ('leaveeval');
 	    $cpt->permit ('require');
+	    $cpt->share_from ( 'Petal::Hash_Repeat', [ qw /$CUR $MAX/ ] );
 	    
 	    $cpt->reval($code_perl);
-	    confess($self->_code_with_line_numbers."\n$@") if $@;
+	    confess ($@ . "\n" . $self->_code_with_line_numbers) if $@;
 	    
 	    # remove silly warning '"Petal::CPT::VAR1" used only once'
 	    $Petal::CPT::VAR1 if (0);
@@ -516,7 +517,7 @@ sub _code_memory_cached
 	else
 	{
 	    eval "$code_perl";
-	    confess $self->_code_with_line_numbers."\n$@" if $@;
+	    confess ($@ . "\n" . $self->_code_with_line_numbers) if $@;
 	    $code = $VAR1;
 	}
 	
@@ -1463,12 +1464,13 @@ C<user> variable which would be outside the loop. The template engine also
 provides the following variables for you inside the loop:
 
   <?repeat name="foo bar"?>
-    <?var name="__count__"?>    - iteration number, starting at 1
-    <?var name="__is_first__"?> - is it the first iteration?
-    <?var name="__is_last__"?>  - is it the last iteration?
-    <?var name="__is_inner__"?> - is it not the first and not the last iteration?
-    <?var name="__even__ "?>    - is the count even?
-    <?var name="__odd__"?>      - is the count odd?
+    <?var name="repeat/index"?>  - iteration number, starting at 0
+    <?var name="repeat/number"?> - iteration number, starting at 1
+    <?var name="repeat/start"?>  - is it the first iteration?
+    <?var name="repeat/end"?>    - is it the last iteration?
+    <?var name="repeat/inner"?>  - is it not the first and not the last iteration?
+    <?var name="repeat/even"?>   - is the count even?
+    <?var name="repeat/odd"?>    - is the count odd?
   <?end?>
 
 Again these variables are scoped, you can safely nest loops, ifs etc...  as
@@ -1709,7 +1711,11 @@ XML::Parser is deprecated and should be replaced by SAX handlers at some point.
 
 =head1 AUTHOR
 
-Copyright 2002 - Jean-Michel Hiver <jhiver@mkdoc.com> 
+Copyright 2003 - MKDoc Holdings Ltd.
+
+Authors: Jean-Michel Hiver <jhiver@mkdoc.com>, 
+         Fergal Daly <fergal@esatclear.ie>,
+	 and others.
 
 This module free software and is distributed under the same license as Perl
 itself. Use it at your own risk.

@@ -13,7 +13,7 @@ pass("loaded");
 my $template_file = 'string_count.html';
 $Petal::DISK_CACHE = 0;
 $Petal::MEMORY_CACHE = 0;
-$Petal::TAINT = 1;
+$Petal::TAINT = 1; 
 $Petal::BASE_DIR = 't/data';
 $Petal::INPUT = "HTML";
 $Petal::OUTPUT = "XHTML";
@@ -37,6 +37,7 @@ my $hash = {
 				],
 };
 
+# print $template->_code_with_line_numbers();
 my $html = $template->process($hash);
 like($html, '/1 - William/');
 like($html, '/2 - Elizabeth/');
