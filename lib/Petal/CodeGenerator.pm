@@ -59,6 +59,7 @@ sub process
           CASE:
             for ($token_name)
 	    {
+                /^attr$/      and do { $class->_attr;    last CASE };
                 /^include$/   and do { $class->_include; last CASE };
 		/^var$/       and do { $class->_var;     last CASE };
 		/^if$/        and do { $class->_if;      last CASE };
@@ -148,6 +149,33 @@ sub _if
     
     $variable =~ s/\'/\\\'/g;
     push @code, ("    " x $indent . "if (\$hash->{'$variable'}) {");
+    $indent++;
+}
+
+
+# $class->_attr;
+# --------------
+#   process a <?petal:attr name="blah"?> statement
+sub _attr
+{
+    my $attribute = $token_hash{name} or
+        confess "Cannot parse $token : 'name' attribute is not defined";
+
+    my $variable = $token_hash{value} or
+        confess "Cannot parse $token : 'value' attribute is not defined";
+    
+    (defined $variable and $variable) or
+        confess "Cannot parse $token : 'value' attribute is not defined";
+    
+    # set the variable in the $variables hash
+    my $tmp = $variable;
+    $tmp =~ s/\..*//;
+    $variables->{$tmp} = 1;
+    
+    $variable =~ s/\'/\\\'/g;
+    push @code, ("    " x $indent . "if (\$hash->{'$variable'}) {");
+    push @code, ("    " x ++$indent . "push \@res, $attribute . '=\"' . \$hash->{'$variable'} . '\"'");
+    push @code, ("    " x --$indent . "}");
     $indent++;
 }
 

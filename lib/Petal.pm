@@ -138,7 +138,7 @@ our $MEMORY_CACHE = 1;
 
 
 # $VERSION is internal, thanks
-our $VERSION = '0.5';
+our $VERSION = '0.51';
 
 
 =head2 Example

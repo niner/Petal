@@ -101,8 +101,23 @@ sub StartTag
 	    }
 	    $att->{$key} = $text;
 	}
-	my $att_str = join " ", map { $_ . '=' . "\"$att->{$_}\"" } grep (!/^petal:/, keys %{$att});
 
+	my @att_str = ();
+	foreach my $key (keys %{$att})
+	{
+	    next if ($key =~ /^petal:/);
+	    my $value = $att->{$key};
+	    if ($value =~ /^<\?petal:attr/)
+	    {
+		push @att_str, $value;
+	    }
+	    else
+	    {
+		push @att_str, $key . '=' . "\"$value\"";
+	    }
+	}
+	my $att_str = join " ", @att_str;
+	
 	if ( (uc ($tag) eq 'AREA')     or 
 	     (uc ($tag) eq 'BASE')     or 
 	     (uc ($tag) eq 'BASEFONT') or 
