@@ -74,9 +74,7 @@ And that's it! Easy, huh?
 
 =head1 AUTHOR
 
-Jean-Michel Hiver (jhiver@mkdoc.com)
-
-(c) 2002 Webarchitects Holdings Ltd - All Rights Reserved.
+Jean-Michel Hiver <jhiver@mkdoc.com>
 
 This module is redistributed under the same license as Perl itself.
 

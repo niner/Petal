@@ -408,9 +408,7 @@ sub _content
 
 =head1 AUTHOR
 
-Jean-Michel Hiver (jhiver@mkdoc.com)
-
-(c) 2002 Webarchitects Holdings Ltd, all rights reserved.
+Jean-Michel Hiver <jhiver@mkdoc.com>
 
 This module is redistributed under the same license as Perl itself. 
 

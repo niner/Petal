@@ -231,3 +231,12 @@ sub _tokenize
 
 
 __END__
+
+
+=head1 AUTHOR
+
+Jean-Michel Hiver <jhiver@mkdoc.com>
+
+This module is redistributed under the same license as Perl itself.
+
+=cut

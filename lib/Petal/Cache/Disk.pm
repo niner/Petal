@@ -14,8 +14,8 @@ Petal::Cache::Disk - Caches generated code on disk.
 
 =head1 DESCRIPTION
 
-  A simple cache module to avoid re-generating the Perl
-  code from the template file every time
+  A simple cache module to avoid re-generating the Perl code from the
+template file every time
 
 =cut
 package Petal::Cache::Disk;
@@ -200,3 +200,12 @@ sub tmp
 
 
 __END__
+
+
+=head1 AUTHOR
+
+Jean-Michel Hiver <jhiver@mkdoc.com>
+
+This module is redistributed under the same license as Perl itself.
+
+=cut
