@@ -233,10 +233,18 @@ sub process
     my $coderef = $self->_code_memory_cached;
     my $res = undef;
     eval { $res = $coderef->($hash) };
-    if (defined $@ and $@) { confess $@ . "\n===\n\n" . $self->_code_with_line_numbers }
+    $self->_handle_error ($@) if (defined $@ and $@);
+
     return $res;
 }
 
+
+sub _handle_error
+{
+    my $self = shift;
+    my $error = shift;
+    confess $error . "\n===\n\n" . $self->_code_with_line_numbers;
+}
 
 # $self->code_with_line_numbers;
 # ------------------------------

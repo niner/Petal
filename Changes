@@ -1,5 +1,9 @@
 Revision history for Petal.
 
+0.93
+	- Fixed petal:set and cached values bug
+	- Changed error handling so that it's subclassable
+
 0.92 Tue Apr 22 14:01:56 2003
 	- Tweaked the multi-lingual mechanism a little bit
 	- Applied Fergal Daly's tests2.patch file
