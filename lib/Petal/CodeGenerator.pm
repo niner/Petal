@@ -16,6 +16,7 @@ use strict;
 use warnings;
 use Carp;
 
+our $PI_RE = '^<\?(?:\s|\r|\n)*(attr|include|var|if|condition|else|repeat|loop|foreach|for|end|eval|endeval).*?\?>$';
 use vars qw /$petal_object $tokens $variables @code $indent $token_name %token_hash $token $my_array/;
 
 
@@ -32,7 +33,7 @@ sub process
     my $class = shift;
     my $data_ref = shift;
     
-    local $petal_object = shift || die "$class::process: \$petal_object was not defined";
+    local $petal_object = shift || die "$class::" . "process: \$petal_object was not defined";
     
     local $tokens = $class->_tokenize ($data_ref);
     local $variables = {};
@@ -50,9 +51,9 @@ sub process
     
     foreach $token (@{$tokens})
     {
-        if ($token =~ /^<\?petal:.*?\?>$/)
+        if ($token =~ /$PI_RE/)
         {
-	    ($token_name) = $token =~ /<\?petal:\s*([a-z]+)/;
+	    ($token_name) = $token =~ /$PI_RE/;
 	    my @atts1 = $token =~ /(\S+)\=\"(.*?)\"/gos;
 	    my @atts2 = $token =~ /(\S+)\=\'(.*?)\'/gos;
 	    %token_hash = (@atts1, @atts2); 
@@ -75,6 +76,8 @@ sub process
 		/^loop$/      and do { $class->_for;     last CASE };
 		/^foreach$/   and do { $class->_for;     last CASE };
 		/^for$/       and do { $class->_for;     last CASE };
+		/^eval$/      and do { $class->_eval;    last CASE };
+		/^endeval$/   and do { $class->_endeval; last CASE };
 		
 		/^end$/ and do
                 {
@@ -108,7 +111,7 @@ sub process
 
 # $class->_include;
 # -----------------
-#   process a <?petal:include file="/foo/blah.html"?> file
+#   process a <?include file="/foo/blah.html"?> file
 sub _include
 {
     my $class = shift;    
@@ -119,7 +122,7 @@ sub _include
 
 # $class->_var;
 # -------------
-#   process a <?petal:var name="blah"?> statement
+#   process a <?var name="blah"?> statement
 sub _var
 {
     my $variable = $token_hash{name} or
@@ -140,7 +143,7 @@ sub _var
 
 # $class->_if;
 # ------------
-#   process a <?petal:if name="blah"?> statement
+#   process a <?if name="blah"?> statement
 sub _if
 {
     my $variable = $token_hash{name} or
@@ -160,9 +163,42 @@ sub _if
 }
 
 
+# $class->_eval;
+# -------------------
+#   process a <?eval?> statement
+sub _eval
+{
+    push @code, ("    " x $indent . "push \@res, eval {");    
+    $indent++;
+    push @code, ("    " x $indent . "my \@res = ();");
+    push @code, ("    " x $indent . "\$SIG{__DIE__} = sub { \$\@ = shift };");
+}
+
+
+# $class->_endeval;
+# -----------------
+#   process a <?endeval errormsg="..."?> statement
+sub _endeval
+{
+    my $variable = $token_hash{'errormsg'} or
+       confess "Cannot parse $token : 'errormsg' attribute is not defined";
+    
+    push @code, ("    " x $indent . "return \@res;");
+    $indent--;
+    push @code, ("    " x $indent . "};");
+
+    push @code, ("    " x $indent . "if (defined \$\@ and \$\@) {");
+    $indent++;
+    $variable = quotemeta ($variable);
+    push @code, ("    " x $indent . "push \@res, \"$variable\";");
+    $indent--;
+    push @code, ("    " x $indent . "}");
+}
+
+
 # $class->_attr;
 # --------------
-#   process a <?petal:attr name="blah"?> statement
+#   process a <?attr name="blah"?> statement
 sub _attr
 {
     my $attribute = $token_hash{name} or
@@ -188,7 +224,7 @@ sub _attr
 
 # $class->_else;
 # --------------
-#   process a <?petal:else name="blah"?> statement
+#   process a <?else name="blah"?> statement
 sub _else
 {
     $indent--;
@@ -200,7 +236,7 @@ sub _else
 
 # $class->_for;
 # -------------
-#   process a <?petal:for name="some_list" as="element"?> statement
+#   process a <?for name="some_list" as="element"?> statement
 sub _for
 {
     my $variable = $token_hash{name} or
@@ -247,7 +283,7 @@ sub _for
 
 
 # $class->_tokenize ($data_ref);
-# -----------------------------
+# ------------------------------
 #   Returns the data to process as a list of tokens:
 #   ( 'some text', '<% a_tag %>', 'some more text', '<% end-a_tag %>' etc.
 sub _tokenize
@@ -255,8 +291,8 @@ sub _tokenize
     my $self = shift;
     my $data_ref = shift;
     
-    my @tags  = $$data_ref =~ /(<\?petal:.*?\?>)/gs;
-    my @split = split /<\?petal:.*?\?>/s, $$data_ref;
+    my @tags  = $$data_ref =~ /(<\?.*?\?>)/gs;
+    my @split = split /(?:<\?.*?\?>)/s, $$data_ref;
     
     my $tokens = [];
     while (@split)

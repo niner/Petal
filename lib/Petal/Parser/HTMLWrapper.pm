@@ -19,8 +19,15 @@ use HTML::Parser;
 use Petal::Canonicalizer::XML;
 use Petal::Canonicalizer::XHTML;
 
-
 use vars qw /@NodeStack @MarkedData $Canonicalizer @NameSpaces/;
+
+
+# this avoid silly warnings
+sub sillyness
+{
+    $Petal::NS,
+    $Petal::NS_URI;
+}
 
 
 sub new

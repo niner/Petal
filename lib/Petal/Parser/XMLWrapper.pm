@@ -19,6 +19,14 @@ use XML::Parser;
 use vars qw /$Canonicalizer @NameSpaces/;
 
 
+# this avoid silly warnings
+sub sillyness
+{
+    $Petal::NS,
+    $Petal::NS_URI;
+}
+
+
 sub new
 {
     my $class = shift;

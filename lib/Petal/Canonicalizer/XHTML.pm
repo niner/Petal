@@ -100,7 +100,7 @@ sub StartTag
 		$command =~ s/^\{//;
 		$command =~ s/\}$//;
 		$command = Petal::XML_Encode_Decode::encode_backslash_semicolon ($command);
-		$command = "<?petal:var name=\"$command\"?>";
+		$command = "<?var name=\"$command\"?>";
 		$text =~ s/\Q$var\E/$command/g;
 	    }
 	    $att->{$key} = $text;
@@ -113,7 +113,7 @@ sub StartTag
 	{
 	    next if ($key =~ /^$petal:/);
 	    my $value = $att->{$key};
-	    if ($value =~ /^<\?petal:attr/)
+	    if ($value =~ /^<\?attr/)
 	    {
 		push @att_str, $value;
 	    }
@@ -143,8 +143,8 @@ sub StartTag
 		my $expression = $att->{"$petal:omit-tag"};
 		$Petal::Canonicalizer::XML::NodeStack[$#Petal::Canonicalizer::XML::NodeStack]->{'omit-tag'} = $expression;
 		push @Petal::Canonicalizer::XML::Result, (defined $att_str and $att_str) ?
-		    "<?petal:if name=\"$expression\"?><?petal:else?><$tag $att_str /><?petal:end?>" :
-		    "<?petal:if name=\"$expression\"?><?petal:else?><$tag /><?petal:end?>";
+		    "<?if name=\"$expression\"?><?else?><$tag $att_str /><?end?>" :
+		    "<?if name=\"$expression\"?><?else?><$tag /><?end?>";
 	    }
 	    else
 	    {
@@ -158,8 +158,8 @@ sub StartTag
 		my $expression = $att->{"$petal:omit-tag"};
 		$Petal::Canonicalizer::XML::NodeStack[$#Petal::Canonicalizer::XML::NodeStack]->{'omit-tag'} = $expression;
 		push @Petal::Canonicalizer::XML::Result, (defined $att_str and $att_str) ?
-		    "<?petal:if name=\"$expression\"?><?petal:else?><$tag $att_str><?petal:end?>" :
-		    "<?petal:if name=\"$expression\"?><?petal:else?><$tag><?petal:end?>";
+		    "<?if name=\"$expression\"?><?else?><$tag $att_str><?end?>" :
+		    "<?if name=\"$expression\"?><?else?><$tag><?end?>";
 	    }
 	    else
 	    {
@@ -212,7 +212,7 @@ sub EndTag
 	if (defined $node->{'omit-tag'})
 	{
 	    my $expression = $node->{'omit-tag'};
-	    push @Petal::Canonicalizer::XML::Result, "<?petal:if name=\"not:$expression\"?><?petal:else?></$tag><?petal:end?>";
+	    push @Petal::Canonicalizer::XML::Result, "<?if name=\"not:$expression\"?><?else?></$tag><?end?>";
 	}
 	else
 	{
@@ -222,7 +222,7 @@ sub EndTag
     
     my $repeat = $node->{repeat} || '0';
     my $condition = $node->{condition} || '0';
-    push @Petal::Canonicalizer::XML::Result, map { '<?petal:end?>' } 1 .. ($repeat+$condition);
+    push @Petal::Canonicalizer::XML::Result, map { '<?end?>' } 1 .. ($repeat+$condition);
 }
 
 

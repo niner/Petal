@@ -235,11 +235,6 @@ sub process
 	$hash = new Petal::Hash (@_);
     }
     
-    # make the hash highly magical
-    #my $hash = (@_ == 1 and ref $_[0] eq 'HASH') ?
-    #    new Petal::Hash (%{$_[0]}) :
-    #    new Petal::Hash (@_);
-    
     my $coderef = $self->_code_memory_cached;
     my $res = undef;
     eval { $res = $coderef->($hash) };
@@ -336,6 +331,7 @@ sub _file_data_ref
     # kill template comments
     $data =~ s/\<!--\?.*?\-->//gsm;
     
+    ## TOCHECK
     # if there are any <?petal:xxx ... > instead of
     # <?petal:xxx ... ?>, issuing a warning would be _good_
     my @decl =  $data =~ /(\<\?petal\:.*?>)/gsm;
@@ -344,6 +340,7 @@ sub _file_data_ref
 	next if /\?\>$/;
 	croak "Bad petal statement: $_ (missing question mark)";
     }
+    
     return \$data;
 }
 
@@ -387,6 +384,9 @@ sub _code_memory_cached
 	    # important line, don't remove
 	    ($code_perl) = $code_perl =~ m/^(.+)$/s;
 	    my $cpt = Safe->new ("Petal::CPT");
+	    $cpt->permit ('entereval');
+	    $cpt->permit ('leaveeval');
+	    
 	    $cpt->reval($code_perl);
 	    die $@ if ($@);
 	    
