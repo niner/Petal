@@ -3,11 +3,8 @@ use warnings;
 use lib ('lib');
 use Test::More tests => 5;
 
-my $loaded;
-END {fail("loaded") unless $loaded;}
 use Petal;
 pass("loaded");
-$loaded = 1;
 
 use strict;
 

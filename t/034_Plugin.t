@@ -1,14 +1,11 @@
 package main;
 use warnings;
 use lib ('lib');
-use Test;
+use Test::More tests => 2;
 
 
-BEGIN {print "1..2\n";}
-END {print "not ok 1\n" unless $loaded;}
 use Petal;
-$loaded = 1;
-print "ok 1\n";
+pass("loaded");
 
 use strict;
 my $loaded = 1;
@@ -23,7 +20,8 @@ $Petal::INPUT = "XML";
 $Petal::OUTPUT = "XML";
 
 my $template = new Petal ('plugin.xml');
-$template->process() =~ /HELLO, WORLD/ ? print "ok 2\n" : print "not ok 2\n";
 
+my $str = $template->process();
+like($str, '/HELLO, WORLD/', "matches");
 
 __END__

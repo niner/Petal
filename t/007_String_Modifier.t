@@ -4,13 +4,9 @@ sub add { return $_[1] + $_[2] };
 package main;
 use warnings;
 use lib ('lib');
-use Test;
-
-BEGIN {print "1..2\n";}
-END {print "not ok 1\n" unless $loaded;}
+use Test::More tests => 2;
 use Petal;
-$loaded = 1;
-print "ok 1\n";
+pass("loaded");
 
 $Petal::BASE_DIR = './t/data/';
 $Petal::DISK_CACHE = 0;
@@ -25,4 +21,4 @@ my $string = $template->process (
 	math => bless {}, 'Foo'
 );
 
-($string =~ /Hello, Bruno Postle, 2 \+ 2 = 4/) ? print "ok 2\n" : print "not ok 2\n";
+like($string, '/Hello, Bruno Postle, 2 \\+ 2 = 4/', "found");

@@ -4,13 +4,9 @@ sub param { shift; return shift }
 package main;
 use warnings;
 use lib ('lib');
-use Test;
-
-BEGIN {print "1..2\n";}
-END {print "not ok 1\n" unless $loaded;}
+use Test::More tests => 2;
 use Petal;
-$loaded = 1;
-print "ok 1\n";
+pass("loaded");
 
 $Petal::BASE_DIR = './t/data/';
 $Petal::DISK_CACHE = 0;
@@ -25,4 +21,4 @@ eval {
     my $string = $template->process ( cgi => $cgi );
 };
 
-(defined $@ and $@) ? print "not ok 2\n" : print "ok 2\n";
+ok(! (defined $@ and $@), "ran") || diag $@;
