@@ -1,6 +1,6 @@
 Revision history for Petal.
 
-2.16
+2.16 Fri Mar 18 15:30:00 2005
     - Added Cookbook.pod documentation and associated tests from William McKee
     - Removed references to HTML::TreeBuilder and XML::Parser (William McKee)
     - Skip test 071 when URI.pm not installed (William McKee)
