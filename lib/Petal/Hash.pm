@@ -156,15 +156,13 @@ $MODIFIERS->{'html:'}        = $MODIFIERS->{'encode:'};
 $MODIFIERS->{'encode_html:'} = $MODIFIERS->{'encode:'};
 
 
-
 # Instanciates a new Petal::Hash object which should
 # be tied to a hash.
 sub new
 {
     my $class = shift;
     my %hash = ();
-    tie %hash, $class;
-    %hash = @_;
+    tie %hash, $class, @_;
     $hash{__petal_hash_cache__} = {};
     return \%hash;
 }
@@ -172,7 +170,7 @@ sub new
 
 # these are pretty straightforward, the only really interesting
 # method is the FETCH method.
-sub TIEHASH  { bless {}, $_[0] }
+sub TIEHASH  { my $class = shift; return bless { @_ }, $class }
 sub STORE    { $_[0]->{$_[1]} = $_[2] }
 sub FIRSTKEY { my $a = scalar keys %{$_[0]}; each %{$_[0]} }
 sub NEXTKEY  { each %{$_[0]} }

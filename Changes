@@ -1,5 +1,8 @@
 Revision history for Petal.
 
+0.74
+	- Done some more optimization on Petal::Hash
+
 0.73 Wed Sep 25 12:05:01 2002
 	- Implemented TIED hash caching
 	- Implemented 'fresh' keyword for clearing cache when necessary
