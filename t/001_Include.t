@@ -4,8 +4,6 @@ use strict;
 use lib ('lib');
 use Test::More tests => 8;
 use Petal;
-use Petal::Parser::HTB;
-$Petal::INPUT = 'HTML';
 sub nowarnings {
     $Petal::MEMORY_CACHE &&
     $Petal::DISK_CACHE

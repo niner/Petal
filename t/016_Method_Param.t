@@ -25,8 +25,6 @@ use lib ('lib');
 use CGI;
 use Test::More 'no_plan';
 use Petal;
-use Petal::Parser::HTB;
-$Petal::INPUT = 'HTML';
 
 $|=1;
 
