@@ -1739,7 +1739,7 @@ None.
 
 =head1 AUTHOR
 
-Copyright 2003 - MKDoc Holdings Ltd.
+Copyright 2003 - MKDoc Ltd.
 
 Authors: Jean-Michel Hiver, 
          Fergal Daly <fergal@esatclear.ie>,
