@@ -1,4 +1,4 @@
-Petal version 0.82
+Petal version 0.83
 ==================
 
 Petal stands for "Perl Template Attribute Language". It is inspired from the
@@ -12,7 +12,7 @@ friendly templates such as:
   </li>
 </ul>
 
-Petal prefers to process XML template files (that can be SVG, XHTML, VoiceXML,
+Petal by default processes XML template files (i.e. SVG, XHTML, VoiceXML,
 whatever) using XML::Parser, however for convenience HTML is also supported
 (using HTML::TreeBuilder).
 
@@ -46,7 +46,7 @@ THANKS TO
 	(improvements on HTML::TreeBuilder used by Petal)
 
   * Kurt Stephens <kstep@pepsdesign.com>
-	(AUTOLOAD bug report & patch)
+	(plenty of bug reports, patches)
 
   * Lucas Saud <lucas.marinho@uol.com.br>
 	(code padding patch)

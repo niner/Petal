@@ -10,7 +10,7 @@
 use lib ('lib');
 use Test;
 
-BEGIN {print "1..10\n";}
+BEGIN {print "1..12\n";}
 END {print "not ok 1\n" unless $loaded;}
 use Petal;
 $loaded = 1;

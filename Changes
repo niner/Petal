@@ -1,7 +1,9 @@
 Revision history for Petal.
 
-0.83
-	- Fixed a method parameter bug
+0.83 Thu Jan 30 12:02:29 2003
+	- Fixed a minor method parameter bug
+	- Fixed XInclude relative path bug
+	- Fixed a minor namespace support bug (quotemeta)
 
 0.82 Mon Jan 27 15:03:21 2003
 	- Added limited support for XIncludes
