@@ -41,6 +41,7 @@ t/022_Hashref_List.t
 t/023_Loop_Error.t
 t/024_Namespaces.t
 t/025_Omit_Tag.t
+t/026_Broken_Loop.t
 t/027_Eval.t
 t/028_Infinite_Includes.t
 t/029_Test_NS_Attributes.t
@@ -67,6 +68,7 @@ t/data/attributes_andquot.xml
 t/data/autoload.xml
 t/data/benchmark.html
 t/data/canonical_error.html
+t/data/children.xml
 t/data/comments.xml
 t/data/decl.xml
 t/data/delete_attribute.xml
