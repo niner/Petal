@@ -474,7 +474,7 @@ Which internally is turned into
   push @out, $hash->{'var:user/login'};
 
 $hash is an highly magical hash which is tied to the Petal::Hash class,
-and uses the ':var' information to pass the expression 'user/login' to
+and uses the 'var:' information to pass the expression 'user/login' to
 the Petal::Hash::VAR module.
 
 The Petal::Hash::VAR module has access to $hash, and has the
@@ -488,10 +488,10 @@ $hash->{user}->login();
 
 Using a uniform, simple syntax you can access:
 
-  * scalars: <?petal var="my_scalar"?>
-  * hashes: <?petal var="my_hash/key"?>
-  * arrays: <?petal var="my_array/12"?>
-  * objects methods: <?petal var="my_object/my_method" ?>
+  * scalars: <?petal:var name="my_scalar"?>
+  * hashes: <?petal:var name="my_hash/key"?>
+  * arrays: <?petal:var name="my_array/12"?>
+  * objects methods: <?petal:var name="my_object/my_method" ?>
 
 Note that you can also pass arguments to object methods.  Let's say that
 you have an object 'math', you could do:
@@ -627,8 +627,8 @@ points:
 
 =head2 interpolation
 
-  <span petal:content=":xml title">Dummy Title</span>
-  <span petal:replace=":xml title">Dummy Title</span>
+  <span petal:content="xml:title">Dummy Title</span>
+  <span petal:replace="xml:title">Dummy Title</span>
 
 'petal:content' and 'petal:replace' are *NOT* aliases. The former will
 replace the contents of the span tag, while the latter will replace the
