@@ -384,8 +384,7 @@ sub _for
     $class->add_code ("local \$Petal::Hash_Repeat::CUR = undef;");
     $class->add_code ("for (my \$i=0; \$i < \@array; \$i++) {");
     $class->indent_increment();
-    $class->add_code ("\$hash->delete_cached (qr/__/);");
-    $class->add_code ("\$hash->delete_cached (qr/^\\Q$as\\E\$/);");
+    $class->add_code ("my \$hash = \$hash->new();");
     $class->add_code ("\$Petal::Hash_Repeat::CUR = \$i;");
     $class->add_code ("\$hash->{__count__}    = sub { \$hash->{repeat}->number() };");
     $class->add_code ("\$hash->{__is_first__} = sub { \$hash->{repeat}->start()  };");

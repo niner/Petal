@@ -56,10 +56,14 @@ sub set
     my $data  = shift;
     my $key   = $class->compute_key ($file);
     my $tmp   = $class->tmp;
-    open FP, ">$tmp/$key" or
+    {
+	no utf8;
+	use bytes;
+	open FP, ">$tmp/$key" or
         ( Carp::cluck "Cannot write-open $tmp/$key" and return );
-    print FP $data;
-    close FP;
+	print FP $data;
+	close FP;
+    }
 }
 
 
@@ -138,12 +142,16 @@ sub cached
     my $cached_filepath = $tmp . '/' . $key;
     
     (-e $cached_filepath) or return;
-    
-    open FP, "<$tmp/$key" or
-        (Carp::cluck "Cannot read-open cached file for $tmp/$key" and return);
-    my $res = join '', <FP>;
-    close FP;
-    
+
+    my $res = undef;
+    {
+	no utf8;
+	use bytes;
+	open FP, "<$tmp/$key" or
+            (Carp::cluck "Cannot read-open cached file for $tmp/$key" and return);
+	$res = join '', <FP>;
+	close FP;
+    }
     $Petal::DECODE_CHARSET and do {
 	require "Encode.pm";
 	$res = Encode::decode ($Petal::DECODE_CHARSET, $res);
