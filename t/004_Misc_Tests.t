@@ -1,7 +1,7 @@
 use lib ('lib');
 use Test;
 
-BEGIN {print "1..2\n";}
+BEGIN {print "1..4\n";}
 END {print "not ok 1\n" unless $loaded;}
 use Petal;
 use vars qw /$loaded/;
