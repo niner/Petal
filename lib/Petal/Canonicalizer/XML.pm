@@ -213,7 +213,7 @@ sub StartTag
 
 	if (defined $att->{"$petal:omit-tag"})
 	{
-	    my $expression = $att->{"$petal:omit-tag"};
+	    my $expression = $att->{"$petal:omit-tag"} || 'string:1';
 	    $NodeStack[$#NodeStack]->{'omit-tag'} = $expression;
 	    push @Result, (defined $att_str and $att_str) ?
 	        "<?if name=\"false:$expression\"?><$tag $att_str><?end?>" :

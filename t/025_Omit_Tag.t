@@ -3,7 +3,7 @@
 package main;
 use warnings;
 use lib ('lib');
-use Test::More tests => 8;
+use Test::More tests => 9;
 
 END {fail("loaded") unless $loaded;}
 use Petal;
@@ -41,5 +41,7 @@ my $data = $template->process(
 unlike($data, '/<html>/');
 unlike($data, '/<body>/');
 like($data, '/<p>What/');
+
+unlike ($data, qr/<b>Is this a bug/ => 'omit-tag=""');
 
 1;
