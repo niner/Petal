@@ -12,3 +12,24 @@ WriteMakefile(
       (ABSTRACT_FROM => 'lib/Petal.pm', # retrieve abstract from module
        AUTHOR     => 'Jean-Michel Hiver <jhiver@mkdoc.com>') : ()),
 );
+
+
+1;
+
+
+package MY;
+
+
+sub postamble {
+    return <<EOF;
+cover ::
+	$(RM_RF) cover_db
+	PERL5OPT=-MDevel::Cover $(MAKE) test || true
+	cover -report html cover_db > /dev/null
+
+EOF
+
+}
+
+
+1;

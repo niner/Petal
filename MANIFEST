@@ -44,7 +44,6 @@ t/022_Hashref_List.t
 t/023_Loop_Error.t
 t/024_Namespaces.t
 t/025_Omit_Tag.t
-t/026_PI_Re.t
 t/027_Eval.t
 t/data/autoload.xml
 t/data/canonical_error.html
