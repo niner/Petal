@@ -5,6 +5,7 @@ Revision history for Petal.
 	- Added infinite recursion protection
 	- Fixed a documentation bug
 	- Fixed a omit-tag bug
+	- Added command line toy functions
 
 0.81 Wed Dec 11 14:19:24 2002
 	- fixed silly documentation bug
