@@ -145,7 +145,7 @@ $MEMORY_CACHE - If set to FALSE, Petal will not use the Petal::Disk::Memory modu
 our $MEMORY_CACHE = 1;
 
 
-our $VERSION = '0.80';
+our $VERSION = '0.81';
 
 
 # this is for XML namespace support. Can't touch this :-)

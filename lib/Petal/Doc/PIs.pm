@@ -1,4 +1,4 @@
-package Petal::Syntax::PIs;
+package Petal::Doc::PIs;
 use strict;
 use warnings;
 
@@ -11,7 +11,7 @@ __END__
 
 =head1 NAME
 
-Petal::Syntax::PIs - Processing Instructions Syntax
+Petal::Doc::PIs - Processing Instructions Syntax
 
 
 =head1 SYNOPSIS

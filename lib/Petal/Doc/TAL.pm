@@ -1,4 +1,4 @@
-package Petal::Syntax::TAL;
+package Petal::Doc::TAL;
 use strict;
 use warnings;
 
@@ -11,7 +11,7 @@ __END__
 
 =head1 NAME
 
-Petal::Syntax::TAL - Template Attribute Language7
+Petal::Doc::TAL - Template Attribute Language
 
 
 =head1 SYNOPSIS

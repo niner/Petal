@@ -1,5 +1,8 @@
 Revision history for Petal.
 
+0.81 Wed Dec 11 14:19:24 2002
+	- fixed silly documentation bug
+
 0.80 Wed Dec 11 14:19:24 2002
 	- this version breaks backward compatibility !!!
 	- removed prefixes from processing instructions

@@ -1,4 +1,4 @@
-package Petal::Syntax::Petales;
+package Petal::Doc::Petales;
 use strict;
 use warnings;
 
@@ -10,7 +10,7 @@ __END__
 
 =head1 NAME
 
-Petal::Syntax::Petales - Petal Expression Syntax
+Petal::Doc::Petales - Petal Expression Syntax
 
 =head1 SYNOPSIS
 

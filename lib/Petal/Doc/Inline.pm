@@ -1,4 +1,4 @@
-package Petal::Syntax::Inline;
+package Petal::Doc::Inline;
 use strict;
 use warnings;
 
@@ -11,7 +11,7 @@ __END__
 
 =head1 NAME
 
-Petal::Syntax::Inline - Petal Inline Syntax
+Petal::Doc::Inline - Petal Inline Syntax
 
 
 =head1 SYNOPSIS
