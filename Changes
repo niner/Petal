@@ -1,5 +1,8 @@
 Revision history for Petal.
 
+0.77 Wed Dec  4 15:05:28 2002
+	- Implemented TAL's omit-tag statement
+
 0.76 Mon Oct 21 13:05:46 2002
 	- Fixed '"' being converted to '&quot;' by Petal::Parser::XMLWrapper
 

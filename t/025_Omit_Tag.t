@@ -4,7 +4,7 @@ package main;
 use lib ('lib');
 use Test;
 
-BEGIN {print "1..4\n";}
+BEGIN {print "1..5\n";}
 END {print "not ok 1\n" unless $loaded;}
 use Petal;
 $loaded = 1;
@@ -20,10 +20,10 @@ $Petal::OUTPUT = "XML";
 
 my $template = new Petal ($template_file);
 my $string = $template->process();
-($string =~ /<b>This tag should not be omited/) ? print "ok 1\n" : print "not ok 1\n";
-($string !~ /<b>This tag should be omited/) ? print "ok 2\n" : print "not ok 2\n";
+($string =~ /<b>This tag should not be omited/) ? print "ok 2\n" : print "not ok 2\n";
+($string !~ /<b>This tag should be omited/) ? print "ok 3\n" : print "not ok 3\n";
 
 $Petal::OUTPUT = "XHTML";
 $string = $template->process();
-($string =~ /<b>This tag should not be omited/) ? print "ok 3\n" : print "not ok 3\n";
-($string !~ /<b>This tag should be omited/) ? print "ok 4\n" : print "not ok 4\n";
+($string =~ /<b>This tag should not be omited/) ? print "ok 4\n" : print "not ok 4\n";
+($string !~ /<b>This tag should be omited/) ? print "ok 5\n" : print "not ok 5\n";
