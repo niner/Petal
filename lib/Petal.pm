@@ -491,9 +491,9 @@ Which internally is turned into
 
 $hash is an highly magical hash which is tied to the Petal::Hash class,
 and uses the 'var:' information to pass the expression 'user/login' to
-the Petal::Hash::VAR module.
+the Petal::Hash::Var module.
 
-The Petal::Hash::VAR module has access to $hash, and has the
+The Petal::Hash::Var module has access to $hash, and has the
 responsibility to resolve the user/login expression. So if
 $hash->{'user'} is an object and 'login' is a method on this object,
 'user/login' will do the 'Right Thing' and return
@@ -527,22 +527,18 @@ Which would output:
   3+3 = 6
 
 If you wonder how it all works, I suggest that you take a look at the
-Petal::Hash and Petal::Hash::VAR modules.
+Petal::Hash and Petal::Hash::Var modules.
 
 
 =head2 Expression modifiers
 
-We have seen that var: maps to Petal::Hash::VAR, which evaluates
+We have seen that var: maps to Petal::Hash::Var, which evaluates
 expressions.
 
 There are other modifiers, which map to the following modules:
 
-  xml:         => Petal::Hash::Encode_XML
-  encode:      => (alias for :xml)
-  encode_html: => Petal::Hash::Encode_HTML
   true:        => Petal::Hash::TRUE
   false:       => Petal::Hash::FALSE
-  not:         => (alias for :false)
   set:         => Petal::Hash::SET
 
 You can write your own modifiers easily by just subclassing
