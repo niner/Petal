@@ -1,3 +1,4 @@
+.cvsignore
 Changes
 lib/Petal.pm
 lib/Petal/Cache/Disk.pm
@@ -85,6 +86,7 @@ t/073_Metal_Fill_Slot.t
 t/080_Petal_TranslationService_h4x0r.t
 t/081_Petal_I18NProcessor.t
 t/082_Petal_Gettext.t
+t/083_test_attributes_chars.t
 t/benchmark.pl
 t/data/access_obj_array.html
 t/data/access_obj_hash.html
@@ -178,6 +180,7 @@ t/data/string.xml
 t/data/string_count.html
 t/data/style_andamp.html
 t/data/test_attributes2.xml
+t/data/test_attributes_chars/test_attributes_chars1.xml
 t/data/test_ns_attributes/test_ns_attributes1.xml
 t/data/test_ns_attributes/test_ns_attributes2.xml
 t/data/test_ns_attributes/test_ns_attributes3.xml
