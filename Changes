@@ -1,5 +1,9 @@
 Revision history for Petal.
 
+1.05
+	- Fixed silly warning bug
+	- Added decoding HTML entities capability
+
 1.04 Sun Aug 17 19:57:40 2003
 	- Fixed repeat object and safe issues
 	- Added Test::Harness and Scalar::Util dependencies
