@@ -1,5 +1,11 @@
 Revision history for Petal.
 
+0.80 Wed Dec 11 14:19:24 2002
+	- this version breaks backward compatibility !!!
+	- removed prefixes from processing instructions
+	- implemented TAL's on-error statement
+	- updated test suite
+
 0.77 Wed Dec  4 15:05:28 2002
 	- Implemented TAL's omit-tag statement
 

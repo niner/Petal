@@ -8,6 +8,10 @@ lib/Petal/Cache/Memory.pm
 lib/Petal/Canonicalizer/XHTML.pm
 lib/Petal/Canonicalizer/XML.pm
 lib/Petal/CodeGenerator.pm
+lib/Petal/Doc/Inline.pm
+lib/Petal/Doc/PIs.pm
+lib/Petal/Doc/Petales.pm
+lib/Petal/Doc/TAL.pm
 lib/Petal/Expressions.pm
 lib/Petal/Hash.pm
 lib/Petal/Hash/String.pm
@@ -40,6 +44,8 @@ t/022_Hashref_List.t
 t/023_Loop_Error.t
 t/024_Namespaces.t
 t/025_Omit_Tag.t
+t/026_PI_Re.t
+t/027_Eval.t
 t/data/autoload.xml
 t/data/canonical_error.html
 t/data/comments.xml
@@ -47,6 +53,7 @@ t/data/decl.xml
 t/data/delete_attribute.xml
 t/data/dummy_data.xml
 t/data/entities.xml
+t/data/eval.xml
 t/data/hashref_list.html
 t/data/if.html
 t/data/if.xml
