@@ -42,7 +42,7 @@ sub process
     $parser->process ($data_ref);
     
     my $res = join '', @Result;
-    _processing_instructions_in (\$res);
+    _processing_instructions_in (\$res, $pis);
     return \$res;
 }
 

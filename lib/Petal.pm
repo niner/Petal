@@ -90,7 +90,7 @@ our $PARSERS = {
     'ANY'  => [ 'Petal::Parser::XMLWrapper', 'Petal::Parser::HTMLWrapper' ],
 };
 
-our $VERSION = '0.1';
+our $VERSION = '0.2';
 
 =head1 METHODS
 
