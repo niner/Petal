@@ -13,14 +13,14 @@ use Petal::Canonicalizer::XML;
 use Petal::Canonicalizer::XHTML;
 use Petal::Functions;
 use Petal::Entities;
+use Petal::Encode;
 use File::Spec;
-use strict;
-use warnings;
 use Carp;
 use Safe;
 use Data::Dumper;
-use Encode;
 use MKDoc::XML::DecodeHO;
+use strict;
+use warnings;
 
 
 # these are used as local variables when the XML::Parser
@@ -86,7 +86,7 @@ our $CURRENT_INCLUDES = 0;
 
 
 # this is for CPAN
-our $VERSION = '1.06';
+our $VERSION = '1.10_01';
 
 
 # The CodeGenerator class backend to use.
@@ -320,7 +320,7 @@ sub process
     local $INPUT              = defined $self->{input}              ? $self->{input}              : $INPUT;
     local $OUTPUT             = defined $self->{output}             ? $self->{output}             : $OUTPUT;
     local $BASE_DIR           = defined $self->{base_dir} ? do { ref $self->{base_dir} ? undef : $self->{base_dir} } : $BASE_DIR;
-    local @BASE_DIR           = defined $self->{base_dir} ? do { ref $self->{base_dir} ? @{$self->{base_dir}} : undef } : @BASE_DIR;
+    local @BASE_DIR           = defined $self->{base_dir} ? do { ref $self->{base_dir} ? @{$self->{base_dir}} : () } : @BASE_DIR;
     local $LANGUAGE           = defined $self->{default_language}   ? $self->{default_language}   : $LANGUAGE;
     local $DEBUG_DUMP         = defined $self->{debug_dump}         ? $self->{debug_dump}         : $DEBUG_DUMP;
     local $DECODE_CHARSET     = defined $self->{decode_charset}     ? $self->{decode_charset}     : $DECODE_CHARSET;
@@ -342,7 +342,7 @@ sub process
 	$res = $coderef->($hash);
 	
 	$Petal::ENCODE_CHARSET and do {
-	    $res = Encode::encode ($Petal::ENCODE_CHARSET, $res);
+	    $res = Petal::Encode::encode ($Petal::ENCODE_CHARSET, $res);
 	};
     };
     
@@ -475,14 +475,14 @@ sub _file_data_ref
     no bytes;
     
     $Petal::DECODE_CHARSET and do {
-	$res = Encode::decode ($Petal::DECODE_CHARSET, $res);
+	$res = Petal::Encode::decode ($Petal::DECODE_CHARSET, $res);
     };
     
     if ($OUTPUT eq 'HTML' or $OUTPUT eq 'XHTML')
     {
-	Encode::_utf8_on ($res);
+	Petal::Encode::_utf8_on ($res);
 	$res = MKDoc::XML::DecodeHO->process ($res);
-	Encode::_utf8_off ($res);
+	Petal::Encode::_utf8_off ($res);
     }
     
     # kill template comments
@@ -586,7 +586,7 @@ sub _utf8_on
 {
     my $class = shift;
     my $res   = shift;
-    Encode::_utf8_on ($res);
+    Petal::Encode::_utf8_on ($res);
     return $res;
 }
 

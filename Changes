@@ -1,5 +1,10 @@
 Revision history for Petal.
 
+1.10_01
+	- Changed Petal's parsing backend to MKDoc::XML::TreeBuilder
+	- Added prefixes in path expressions, i.e. /foo/var:bar
+	- Refactored Petal's use of the Encode module
+
 1.06 Wed Aug 20 17:41:21 2003
 	- fixed omit-tag="" bug
 	- Include errors are now reported in HTML comments

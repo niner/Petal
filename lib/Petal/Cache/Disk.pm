@@ -10,7 +10,7 @@ use strict;
 use warnings;
 use File::Spec;
 use Digest::MD5 qw /md5_hex/;
-use Encode;
+use Petal::Encode;
 use Carp;
 
 
@@ -153,8 +153,9 @@ sub cached
 	$res = join '', <FP>;
 	close FP;
     }
+    
     $Petal::DECODE_CHARSET and do {
-	$res = Encode::decode ($Petal::DECODE_CHARSET, $res);
+	$res = Petal::Encode::decode ($Petal::DECODE_CHARSET, $res);
     };
     
     return $res;

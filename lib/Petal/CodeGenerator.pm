@@ -203,7 +203,7 @@ sub _include
 	$class->add_code ("my \$res = eval { Petal->new ('$path')->process (\$hash->new()) };");
     
     $class->add_code ("\$res = \"<!--\\n\$\@\\n-->\" if (defined \$\@ and \$\@);");
-    $class->add_code ("\$res = Encode::decode (\$Petal::ENCODE_CHARSET, \$res) if (\$Petal::ENCODE_CHARSET);");
+    $class->add_code ("\$res = Petal::Encode::decode (\$Petal::ENCODE_CHARSET, \$res) if (\$Petal::ENCODE_CHARSET);");
     $class->add_code ("\$res = Petal->_utf8_on (\$res);");
     $class->add_code ("\$res;");
     $class->indent_decrement();
