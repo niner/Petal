@@ -3,6 +3,7 @@ Revision history for Petal.
 2.17
     - check that &nbsp; becomes chr(160) not chr(194) (William McKee)
     - Fix bug where \-escaped semicolons were not recognised (William McKee)
+    - test 090 for ${1} appearance when Petal::I18N->process
 
 2.16 Fri Mar 18 15:30:00 2005
     - Added Cookbook.pod documentation and associated tests from William McKee
