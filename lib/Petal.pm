@@ -66,8 +66,8 @@ our $MAX_INCLUDES = 30;
 our $CURRENT_INCLUDES = 0;
 
 
-# that's for CPAN
-our $VERSION = '0.92';
+# this is for CPAN
+our $VERSION = '0.93';
 
 
 # The CodeGenerator class backend to use.
@@ -146,14 +146,13 @@ sub _initialize
 {
     my $self = shift;
     my $lang = $self->language() || return;
-
-    my @dirs = @BASE_DIR;
-    unshift (@dirs, $BASE_DIR) if (defined $BASE_DIR);
+    
+    my @dirs = $self->base_dir();
     @dirs = map { File::Spec->canonpath ("$_/$self->{file}") } @dirs;
-
+    
     $self->{file} =~ s/\/$//;
     my $filename = Petal::Functions::find_filename ($lang, @dirs);
-    $self->{file} .= "/$filename" if ($filename); 
+    $self->{file} .= "/$filename" if ($filename);
 }
 
 
@@ -164,6 +163,44 @@ sub language
     my $self = shift;
     return $self->{language} || $self->{lang};
 }
+
+
+sub default_language { exists $_[0]->{default_language} ? $_[0]->{default_language} : $LANGUAGE     }
+sub input            { exists $_[0]->{input}            ? $_[0]->{input}            : $INPUT        }
+sub output           { exists $_[0]->{output}           ? $_[0]->{output}           : $OUTPUT       }
+sub taint            { exists $_[0]->{taint}            ? $_[0]->{taint}            : $TAINT        }
+sub disk_cache       { exists $_[0]->{disk_cache}       ? $_[0]->{disk_cache}       : $DISK_CACHE   }
+sub memory_cache     { exists $_[0]->{memory_cache}     ? $_[0]->{memory_cache}     : $MEMORY_CACHE }
+sub max_includes     { exists $_[0]->{max_includes}     ? $_[0]->{max_includes}     : $MAX_INCLUDES }
+
+
+sub base_dir
+{
+    my $self = shift;
+    return map { defined $_ ? $_ : () } $self->_base_dir();
+}
+
+
+sub _base_dir
+{
+    my $self = shift;
+    if (exists $self->{base_dir})
+    {
+	my $base_dir = $self->{base_dir};
+	if (ref $base_dir) { return @{$base_dir} }
+	else
+	{
+	    die '\$self->{base_dir} is not defined' unless (defined $base_dir);
+	    return $base_dir;
+	}
+    }
+    else
+    {
+	if (defined $BASE_DIR) { return ( $BASE_DIR, @BASE_DIR ) }
+	else                   { return @BASE_DIR                }
+    }
+}
+
 
 
 # _include_compute_path ($path);
@@ -219,12 +256,26 @@ sub _include_compute_path
 # print $data_out;
 sub process
 {
+    my $self = shift;
+
+    # ok, from there on we need to override any global
+    # variable with stuff that might have been specified
+    # when constructing the object
+    local $TAINT        = defined $self->{taint}        ? $self->{taint}        : $TAINT;
+    local $DISK_CACHE   = defined $self->{disk_cache}   ? $self->{disk_cache}   : $DISK_CACHE;
+    local $MEMORY_CACHE = defined $self->{memory_cache} ? $self->{memory_cache} : $MEMORY_CACHE;
+    local $MAX_INCLUDES = defined $self->{max_includes} ? $self->{max_includes} : $MAX_INCLUDES;
+    local $INPUT        = defined $self->{input}        ? $self->{input}        : $INPUT;
+    local $OUTPUT       = defined $self->{output}       ? $self->{output}       : $OUTPUT;
+    local $BASE_DIR     = defined $self->{base_dir} ? do { ref $self->{base_dir} ? undef : $self->{base_dir} } : $BASE_DIR;
+    local @BASE_DIR     = defined $self->{base_dir} ? do { ref $self->{base_dir} ? @{$self->{base_dir}} : undef } : @BASE_DIR;
+    local $LANGUAGE     = defined $self->{default_language} ? $self->{default_language} : $LANGUAGE;
+    
     # prevent infinite includes from happening...
     my $current_includes = $CURRENT_INCLUDES;
+    return "ERROR: MAX_INCLUDES : $CURRENT_INCLUDES" if ($CURRENT_INCLUDES > $MAX_INCLUDES);
     local $CURRENT_INCLUDES = $current_includes + 1;
-    return "ERROR: MAX_INCLUDES : $CURRENT_INCLUDES" if ($CURRENT_INCLUDES >= $MAX_INCLUDES);
     
-    my $self = shift;
     my $hash = undef;
     if (ref $_[0] eq 'Petal::Hash') { $hash = shift }
     elsif (ref $_[0] eq 'HASH')     { $hash = new Petal::Hash (%{shift()}) }
@@ -296,8 +347,7 @@ sub _file_path
 {
     my $self = shift;
     my $file = $self->_file;
-    my @dirs = @BASE_DIR;
-    unshift (@dirs, $BASE_DIR) if (defined $BASE_DIR);
+    my @dirs = $self->base_dir;
     
     foreach my $dir (@dirs)
     {
@@ -308,7 +358,7 @@ sub _file_path
 	return $file_path if (-e $file_path and -r $file_path);
     }
     
-    confess ("Cannot find $file in @BASE_DIR. (typo? permission problem?)");
+    confess ("Cannot find $file in @dirs. (typo? permission problem?)");
 }
 
 
