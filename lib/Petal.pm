@@ -86,7 +86,7 @@ our $CURRENT_INCLUDES = 0;
 
 
 # this is for CPAN
-our $VERSION = '1.10_02';
+our $VERSION = '1.10_03';
 
 
 # The CodeGenerator class backend to use.
@@ -337,19 +337,22 @@ sub _process_absolutize_pathes
 {
     my $self = shift;
     
-    $BASE_DIR = File::Spec->rel2abs ($BASE_DIR) unless (
-	File::Spec->file_name_is_absolute ($BASE_DIR)
-	 );
+    if (defined $BASE_DIR)
+    {
+	$BASE_DIR = File::Spec->rel2abs ($BASE_DIR) unless (
+	    File::Spec->file_name_is_absolute ($BASE_DIR)
+	     );
+    }
     
-    @BASE_DIR = ( map { File::Spec->file_name_is_absolute ($BASE_DIR) ? $_ : File::Spec->rel2abs ($_) }
+    @BASE_DIR = ( map { File::Spec->file_name_is_absolute ($_) ? $_ : File::Spec->rel2abs ($_) }
 		  map { defined $_ ? $_ : () } @BASE_DIR );
     
-    if ($self->{base_dir})
+    if (defined $self->{base_dir})
     {
 	if (ref $self->{base_dir})
 	{
 	    $self->{base_dir} = [
-		map { File::Spec->file_name_is_absolute ($BASE_DIR) ? $_ : File::Spec->rel2abs ($_) }
+		map { File::Spec->file_name_is_absolute ($_) ? $_ : File::Spec->rel2abs ($_) }
 		map { defined $_ ? $_ : () } @{$self->{base_dir}}
 	       ] if (defined $self->{base_dir});
 	}

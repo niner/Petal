@@ -15,6 +15,7 @@ $Petal::TAINT        = 1;
 $Petal::INPUT        = 'XHTML';
 $Petal::OUTPUT       = 'XHTML';
 
+ok (1);
 if ($] > 5.007)
 {
     my $string = Petal->new ( 'entities.html' )->process();

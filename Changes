@@ -1,5 +1,10 @@
 Revision history for Petal.
 
+1.10_03
+	- Fixed File::Spec use of uninitialized values
+	- Fixed somehow broken Petal::_process_absolutize_pathes() 
+	- Fixed entities test running nothing when using perl 5.6.x
+
 1.10_02
 	- Changed Petal to ignore Encode if Perl < 5.007
 	- Fixed a @BASE_DIR inconsistency in process()
