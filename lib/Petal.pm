@@ -87,7 +87,7 @@ our $CURRENT_INCLUDES = 0;
 
 
 # this is for CPAN
-our $VERSION = '1.10_05';
+our $VERSION = '1.10_06';
 
 
 # The CodeGenerator class backend to use.
@@ -106,6 +106,10 @@ our $NS_URI = 'http://purl.org/petal/1.0/';
 
 our $XI_NS = 'xi';
 our $XI_NS_URI = 'http://www.w3.org/2001/XInclude';
+
+our $MT_NS       = 'metal';
+our $MT_NS_URI   = 'http://xml.zope.org/namespaces/metal';
+our $MT_NAME_CUR = 'main';
 
 
 # Displays the canonical template for template.xml.
@@ -174,14 +178,31 @@ sub new
 # find which template we can use.
 sub _initialize
 {
+    my $self  = shift;
+    my $file  = $self->{file};
+    if ($file =~ /#/)
+    {
+	my ($file, $macro) = split /#/, $file, 2;
+	$self->{file}  = $file;
+	$self->_initialize_lang();
+	$self->{file} .= "#$macro";
+    }
+    else
+    {
+	$self->_initialize_lang();
+    }
+}
+
+
+sub _initialize_lang
+{
     my $self = shift;
     my $lang = $self->language() || return;
-    
     my @dirs = $self->base_dir();
-    @dirs = map { File::Spec->canonpath ("$_/$self->{file}") } @dirs;
+    @dirs    = map { File::Spec->canonpath ("$_/$self->{file}") } @dirs;
     
-    $self->{file} =~ s/\/$//;
-    my $filename = Petal::Functions::find_filename ($lang, @dirs);
+    $self->{file}  =~ s/\/$//;
+    my $filename   = Petal::Functions::find_filename ($lang, @dirs);
     $self->{file} .= "/$filename" if ($filename);
 }
 
@@ -459,6 +480,7 @@ sub _file_path
 {
     my $self = shift;
     my $file = $self->_file;
+    $file =~ s/#.*$//;
     my @dirs = $self->base_dir;
     
     foreach my $dir (@dirs)
@@ -483,6 +505,7 @@ sub _file_data_ref
 {
     my $self      = shift;
     my $file_path = $self->_file_path;
+    $file_path =~ s/#.*$//;
     
     use bytes;
     open FP, "<$file_path" || die 'Cannot read-open $file_path';
@@ -511,8 +534,7 @@ sub _file_data_ref
 
 # $self->_code_disk_cached;
 # -------------------------
-#   Returns the Perl code data, using the disk cache if
-#   possible
+# Returns the Perl code data, using the disk cache if possible
 sub _code_disk_cached
 {
     my $self = shift;
@@ -520,6 +542,12 @@ sub _code_disk_cached
     my $code = (defined $DISK_CACHE and $DISK_CACHE) ? Petal::Cache::Disk->get ($file) : undef;
     unless (defined $code)
     {
+	my $macro = $self->{file};
+	($macro =~ /#/) ? do { $macro =~ s/^.*#// } : do { $macro = $MT_NAME_CUR };
+	
+	local ($MT_NAME_CUR);
+	$MT_NAME_CUR = $macro;
+	
 	my $data_ref = $self->_canonicalize;
 	load_code_generator();
 	$code = $CodeGenerator->process ($data_ref, $self);
@@ -549,7 +577,7 @@ sub _code_memory_cached
 	Petal::Cache::Memory->set ($file, $code) if (defined $MEMORY_CACHE and $MEMORY_CACHE);	
     }
     
-    return $code;
+     return $code;
 }
 
 =cut

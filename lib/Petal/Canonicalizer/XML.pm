@@ -135,7 +135,7 @@ sub _compute_unique_string
 sub StartTag
 {
     Petal::load_code_generator(); # we will use it later
-
+    
     my $class = shift;
     push @NodeStack, {};
     return if ($class->_is_inside_content_or_replace());
@@ -144,12 +144,13 @@ sub StartTag
     ($tag) = $tag =~ /^<\s*((?:\w|\:|\-)*)/;
     my $att = { %_ };
     
-    $class->_on_error ($tag, $att);
-    $class->_define ($tag, $att);
-    $class->_condition ($tag, $att);
-    $class->_repeat ($tag, $att);    
+    $class->_use_macro   ($tag, $att);
+    $class->_on_error    ($tag, $att);
+    $class->_define      ($tag, $att);
+    $class->_condition   ($tag, $att);
+    $class->_repeat      ($tag, $att);    
     $class->_is_xinclude ($tag) and $class->_xinclude ($tag, $att) and return;
-    $class->_replace ($tag, $att);
+    $class->_replace     ($tag, $att);
     
     my $petal = quotemeta ($Petal::NS);
     
@@ -317,10 +318,14 @@ sub _is_inside_content_or_replace
     my $endtag = shift;
     my $tmp    = undef;
     $tmp = pop (@NodeStack) if ($endtag);
+    
+    # WHY do I have to do this?
+    return 1 if (defined $tmp and $tmp->{'use-macro'});
     for (my $i=@NodeStack - 1; $i >= 0; $i--)
     {
-	return 1 if ( defined $NodeStack[$i]->{replace} or
-		      defined $NodeStack[$i]->{content} )
+	return 1 if ( defined $NodeStack[$i]->{'replace'}   or
+		      defined $NodeStack[$i]->{'content'}   or
+		      defined $NodeStack[$i]->{'use-macro'} );
     }
     push @NodeStack, $tmp if (defined $tmp);
     return;
@@ -465,6 +470,27 @@ sub _replace
     
     push @Result, @new;
     $NodeStack[$#NodeStack]->{replace} = 'true';
+    return 1;
+}
+
+
+# _use_macro;
+# -----------
+# Rewrites <tag use-macro="something" as <?include file="something"?>
+# All the descendent nodes of 'tag' will be skipped
+sub _use_macro
+{
+    my $class = shift;
+    return if ($class->_is_inside_content_or_replace());
+    
+    my $metal = $Petal::MT_NS;
+    
+    my $tag = shift;
+    my $att = shift;
+    my $expr = delete $att->{"$metal:use-macro"} || return;
+    
+    push @Result, qq|<?include file="$expr"?>|;
+    $NodeStack[$#NodeStack]->{'use-macro'} = 'true';
     return 1;
 }
 

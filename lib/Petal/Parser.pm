@@ -15,7 +15,7 @@ use Petal::Canonicalizer::XML;
 use Petal::Canonicalizer::XHTML;
 
 use vars qw /@NodeStack @MarkedData $Canonicalizer
-	     @NameSpaces @XI_NameSpaces $Decode/;
+	     @NameSpaces @XI_NameSpaces @MT_NameSpaces @MT_Name_Cur $Decode/;
 
 
 # this avoid silly warnings
@@ -41,10 +41,12 @@ sub process
     local $Canonicalizer = shift;
     my $data_ref = shift;
     
-    local @MarkedData = ();
-    local @NodeStack  = ();
-    local @NameSpaces = ();
-    local $Decode     = new MKDoc::XML::Decode (qw /xml numeric/);
+    local @MarkedData    = ();
+    local @NodeStack     = ();
+    local @NameSpaces    = ();
+    local @MT_NameSpaces = ();
+    local @MT_Name_Cur   = ('main');
+    local $Decode        = new MKDoc::XML::Decode (qw /xml numeric/);
     
     $data_ref = (ref $data_ref) ? $data_ref : \$data_ref;
     
@@ -111,8 +113,8 @@ sub generate_events_start
     $_ = "<$_>";
     local %_ = %{shift()};
     delete $_{'/'};
-
-    # process the Petal namespace...
+    
+    # process the Petal namespace
     my $ns = (scalar @NameSpaces) ? $NameSpaces[$#NameSpaces] : $Petal::NS;
     foreach my $key (keys %_)
     {
@@ -146,7 +148,27 @@ sub generate_events_start
     push @XI_NameSpaces, $xi_ns;
     local ($Petal::XI_NS) = $xi_ns;
     
-    $Canonicalizer->StartTag();
+    # process the Metal namespace
+    my $mt_ns = (scalar @MT_NameSpaces) ? $MT_NameSpaces[$#MT_NameSpaces] : $Petal::MT_NS;
+    foreach my $key (keys %_)
+    {
+	my $value = $_{$key};
+	if ($value eq $Petal::MT_NS_URI)
+	{
+	    next unless ($key =~ /^xmlns\:/);
+	    delete $_{$key};
+	    $mt_ns = $key;
+	    $mt_ns =~ s/^xmlns\://;
+	}
+    }
+    
+    push @MT_NameSpaces, $mt_ns;
+    local ($Petal::MT_NS) = $mt_ns;
+    
+    # process the Metal current name
+    push @MT_Name_Cur, delete $_{"$mt_ns:define-macro"} || $MT_Name_Cur[$#MT_Name_Cur];
+    my $dont_skip = grep /^\Q$Petal::MT_NAME_CUR\E$/, @MT_Name_Cur;
+    $Canonicalizer->StartTag() if ($dont_skip);
 }
 
 
@@ -154,29 +176,48 @@ sub generate_events_end
 {
     local $_ = shift;
     local $_ = "</$_>";
-    local ($Petal::NS) = pop (@NameSpaces);
+    local ($Petal::NS)    = pop (@NameSpaces);
     local ($Petal::XI_NS) = pop (@XI_NameSpaces);
-    $Canonicalizer->EndTag();
+    local ($Petal::MT_NS) = pop (@MT_NameSpaces);
+    
+    my $skip = 1;
+    for (@MT_Name_Cur) { $_ eq $Petal::MT_NAME_CUR and $skip = 0 }
+
+    my $dont_skip = grep /^\Q$Petal::MT_NAME_CUR\E$/, @MT_Name_Cur;
+    $Canonicalizer->EndTag() if ($dont_skip);
+    pop (@MT_Name_Cur);
 }
 
 
 sub generate_events_text
 {
+
+    my $skip = 1;
+    for (@MT_Name_Cur) { $_ eq $Petal::MT_NAME_CUR and $skip = 0 }
+    
     my $data = shift;
     $data =~ s/\&/&amp;/g;
     $data =~ s/\</&lt;/g;
     local $_ = $data;
-    local ($Petal::NS) = $NameSpaces[$#NameSpaces];
+    local ($Petal::NS)    = $NameSpaces[$#NameSpaces];
     local ($Petal::XI_NS) = $XI_NameSpaces[$#XI_NameSpaces];
-    $Canonicalizer->Text();
+    local ($Petal::MT_NS) = $MT_NameSpaces[$#MT_NameSpaces];
+
+    my $dont_skip = grep /^\Q$Petal::MT_NAME_CUR\E$/, @MT_Name_Cur;
+    $Canonicalizer->Text() if ($dont_skip);
 }
 
 
 sub generate_events_comment
 {
+    my $skip = 1;
+    for (@MT_Name_Cur) { $_ eq $Petal::MT_NAME_CUR and $skip = 0 }
+    
     my $data = shift;
     local $_ = '<!--' . $data . '-->';
-    $Canonicalizer->Text();    
+    
+    my $dont_skip = grep /^\Q$Petal::MT_NAME_CUR\E$/, @MT_Name_Cur;
+    $Canonicalizer->Text() if ($dont_skip);
 }
 
 
