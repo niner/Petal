@@ -71,6 +71,7 @@ sub StartTag
     $class->_use_macro ($tag, $att);
     $class->_on_error ($tag, $att);
     $class->_define ($tag, $att);
+    $class->_define_slot ($tag, $att);
     $class->_condition ($tag, $att);
     $class->_repeat ($tag, $att);
     $class->_is_xinclude ($tag) and $class->_xinclude ($tag, $att) and return;
@@ -233,7 +234,8 @@ sub EndTag
     
     my $repeat = $node->{repeat} || '0';
     my $condition = $node->{condition} || '0';
-    push @Petal::Canonicalizer::XML::Result, map { '<?end?>' } 1 .. ($repeat+$condition);
+    my $define_slot = $node->{define_slot} || '0';
+    push @Petal::Canonicalizer::XML::Result, map { '<?end?>' } 1 .. ($repeat+$condition+$define_slot);
     
     if (exists $node->{'on-error'})
     {

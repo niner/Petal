@@ -164,9 +164,23 @@ sub generate_events_start
     
     push @MT_NameSpaces, $mt_ns;
     local ($Petal::MT_NS) = $mt_ns;
-    
+
     # process the Metal current name
-    push @MT_Name_Cur, delete $_{"$mt_ns:define-macro"} || $MT_Name_Cur[$#MT_Name_Cur];
+    my $pushed = 0;
+
+    $_{"$mt_ns:define-macro"} and do {
+        $pushed = 1;
+        delete $_{"$mt_ns:define-slot"};
+        push @MT_Name_Cur, delete $_{"$mt_ns:define-macro"};
+    };
+     
+    $_{"$mt_ns:fill-slot"} and do {
+        $pushed = 1;
+        push @MT_Name_Cur, "__metal_slot__" . delete $_{"$mt_ns:fill-slot"};
+    };    
+
+    push @MT_Name_Cur, $MT_Name_Cur[$#MT_Name_Cur] unless ($pushed);
+
     my $dont_skip = grep /^\Q$Petal::MT_NAME_CUR\E$/, @MT_Name_Cur;
     $Canonicalizer->StartTag() if ($dont_skip);
 }

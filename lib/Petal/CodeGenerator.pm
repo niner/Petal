@@ -36,7 +36,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $PI_RE = '^<\?(?:\s|\r|\n)*(attr|include|var|if|condition|else|repeat|loop|foreach|for|eval|endeval|end).*?\?>$';
+our $PI_RE = '^<\?(?:\s|\r|\n)*(attr|include|var|if|condition|else|repeat|loop|foreach|for|eval|endeval|end|defslot).*?\?>$';
 use vars qw /$petal_object $tokens $variables @code $indentLevel $token_name %token_hash $token $my_array/;
 
 
@@ -189,13 +189,14 @@ sub process
 		/^for$/       and do { $class->_for;     last CASE };
 		/^eval$/      and do { $class->_eval;    last CASE };
 		/^endeval$/   and do { $class->_endeval; last CASE };
+		/^defslot$/   and do { $class->_defslot; last CASE };
 		
 		/^end$/ and do
                 {
                     my $idt = $class->indent();
 		    delete $my_array->{$idt};
                     $class->indent_decrement();
-                    $class->add_code("}");
+                    $class->add_code("};");
                     last CASE;
                 };
 	    }
@@ -226,21 +227,80 @@ sub _include
     my $file  = $token_hash{file};
     my $path  = $petal_object->_include_compute_path ($file);
     my $lang  = $petal_object->language();
-    
     $class->add_code ($class->_add_res ("do {"));
     $class->indent_increment();
-    
+
+    my $included_from = $petal_object->_file();
+    $included_from =~ s/\#.*$//;
+
+    $class->add_code ("do {");
+    $class->indent_increment();
+
+    $class->add_code ("my \$new_hash = \$hash->new();");
+    $class->add_code ("\$new_hash->{__included_from__} = '$included_from';");
+
     (defined $lang and $lang) ?
-        $class->add_code ("my \$res = eval { Petal->new (file => '$path', lang => '$lang')->process (\$hash->new()) };") :
-	$class->add_code ("my \$res = eval { Petal->new ('$path')->process (\$hash->new()) };");
+        $class->add_code ("my \$res = eval { Petal->new (file => '$path', lang => '$lang')->process (\$new_hash) };") :
+	$class->add_code ("my \$res = eval { Petal->new ('$path')->process (\$new_hash) };");
     
     $class->add_code ("\$res = \"<!--\\n\$\@\\n-->\" if (defined \$\@ and \$\@);");
-    # $class->add_code ("if (\$] > 5.007) { \$res = Petal->_decode_for_codegenerator (\$res) }");
     $class->add_code ("\$res;");
     $class->indent_decrement();
     $class->add_code ("} || '';");
+
+    $class->indent_decrement();
+    $class->add_code ("};");
 }
 
+
+# $class->_defslot;
+# ---------------------
+# process a <?defslot name="blah"?> statement
+sub _defslot
+{
+    my $class = shift;
+    my $variable = $token_hash{name} or
+        confess "Cannot parse $token : 'name' attribute is not defined";
+    
+    (defined $variable and $variable) or
+        confess "Cannot parse $token : 'name' attribute is not defined";
+   
+    # set the variable in the $variables hash
+    my $tmp = $variable;
+    $tmp =~ s/\..*//;
+    $variables->{$tmp} = 1;
+    
+    $variable =~ s/\'/\\\'/g;
+
+    $class->add_code ("do {");
+    $class->indent_increment();
+
+    $class->add_code ("my \$tmp = undef;");
+    $class->add_code ("\$hash->{__included_from__} && do {");
+    $class->indent_increment();
+
+    $class->add_code ("my \$path = \$hash->{__included_from__} . '#$variable';");
+    $class->add_code ("my \$new_hash = \$hash->new();");
+    $class->add_code ("delete \$new_hash->{__included_from__};");
+
+    my $lang  = $petal_object->language();
+    (defined $lang and $lang) ?
+        $class->add_code ("\$tmp = eval { Petal->new (file => \$path, lang => '$lang')->process (\$new_hash) };") :
+	$class->add_code ("\$tmp = eval { Petal->new (\$path)->process (\$new_hash) };");
+
+    $class->indent_decrement();
+    $class->add_code ("};");
+
+    $class->add_code ("if (\$tmp) {");
+    $class->indent_increment();
+
+    $class->add_code ( $class->_add_res ("\$tmp") );
+    $class->indent_decrement();
+
+    $class->add_code ( "} else {" );
+    $class->indent_increment();
+}
+    
 
 # $class->_var;
 # -------------

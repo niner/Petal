@@ -150,6 +150,7 @@ sub StartTag
     $class->_use_macro   ($tag, $att);
     $class->_on_error    ($tag, $att);
     $class->_define      ($tag, $att);
+    $class->_define_slot ($tag, $att);
     $class->_condition   ($tag, $att);
     $class->_repeat      ($tag, $att);    
     $class->_is_xinclude ($tag) and $class->_xinclude ($tag, $att) and return;
@@ -183,7 +184,8 @@ sub StartTag
 	    }
 	    $att->{$key} = $text;
 	}
-	
+
+        # processes the petal:attributes instruction	
 	$class->_attributes ($tag, $att);
 	
 	my @att_str = ();
@@ -271,7 +273,8 @@ sub EndTag
     
     my $repeat = $node->{repeat} || '0';
     my $condition = $node->{condition} || '0';
-    push @Result, map { '<?end?>' } 1 .. ($repeat+$condition);
+    my $define_slot = $node->{define_slot} || '0';
+    push @Result, map { '<?end?>' } 1 .. ($repeat+$condition+$define_slot);
 
     unless (defined $node->{replace} and $node->{replace})
     {
@@ -417,6 +420,28 @@ sub _condition
     my @new = map { "<?if name=\"$_\"?>" } $class->_split_expression ($expr);
     push @Result, @new;
     $NodeStack[$#NodeStack]->{condition} = scalar @new;
+    return 1;
+}
+
+
+# _define_slot;
+# -----------
+# Rewrites <tag petal:if="[expression]"> statements into
+# <?petal:if name="[expression]"?><tag>
+sub _define_slot
+{
+    my $class = shift;
+    return if ($class->_is_inside_content_or_replace());
+
+    my $metal = $Petal::MT_NS;
+    my $tag   = shift;
+    my $att   = shift;
+    my $expr  = delete $att->{"$metal:define-slot"} || return;
+    
+    $expr = $class->_encode_backslash_semicolon ($expr);
+    my @new = map { "<?defslot name=\"__metal_slot__$_\"?>" } $class->_split_expression ($expr);
+    push @Result, @new;
+    $NodeStack[$#NodeStack]->{define_slot} = 2 * scalar @new;
     return 1;
 }
 

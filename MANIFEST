@@ -1,4 +1,8 @@
 Changes
+MANIFEST			This list of files
+META.yml			Module meta-data (added by MakeMaker)
+Makefile.PL
+README
 lib/Petal.pm
 lib/Petal/Cache/Disk.pm
 lib/Petal/Cache/Memory.pm
@@ -12,9 +16,6 @@ lib/Petal/Hash/String.pm
 lib/Petal/Hash/Test.pm
 lib/Petal/Hash/Var.pm
 lib/Petal/Parser.pm
-Makefile.PL
-MANIFEST			This list of files
-README
 t/001_Include.t
 t/002_Set_Modifier.t
 t/003_More_Include.t
@@ -73,6 +74,8 @@ t/064_Metal_Double_Include.t
 t/065_HTML_Attribute_Strip.t
 t/070_HTML_Errors.t
 t/071_Encode_Overloaded_Object.t
+t/072_Metal_Define_Slot.t
+t/073_Metal_Fill_Slot.t
 t/benchmark.pl
 t/data/access_obj_array.html
 t/data/access_obj_hash.html
@@ -116,6 +119,8 @@ t/data/language/include/fr-CA.html
 t/data/language/include/fr.html
 t/data/loop_error.xml
 t/data/manipulate.html
+t/data/metal-define-slot.html
+t/data/metal-fill-slot.html
 t/data/metal_define_macro.xml
 t/data/metal_double_include/fragment.xhtml
 t/data/metal_double_include/main.xhtml
@@ -162,4 +167,3 @@ t/data/test_ns_attributes/test_rightWayOfDoing.xml
 t/data/tests_with_zero.xml
 t/data/xhtml.html
 t/data/xhtml_omit_tag.html
-META.yml                                 Module meta-data (added by MakeMaker)
