@@ -3,7 +3,6 @@ use Test::More 'no_plan';
 use warnings;
 use lib 'lib';
 use Petal;
-use URI;
 
 $Petal::DISK_CACHE   = 0;
 $Petal::MEMORY_CACHE = 0;

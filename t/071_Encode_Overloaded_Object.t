@@ -1,9 +1,18 @@
 #!/usr/bin/perl
-use Test::More 'no_plan';
+use Test::More;
 use warnings;
 use lib 'lib';
 use Petal;
-use URI;
+
+eval {
+  require URI;
+};
+if( $@ ) {
+  plan skip_all => 'URI.pm not installed';
+}
+else {
+  plan tests => 1;
+}
 
 $Petal::DISK_CACHE   = 0;
 $Petal::MEMORY_CACHE = 0;
