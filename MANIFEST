@@ -14,8 +14,10 @@ lib/Petal/Hash/Test.pm
 lib/Petal/Hash/Var.pm
 lib/Petal/I18N.pm
 lib/Petal/Parser.pm
+lib/Petal/TranslationService/Gettext.pm
 lib/Petal/TranslationService/h4x0r.pm
 lib/Petal/TranslationService/MOFile.pm
+lib/Petal/TranslationService/Noop.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml			Module meta-data (added by MakeMaker)
@@ -132,6 +134,11 @@ t/data/language/exists_filename/fr.xml
 t/data/language/fr.xml
 t/data/language/include/fr-CA.html
 t/data/language/include/fr.html
+t/data/locale/es/LC_MESSAGES/testdomain.mo
+t/data/locale/es/LC_MESSAGES/testdomain.po
+t/data/locale/fr/LC_MESSAGES/testdomain.mo
+t/data/locale/fr/LC_MESSAGES/testdomain.po
+t/data/locale/testdomain.pot
 t/data/loop_error.xml
 t/data/manipulate.html
 t/data/metal-define-slot.html

@@ -351,7 +351,7 @@ sub process
     local $DECODE_CHARSET     = defined $self->{decode_charset}      ? $self->{decode_charset}      : $DECODE_CHARSET;
     local $TranslationService = defined $self->{translation_service} ? $self->{translation_service} : $TranslationService;
     # local $ENCODE_CHARSET     = defined $self->{encode_charset}     ? $self->{encode_charset}     : $ENCODE_CHARSET;
-    
+
     # prevent infinite includes from happening...
     my $current_includes = $CURRENT_INCLUDES;
     return "ERROR: MAX_INCLUDES : $CURRENT_INCLUDES" if ($CURRENT_INCLUDES > $MAX_INCLUDES);
@@ -371,7 +371,7 @@ sub process
     };
    
     if (defined $@ and $@) { $res = $self->_handle_error ($@) }
-    elsif (defined $TranslationService) { $res = Petal::I18N->process ($res) } 
+    elsif (defined $TranslationService && $CURRENT_INCLUDES == 1) { $res = Petal::I18N->process ($res) } 
 
     return $res;
 }

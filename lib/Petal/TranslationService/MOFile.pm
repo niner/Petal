@@ -33,7 +33,9 @@ sub maketext
     my $self = shift;
     my $id   = shift || return;
     $self->{lexicon} || return;
-    return $self->{lexicon}->{$id};
+    my $res  = $self->{lexicon}->{$id};
+
+    return $res;
 }
 
 

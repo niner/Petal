@@ -22,10 +22,10 @@ sub process
     my $hash = shift;
     my $argument = shift;
 
-    $Petal::TranslationService && do {
-        $argument = eval { $Petal::TranslationService->maketext ($argument) } || $argument;
-        $@ and warn $@;
-    };
+#    $Petal::TranslationService && do {
+#        $argument = eval { $Petal::TranslationService->maketext ($argument) } || $argument;
+#        $@ and warn $@;
+#    };
     
     my $tokens = $self->_tokenize (\$argument);
     my @res = map {

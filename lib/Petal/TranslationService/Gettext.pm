@@ -21,7 +21,8 @@ sub maketext
 {
     my $self = shift;
     my $tsrv = $self->mo_file_translation_service();
-    return $tsrv->maketext (@_);
+    ref $tsrv and return $tsrv->maketext (@_);
+    return;
 }
 
 
@@ -58,7 +59,7 @@ sub _mo_file_translation_service
     $res = $self->_instanciate_mo_file_tranlation_service_if_file_exists ($target_lang);
     $res && return $res;
 
-    return Petal::TranslationService::Noop->new();
+    return '__none__';
 }
 
 

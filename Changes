@@ -1,5 +1,8 @@
 Revision history for Petal.
 
+2.13 Mon Aug  9 11:32:12 BST 2004
+    - Stopped Petal doing I18N stuff for includes
+
 2.12 Fri Aug  6 13:58:55 2004
     - Added namespace support to Petal::I18N
     - Added Petal::TranslationService::Noop

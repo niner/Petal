@@ -57,6 +57,7 @@ sub _process
     my $attr = { map { /^_/ ? () : ( $_ => $tree->{$_} ) } keys %{$tree} };
     return if ($tag eq '~comment' or $tag eq '~pi' or $tag eq '~declaration');
 
+
     # replace attributes with their respective translations 
     $tree->{"$Prefix:attributes"} && do {
         my $attributes = $tree->{"$Prefix:attributes"};
@@ -98,6 +99,7 @@ sub _process
             $tree->{$attribute_name} = $value;
         }
     };
+
 
     # replace content with its translation
     exists $tree->{"$Prefix:translate"} && do {

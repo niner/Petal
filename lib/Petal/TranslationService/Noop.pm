@@ -8,7 +8,11 @@ sub new
     return bless {}, $class;
 }
 
-sub maketext { return @_ };
+sub maketext
+{
+    my $self = shift;
+    return join '', @_;
+}
 
 1;
 
