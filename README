@@ -1,4 +1,4 @@
-Petal version 0.92
+Petal version 0.93
 ==================
 
 Petal stands for "Perl Template Attribute Language". It is inspired from the
@@ -54,6 +54,7 @@ Holland, Mark <Mark.Holland@commerzbankib.com>
 Ronald Hayden <rhayden@apple.com>
 Peter Wilson <pwilson@apple.com>
 Fergal Daly <fergal@esatclear.ie>
+Grant McLean <grant@mclean.net.nz>
 
 (hopefully I didn't forget anybody...)
 
