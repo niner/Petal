@@ -1,6 +1,6 @@
 Revision history for Petal.
 
-0.5
+0.5 Sat Aug  3 19:56:13 2002
 	- Added tests
 	- Modifiers are now 'modifier:' rather than ':modifier'
 	- Modifiers are now stackable (i.e. foo:bar:baz/buz)
