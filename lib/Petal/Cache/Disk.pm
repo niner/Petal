@@ -40,7 +40,7 @@ i.e. 'foo.html' might be stored as petale_cache_4e38e18f1c6bedaaf174f95310a938c2
 
 =cut
 our $TMP_DIR = File::Spec->tmpdir;
-our $PREFIX  = 'petale_cache_';
+our $PREFIX  = 'petal_cache';
 
 
 =head1 METHODS
@@ -118,7 +118,7 @@ sub compute_key
     # $file = File::Spec->rel2abs ($file);
     
     my $key = md5_hex ($file);
-    $key = "$PREFIX$key" if (defined $PREFIX);
+    $key = $PREFIX . "_" . $Petal::VERSION . "_" . $key if (defined $PREFIX);
     return $key;
 }
 

@@ -1,1 +1,4 @@
-Hey, I am an included file!
+<div>
+  <p>__INCLUDED__</p>
+  <p>__INCLUDED__</p>
+</div>

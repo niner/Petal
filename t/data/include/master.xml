@@ -1,3 +1,0 @@
-<p>This is a test to include another template file...</p>
-<p><?petal:include file="included.xml"?></p>
-<p>End of example</p>

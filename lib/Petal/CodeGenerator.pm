@@ -16,11 +16,11 @@ use strict;
 use warnings;
 use Carp;
 
-use vars qw /$base_dir $tokens $variables @code $indent $token_name %token_hash $token/;
+use vars qw /$petal_object $tokens $variables @code $indent $token_name %token_hash $token/;
 
 
-# $class->process ($data_ref, $base_dir);
-# ---------------------------------------
+# $class->process ($data_ref, $petal_object);
+# -------------------------------------------
 #   This (too big) subroutine converts the canonicalized template
 #   data into Perl code which is ready to be evaled and executed
 sub process
@@ -28,7 +28,8 @@ sub process
     my $class = shift;
     my $data_ref = shift;
     
-    local $base_dir = shift;
+    local $petal_object = shift || die "$class::process: \$petal_object was not defined";
+    
     local $tokens = $class->_tokenize ($data_ref);
     local $variables = {};
     local @code = ();
@@ -97,21 +98,18 @@ sub _include
 {
     my $class = shift;
     
-    my $file = $token_hash{name} || $token_hash{file} ||
-        confess "Cannot parse $token : 'name' attribute is not defined";
+    my $file = delete $token_hash{name} || delete $token_hash{file} ||
+        confess "Cannot parse $token : 'file' attribute is not defined";
     
     (defined $file and $file) or
-        confess "Cannot parse $token : 'name' attribute is not defined";
+        confess "Cannot parse $token : 'file' attribute is not defined";
     
-    if (defined $base_dir and $base_dir)
-    {
-	push @code, ("    " x $indent . 
-		     "push \@res, Petal->new (base_dir => '$base_dir', file => '$file' )->process (\$hash);");
-    }
-    else
-    {
-	push @code, ("    " x $indent . "push \@res, Petal->new (file => '$file' )->process (\$hash);");
-    }
+    # to __severely__ tweak...
+    my $base_dir = $petal_object->_base_dir;
+    $token_hash{base_dir} = '/';
+    $token_hash{file} = $base_dir . '/' . $file;
+    my $token_hash_args = join ", ", map { $_ . ' => "' . quotemeta ($token_hash{$_}) . '"' } keys %token_hash;
+    push @code, ("    " x $indent . "push \@res, Petal->new ( $token_hash_args )->process (\$hash);");
 }
 
 

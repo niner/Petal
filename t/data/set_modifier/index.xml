@@ -1,0 +1,8 @@
+<html>
+<body>
+    <?petal:var name=":set settest title"?>
+
+    * title : $title
+    * settest : $settest
+</body>
+</html>

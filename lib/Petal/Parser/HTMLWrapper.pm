@@ -12,9 +12,12 @@ gadzillon HTML pages out there which are not valid XML...
 package Petal::Parser::HTMLWrapper;
 use strict;
 use warnings;
+use Carp;
 
 use Petal::Canonicalizer;
 use HTML::TreeBuilder;
+
+use vars qw /$IsInclude @NodeStack/;
 
 
 sub new
@@ -30,8 +33,11 @@ sub process
     my $self = shift;
     my $data_ref = shift;
     $data_ref = (ref $data_ref) ? $data_ref : \$data_ref;
-    + Petal::Canonicalizer::StartDocument();
     
+    $IsInclude = not ($$data_ref =~ /<html>/i);
+    @NodeStack = ();
+    
+    + Petal::Canonicalizer::StartDocument();
     my $tree = HTML::TreeBuilder->new;
     $tree->p_strict (0);
     $tree->no_space_compacting(1);
@@ -53,6 +59,7 @@ sub generate_events
 {
     my $self = shift;
     my $tree = shift;
+    
     if (ref $tree)
     {
 	my $tag  = $tree->tag;
@@ -64,18 +71,30 @@ sub generate_events
 	}
 	else
 	{
-	    start ($tag, $attr);
+	    start ($tag, $attr) if (not $IsInclude or is_inside_body());
+	    push @NodeStack, $tree;
 	    foreach my $content ($tree->content_list())
 	    {
 		$self->generate_events ($content);
 	    }
-	    end ($tag);
+	    pop (@NodeStack);
+	    end ($tag) if (not $IsInclude or is_inside_body());
 	}
     }
     else
     {
 	text ($tree);
     }
+}
+
+
+sub is_inside_body
+{
+    foreach (@NodeStack)
+    {
+	return 1 if $_->tag eq 'body';
+    }
+    return;
 }
 
 
