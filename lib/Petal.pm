@@ -1408,17 +1408,6 @@ Displays the canonical template for template.xml.
 You can set $INPUT using by setting the PETAL_INPUT environment variable.
 You can set $OUTPUT using by setting the PETAL_OUTPUT environment variable.
 
-=cut
-sub main::canonical
-{
-    my $file = shift (@ARGV);
-    local $Petal::DISK_CACHE = 0;
-    local $Petal::MEMORY_CACHE = 0;
-    local $Petal::INPUT  = $ENV{PETAL_INPUT}  || 'XML';
-    local $Petal::OUTPUT = $ENV{PETAL_OUTPUT} || 'XHTML';
-    print ${Petal->new ($file)->_canonicalize()};
-}
-
 
 =head3 perl -MPetal -e code template.xml
 
@@ -1426,30 +1415,12 @@ Displays the perl code for template.xml.
 You can set $INPUT using by setting the PETAL_INPUT environment variable.
 You can set $OUTPUT using by setting the PETAL_OUTPUT environment variable.
 
-=cut
-sub main::code
-{
-    my $file = shift (@ARGV);
-    local $Petal::DISK_CACHE = 0;
-    local $Petal::MEMORY_CACHE = 0;
-    print Petal->new ($file)->_code_disk_cached;
-}
-
 
 =head3 perl -MPetal -e lcode template.xml
 
 Displays the perl code for template.xml, with line numbers.
 You can set $INPUT using by setting the PETAL_INPUT environment variable.
 You can set $OUTPUT using by setting the PETAL_OUTPUT environment variable.
-
-=cut
-sub main::lcode
-{
-    my $file = shift (@ARGV);
-    local $Petal::DISK_CACHE = 0;
-    local $Petal::MEMORY_CACHE = 0;
-    print Petal->new ($file)->_code_with_line_numbers;
-}
 
 
 =head2 What does Petal do internally?

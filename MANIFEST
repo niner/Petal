@@ -1,5 +1,6 @@
 Changes
 MANIFEST
+Makefile
 Makefile.PL
 README
 lib/Petal.pm
@@ -8,11 +9,7 @@ lib/Petal/Cache/Memory.pm
 lib/Petal/Canonicalizer/XHTML.pm
 lib/Petal/Canonicalizer/XML.pm
 lib/Petal/CodeGenerator.pm
-lib/Petal/Doc/Inline.pm
-lib/Petal/Doc/PIs.pm
-lib/Petal/Doc/Petales.pm
-lib/Petal/Doc/TAL.pm
-lib/Petal/Expressions.pm
+lib/Petal/Functions.pm
 lib/Petal/Hash.pm
 lib/Petal/Hash/String.pm
 lib/Petal/Hash/Test.pm
@@ -53,6 +50,7 @@ t/031_Escape_Semicolon.t
 t/032_Hypen_XML.t
 t/033_Hash.t
 t/034_Plugin.t
+t/035_Petal_Language.t
 t/data/attributes_andquot.xml
 t/data/autoload.xml
 t/data/canonical_error.html
@@ -76,6 +74,11 @@ t/data/include/index_xinclude2.xml
 t/data/infinite_includes.xml
 t/data/inline_vars.xml
 t/data/interpolate.xml
+t/data/language/exists_filename/fr-CA.html
+t/data/language/exists_filename/fr.xml
+t/data/language/fr.xml
+t/data/language/include/fr-CA.html
+t/data/language/include/fr.html
 t/data/loop_error.xml
 t/data/manipulate.html
 t/data/method_param.xml
