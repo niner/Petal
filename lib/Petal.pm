@@ -252,6 +252,49 @@ sub new
 }
 
 
+# _include_compute_path ($path);
+# ------------------------------
+# Computes the new absolute path from the current
+# path and $path
+sub _include_compute_path
+{
+    my $self  = shift;
+    my $file  = shift;
+    return $file if ($file =~ /^\//);
+    
+    my $path1 = $self->{file};
+    $path1 =~ s/^\///;
+    my @path1 = split /\//, $path1;
+    pop (@path1); # get old filename out of the way
+    
+    my $path2 = $file;
+    my @path2 = split /\//, $path2;
+    
+    my @path = (@path1, @path2);
+    my @new_path = ();
+    while (@path)
+    {
+	my $dir = shift (@path);
+	next if ($dir) eq '.';
+	
+	if ($dir eq '..')
+	{
+	    confess "Cannot include $file: Cannot go above base directory"
+	    unless (scalar @new_path);
+	    
+	    pop (@new_path);
+	}
+	else
+	{
+	    push @new_path, $dir;
+	}
+    }
+    
+    my $res = '/' . join '/', @new_path;
+    return $res;
+}
+
+
 =head2 $self->process (%hash);
 
 Processes the current template object with the information contained in

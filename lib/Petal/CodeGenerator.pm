@@ -114,9 +114,10 @@ sub process
 #   process a <?include file="/foo/blah.html"?> file
 sub _include
 {
-    my $class = shift;    
-    my $token_hash_args = join ", ", map { $_ . ' => "' . quotemeta ($token_hash{$_}) . '"' } keys %token_hash;
-    push @code, ("    " x $indent . "push \@res, Petal->new ( $token_hash_args )->process (\$hash);");
+    my $class = shift;
+    my $file  = $token_hash{file};
+    my $path  = $petal_object->_include_compute_path ($file);
+    push @code, ("    " x $indent . "push \@res, Petal->new ('$path')->process (\$hash);");
 }
 
 
