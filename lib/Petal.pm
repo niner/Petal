@@ -698,19 +698,6 @@ sub _canonicalize
 Petal - Perl Template Attribute Language - TAL for Perl!
 
 
-=head1 IMPORTANT NOTE 
-
-From version 2.00 onwards Petal *requires* that you use well-formed XML. This
-is because Petal now uses L<MKDoc::XML::TreeBuilder> rather than
-L<HTML::TreeBuilder> and L<XML::Parser>.
-
-In particular, this version of Petal *CAN* break backwards compatibility if you
-were using Petal's HTML mode will non well formed XHTML.
-
-If you still want to use broken XHTML, you can Petal 2.00 in conjunction with
-L<Petal::Parser::HTB> which has been created for this purpose.
-
-
 =head1 SYNOPSIS
 
 in your Perl code:
@@ -783,37 +770,7 @@ some_object() is a subroutine that returns some kind of object, may it be a scal
 object, array referebce or hash reference. Let's see what we can do...
 
 
-=head2 Version 1: Prototype
-
-    <!--? This is a template comment.
-          It will not appear in the output -->
-    <html xmlns:tal="http://purl.org/petal/1.0/">
-      <body>
-        This is the variable 'my_var' : ${my_var}.
-      </body>
-    </html>
-
-
-And if C<my_var> contained I<Hello World>, Petal would have outputted:
-
-    <html>
-      <body>
-        This is the variable 'my_var' : Hello World.
-      </body>
-    </html>
-
-
-Now let's say that C<my_var> is a hash reference as follows:
-
-    $VAR1 = { hello_world => 'Hello, World' }
-
-
-To output the same result, you would write:
-
-    This is the variable 'my_var' : ${my_var/hello_world}.
-
-
-=head2 Version 2: WYSIWYG friendly.
+=head2 Version 1: WYSIWYG friendly prototype.
 
 The problem with the above page is that when you edit it with a WYSIWYG editor,
 or simply open it in your browser, you will see:
@@ -832,26 +789,23 @@ frontpage, dreamweaver, adobe golive...) and work with less risk of damaging
 your petal commands.
 
 
-=head2 Version 3: Object-oriented version
+=head2 Version 2: Object-oriented version
 
 Let's now say that C<my_var> is actually an object with a method hello_world()
-that returns I<Hello World>. To output the same result, your line:
+that returns I<Hello World>. To output the same result, your line, which was:
 
     <span tal:replace="my_var/hello_world">Hola, Mundo!</span>
 
-Would become:
-
-    <span tal:replace="my_var/hello_world">Hola, Mundo!</span>
-
-Look carefully at those two lines. That's right. There are identical. Petal
-lets you access hashes and objects in an entirely transparent way.
+Would need to be... EXACTLY the same. Petal lets you access hashes and objects
+in an entirely transparent way and tries to automagically do The Right Thing
+for you.
 
 This high level of polymorphism means that in most cases you can maintain your
 code, swap hashes for objects, and not change a single line of your template
 code.
 
 
-=head2 Version 4: Personalizable
+=head2 Version 3: Personalizable
 
 Now let's say that your method some_object() can take an optional
 argument so that C<$my_var->hello_world ('Jack')> returns I<Hello Jack>.
@@ -883,7 +837,7 @@ You cannot write nested expressions such as:
 This will NOT work. At least, not yet.
 
 
-=head2 Version 5: Internationalized
+=head2 Version 4: Internationalized
 
 Let's say that you have a directory called C<hello_world> with the following
 files:
@@ -903,6 +857,10 @@ You can use Petal as follows in your Perl code:
 What will happen is that the C<$template> object will try to find a file named
 C<fr-CA>, then C<fr>, then will default to <en>. It should work fine for
 includes, too!
+
+NOTE: There is now *EXPERIMENTAL, LIMITED* support for ZPT-like i18n
+attributes, which should provide a much nicer framework. See L<Petal::I18N> for
+details.
 
 
 TIP:
@@ -1043,26 +1001,6 @@ If specified, Petal will assume that the template to be processed (and its
 sub-templates) are in the character set I<charset>.
 
 I<charset> can be any character set that can be used with the module L<Encode>. 
-
-
-=head2 Global Variables
-
-If you want to use an option throughout your entire program and don't want to
-have to pass it to the constructor each time, you can set them globally. They
-will then act as defaults unless you override them in the constructor.
-
-  $Petal::BASE_DIR           (use base_dir option)
-  $Petal::INPUT              (use input option)
-  $Petal::OUTPUT             (use output option)
-  $Petal::TAINT              (use taint option)
-  $Petal::ERROR_ON_UNDEF_VAR (use error_on_undef_var option)
-  $Petal::DISK_CACHE         (use disk_cache option)
-  $Petal::MEMORY_CACHE       (use memory_cache option)
-  $Petal::MAX_INCLUDES       (use max_includes option)
-  $Petal::LANGUAGE           (use default_language option)
-  $Petal::DEBUG_DUMP         (use debug_dump option)
-    # $Petal::ENCODE_CHARSET     (use encode_charset option) -- _DEPRECATED_
-  $Petal::DECODE_CHARSET     (use decode_charset option)
 
 
 =head1 TAL SYNTAX

@@ -12,10 +12,7 @@ sub new
 }
 
 
-sub get_from_id { undef }
-
-
-sub get_from_string
+sub maketext
 {
     my $self   = shift;
     my $string = shift;
