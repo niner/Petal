@@ -1,9 +1,10 @@
 Revision history for Petal.
 
-2.14
+2.14 Thu Sep  2 15:07:39 2004
+    - Fixed broken I18N attributes parsing
     - Added I18N to string:
 
-2.13 Mon Aug  9 11:32:12 BST 2004
+2.13 Mon Aug  9 11:32:12 2004
     - Stopped Petal doing I18N stuff for includes
     - Fixed Petal::TranslationService::Gettext wrongly using noop
 

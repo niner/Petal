@@ -63,7 +63,7 @@ sub _process
         my $attributes = $tree->{"$Prefix:attributes"};
         $attributes =~ s/\s*;\s*$//;
         $attributes =~ s/^\s*//;
-        my @attributes = split /\s+\;\s+/, $attributes;
+        my @attributes = split /\s*\;\s*/, $attributes;
         foreach my $attribute (@attributes)
         {
             # if we have i18n:attributes="alt alt_text", then the
