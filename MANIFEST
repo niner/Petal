@@ -1,5 +1,5 @@
 Changes
-MANIFEST
+MANIFEST			This list of files
 Makefile.PL
 README
 lib/Petal.pm
@@ -9,6 +9,7 @@ lib/Petal/Cache/Memory.pm
 lib/Petal/Canonicalizer/XHTML.pm
 lib/Petal/Canonicalizer/XML.pm
 lib/Petal/CodeGenerator.pm
+lib/Petal/Encode.pm
 lib/Petal/Entities.pm
 lib/Petal/Functions.pm
 lib/Petal/Hash.pm
@@ -58,13 +59,13 @@ t/039_Access_Objects.t
 t/040_Tests_With_Zero.t
 t/041_Entities.t
 t/042_Path_Prefix.t
+t/043_Basic.t
 t/050_Opt_base_dir.t
 t/051_Opt_in_out.t
 t/052_Opt_language.t
 t/053_Opt_taint.t
 t/054_Opt_cache.t
 t/055_Opt_maxinc.t
-t/056_Basic.t
 t/benchmark.pl
 t/data/access_obj_array.html
 t/data/access_obj_hash.html
