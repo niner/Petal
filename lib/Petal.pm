@@ -13,6 +13,7 @@ Petal - Perl Template Attribute Language
     some_object => $object,
   );
 
+
 =head1 SUMMARY
 
 Petal is a XML based templating engine that is able to process any
@@ -547,15 +548,27 @@ Join the Petal mailing list:
 
   http://lists.webarch.co.uk/mailman/listinfo/petal
 
+Mailing list archives:
+
+  http://lists.webarch.co.uk/pipermail/petal
+
+
 Have a peek at the TAL / TALES / METAL specs:
 
   http://www.zope.org/Wikis/DevSite/Projects/ZPT/TAL
   http://www.zope.org/Wikis/DevSite/Projects/ZPT/TALES
   http://www.zope.org/Wikis/DevSite/Projects/ZPT/METAL
 
-The 3 Petal syntaxes, L<Petal::Doc::Inline>, L<Petal::Doc::PIs>,
-L<Petal::Doc::TAL> plus the Expression Syntax
-L<Petal::Doc::Petales>.
+
+Look at the different syntaxes which you can use:
+
+L<Petal::Doc::Inline>,
+L<Petal::Doc::PIs>,
+L<Petal::Doc::TAL>,
+
+
+And the expression syntax: L<Petal::Doc::Petales>.
+
 
 Any extra questions? jhiver@mkdoc.com.
 
