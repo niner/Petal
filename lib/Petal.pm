@@ -1054,6 +1054,48 @@ Example:
 
   <li tal:repeat="user system/user_list">$user/real_name</li>
 
+A select list with one item selected:
+
+  <select>
+    <option
+      selected="selected"
+      tal:attributes="value self/selected_lang/value"
+      tal:content="self/selected_lang/label"
+    >English</option>
+    <option
+      value="i-klingon"
+      tal:repeat="lang self/unselected_langs;"
+      tal:attributes="value lang/value"
+      tal:content="lang/label"
+    >Klingon</option>
+  </select>
+
+A table with rows of alternation colours set via CSS:
+
+  <table>
+    <div
+      tal:omit-tag=""
+      tal:repeat="audience self/audiences"
+    >
+      <tr 
+        class="odd"
+        tal:condition="true: repeat/odd"
+      >
+        <td>
+          This a odd row, it comes before the even row.
+        </td>
+      </tr>
+      <tr 
+        class="even"
+        tal:condition="true: repeat/even"
+      >
+        <td> 
+          This a even row.
+        </td>
+      </tr>
+    </div>
+  </table>
+
 Why?
 
 Repeat statements are used to loop through a list of values,
