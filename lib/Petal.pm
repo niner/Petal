@@ -260,7 +260,7 @@ sub _include_compute_path
 {
     my $self  = shift;
     my $file  = shift;
-    return $file if ($file =~ /^\//);
+    return $file unless ($file =~ /^\./);
     
     my $path1 = $self->{file};
     $path1 =~ s/^\///;
@@ -614,12 +614,39 @@ article.
 
 =head2 Limited Xinclude support
 
-If you want to include other templates in your main template, you can
-use a subset of the XInclude syntax as follows:
+Let's say that your base directory is '/www/projects/foo/templates',
+and you're editing '/www/projects/foo/templates/hello/index.html'.
+
+From there you want to include '/www/projects/foo/templates/includes/header.html'
+
+
+=head3 General syntax
+
+You can use a subset of the XInclude syntax as follows:
 
   <body xmlns:xi="http://www.w3.org/2001/XInclude">
-    <xi:include href="../header/en.xml" />
+    <xi:include href="/includes/header.html" />
   </body>
+
+
+For backwards compatibility reasons, you can omit the first slash, i.e.
+
+  <xi:include href="includes/header.html" />
+
+
+=head3 Relative paths
+
+If you'd rather use a path which is relative to the template itself rather
+than the base directory, you can do it but the path needs to start with a dot,
+i.e.
+
+  <xi:include href="../includes/header.html" />
+
+  <xi:include href="./subdirectory/foo.xml" />
+
+etc.
+
+=head3 Limitations
 
 The 'href' parameter does not support URIs, no other tag than
 xi:include is supported, and no other directive than the 'href'
@@ -627,8 +654,9 @@ parameter is supported at the moment.
 
 Also note that contrarily to the XInclude specification Petal DOES
 allow recursive includes up to $Petal::MAX_INCLUDES. This behavior
-is very useful when designing templates to display data which is
-recursive by nature such as sitemaps, fibonacci suites, etc.
+is very useful when designing templates to display data which can
+be recursive such as sitemaps, database cursors, fibonacci suites,
+etc.
 
 You can use ONLY the following Petal directives with Xinclude tags:
 
