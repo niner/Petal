@@ -5,6 +5,7 @@ lib/Petal/Cache/Memory.pm
 lib/Petal/Canonicalizer/XHTML.pm
 lib/Petal/Canonicalizer/XML.pm
 lib/Petal/CodeGenerator.pm
+lib/Petal/Deprecated.pm
 lib/Petal/Entities.pm
 lib/Petal/Functions.pm
 lib/Petal/Hash.pm
@@ -14,6 +15,7 @@ lib/Petal/Hash/Var.pm
 lib/Petal/I18N.pm
 lib/Petal/Parser.pm
 lib/Petal/TranslationService/h4x0r.pm
+lib/Petal/TranslationService/MOFile.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml			Module meta-data (added by MakeMaker)
@@ -80,6 +82,7 @@ t/072_Metal_Define_Slot.t
 t/073_Metal_Fill_Slot.t
 t/080_Petal_TranslationService_h4x0r.t
 t/081_Petal_I18NProcessor.t
+t/082_Petal_Gettext.t
 t/benchmark.pl
 t/data/access_obj_array.html
 t/data/access_obj_hash.html
@@ -100,12 +103,20 @@ t/data/entities.html
 t/data/entities.xml
 t/data/error_on_undef_var.html
 t/data/eval.xml
+t/data/gettext/html/index.html
+t/data/gettext/html/menu-no-css.html
+t/data/gettext/mo/en.mo
+t/data/gettext/mo/fr.mo
+t/data/gettext/po/en.po
+t/data/gettext/po/fr.po
+t/data/gettext/po/index.pot
 t/data/hash_mustfail.xml
 t/data/hash_mustpass.xml
 t/data/hashref_list.html
 t/data/html_errors/no_var.html
 t/data/html_errors/not_xml.html
 t/data/hypen.xml
+t/data/i18n-test.html
 t/data/if.html
 t/data/if.xml
 t/data/include/deep/index.xml

@@ -133,6 +133,7 @@ sub process
     
     # return '' unless (defined $current);
     # $current = "$current" if (defined $current);
+    return $$current if isa($current, 'SCALAR');
     return $current;
 }
 

@@ -6,14 +6,14 @@ use Test::More 'no_plan';
 use Petal::I18N;
 use Petal;
 
-eval { use Lingua::31337 };
+eval "use Lingua::31337";
 if ($@) {
-   # no h4x0r module, no worries...   
+   warn "Lingua::31337 not found - skipping";
    ok (1);
 }
 else
 {
-    eval { use Petal::TranslationService::h4x0r };
+    eval "use Petal::TranslationService::h4x0r";
     die $@ if ($@);
 
     $Petal::TranslationService = Petal::TranslationService::h4x0r->new();

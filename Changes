@@ -1,6 +1,10 @@
 Revision history for Petal.
 
-2.08
+2.11 Fri Jul 23 13:10:30 2004
+    - Applied Warren Smith's dereferencing patch
+    - Fixed broken tests for I18N
+
+2.10 Thu Jul 22 15:12:51 2004
     - Added experimental ZPT I18N support
     - Updated documentation
     - Added a bunch of tests

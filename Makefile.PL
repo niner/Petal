@@ -7,7 +7,7 @@ WriteMakefile(
     'PREREQ_PM'		=> {
 	'Test::Harness'	    => '2.00',
 	'Scalar::Util'      => '1.07',
-	'MKDoc::XML'        => '0.69',
+	'MKDoc::XML'        => '0.72',
     },
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM => 'lib/Petal.pm', # retrieve abstract from module

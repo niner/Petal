@@ -4,14 +4,14 @@ use strict;
 use lib ('lib');
 use Test::More 'no_plan';
 
-eval { use Lingua::31337 };
+eval "use Lingua::31337";
 if ($@) {
-   # no h4x0r module, no worries...   
+   warn "Lingua::31337 not found - skipping";
    ok (1);
 }
 else
 {
-   eval { use Petal::TranslationService::h4x0r };
+   eval "use Petal::TranslationService::h4x0r";
    die $@ if ($@);
 
    my $trans  = new Petal::TranslationService::h4x0r;

@@ -6,14 +6,13 @@ use Test::More 'no_plan';
 use Petal::I18N;
 use Petal;
 
-eval { use Locale::Maketext::Gettext };
+eval "use Locale::Maketext::Gettext";
 if ($@) {
-   # no gettext module, no worries...
-   warn "Locale::Maketext::Gettext is not installed - skipping";
+   warn "Locale::Maketext::Gettext not found - skipping";
    ok (1);
 }
 else {
-    eval { use Petal::TranslationService::MOFile };
+    eval "use Petal::TranslationService::MOFile";
     $@ and die $@;
 
     my $lh = Locale::Maketext::Gettext->get_handle();
