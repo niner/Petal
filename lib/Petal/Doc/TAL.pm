@@ -36,7 +36,7 @@ as follows (for the sake of the example, let's say we want to use the
     <html xml:lang="en"
           lang="en-"
           xmlns="http://www.w3.org/1999/xhtml"
-          TAL:xmlns="http://purl.org/petal/1.0/">
+          xmlns:TAL="http://purl.org/petal/1.0/">
 
       Blah blah blah...
       Content of the file
@@ -45,7 +45,6 @@ as follows (for the sake of the example, let's say we want to use the
 
 
 =head1 STATEMENTS
-
 
 =head2 define
 

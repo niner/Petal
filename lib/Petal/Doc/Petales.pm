@@ -112,7 +112,7 @@ Note: You're more likely to want to loop through arrays:
   3. some_object/some_method some_variable
 
 Note that the syntax as described in 2c works only if you use strings
-which do not have spaces.
+which do not contain spaces.
 
 =head3 Example
 
@@ -136,7 +136,7 @@ Petal lets you traverse any data structure, i.e.
 
 =head3 Petal expression
 
-  some_object/some_method/key2/some_other_method 'foo' bar
+  some_object/some_method/key2/some_other_method --foo bar
 
 
 =head1 MODIFIERS
@@ -166,7 +166,7 @@ the true: modifiers should always be used when doing Petal conditions.
 
 =head2 false:EXPRESSION
 
-I'm sure you can work that out by yourself :-)
+I'm pretty sure you can work this one out by yourself :-)
 
 
 =head2 set:variable_name EXPRESSION

@@ -145,7 +145,16 @@ $MEMORY_CACHE - If set to FALSE, Petal will not use the Petal::Disk::Memory modu
 our $MEMORY_CACHE = 1;
 
 
-our $VERSION = '0.81';
+=pod
+
+$MAX_INCLUDES - Maximum number of recursive includes before Petal stops including
+to prevent accidental infinite recursions.
+
+=cut
+our $MAX_INCLUDES = 30;
+our $CURRENT_INCLUDES = 0;
+
+our $VERSION = '0.82';
 
 
 # this is for XML namespace support. Can't touch this :-)
@@ -211,6 +220,11 @@ Example:
 =cut
 sub process
 {
+    # prevent infinite includes from happening...
+    my $current_includes = $CURRENT_INCLUDES;
+    local $CURRENT_INCLUDES = $current_includes + 1;
+    return "ERROR: MAX_INCLUDES : $CURRENT_INCLUDES" if ($CURRENT_INCLUDES >= $MAX_INCLUDES);
+    
     my $self = shift;
     my $hash = undef;
     if (@_ == 1 and ref $_[0] eq 'HASH')
@@ -501,6 +515,25 @@ article.
 
 This syntax is documented in the L<Petal::Doc::PIs>
 article.
+
+
+=head2 Limited Xinclude support
+
+If you want to include other templates in your main template, you can
+use a subset of the XInclude syntax as follows:
+
+  <body xmlns:xi="http://www.w3.org/2001/XInclude">
+    <xi:include href="../header/en.xml" />
+  </body>
+
+The 'href' parameter does not support URIs, no other tag than
+xi:include is supported, and no other directive than the 'href'
+parameter is supported at the moment.
+
+Also note that contrarily to the XInclude specification Petal DOES
+allow recursive includes up to $Petal::MAX_INCLUDES. This behavior
+is very useful when designing templates to display data which is
+recursive by nature such as sitemaps, fibonacci suites, etc.
 
 
 =head1 Variable expressions and modifiers
