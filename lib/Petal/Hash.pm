@@ -161,11 +161,11 @@ $MODIFIERS->{'encode_html:'} = $MODIFIERS->{'encode:'};
 sub new
 {
     my $thing = shift;
-    my $class = ref $thing || $thing;
+    my $self  = (ref $thing) ?
+        bless { %{$thing} }, ref $thing :
+	bless { @_ }, $thing;
     
-    my $self  = bless { @_ }, $class;
     $self->{__petal_hash_cache__}  = {};
-    $self->{__petal_hash_parent__} = (ref $thing) ? $thing : undef;
     return $self;
 }
 
@@ -179,30 +179,9 @@ sub get
     delete $self->{__petal_hash_cache__}->{$key} if ($fresh);
     exists $self->{__petal_hash_cache__}->{$key} and return $self->{__petal_hash_cache__}->{$key};
     
-    # if we're not the top hash, whenever the expression cannot be resolved,
-    # we need to return undefined rather that dying...
-    my $parent = $self->parent();
-    my $res;
-    if (defined $parent)
-    {
-	local $Petal::Hash::Var::ReturnUndefInsteadOfDie = 1;
-	$res = $self->__FETCH ($key) || $parent->get ($key);
-    }
-    else
-    {
-	local $Petal::Hash::Var::ReturnUndefInsteadOfDie = 0;
-	$res = $self->__FETCH ($key);
-    }
-    
+    my $res = $self->__FETCH ($key);
     $self->{__petal_hash_cache__}->{$key} = $res;
     return $res;
-}
-
-
-sub parent
-{
-    my $self = shift;
-    return $self->{__petal_hash_parent__};
 }
 
 

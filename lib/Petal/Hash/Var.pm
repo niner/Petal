@@ -26,8 +26,6 @@ use strict;
 use warnings;
 use Carp;
 
-our $ReturnUndefInsteadOfDie = 0;
-
 our $STRING_RE_DOUBLE = qq |(?<!\\\\)\\".*?(?<!\\\\)\\"|;
 our $STRING_RE_SINGLE = qq |(?<!\\\\)\\'.*?(?<!\\\\)\\'|;
 our $STRING_RE        = "(?:$STRING_RE_SINGLE|$STRING_RE_DOUBLE)";
@@ -141,8 +139,6 @@ sub process
 	# let's croak and return
 	else
 	{
-	    return if ($ReturnUndefInsteadOfDie);
-	    
 	    my $warnstr = "Cannot find value for $argument: $next cannot be retrieved\n";
 	    $warnstr .= "(current value was ";
 	    $warnstr .= (defined $current) ? "'$current'" : 'undef';
