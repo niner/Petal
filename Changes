@@ -1,6 +1,6 @@
 Revision history for Petal.
 
-0.64 Tue Sep  3 15:48:23 2002
+0.64
 	- Fixed extra AUTOLOAD bug
 	- Fixed _split_expression critical bug 
 	- Added test
