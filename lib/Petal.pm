@@ -235,13 +235,12 @@ sub _file_path
 {
     my $self = shift;
     my $file = $self->_file;
-    
     if (defined $BASE_DIR)
     {
 	my $base_dir = File::Spec->canonpath ($BASE_DIR);
 	$base_dir = File::Spec->rel2abs ($base_dir) unless ($base_dir =~ /^\//);
 	$base_dir =~ s/\/$//;
-	my $file_path = $base_dir . '/' . $file;
+	my $file_path = File::Spec->canonpath ($base_dir . '/' . $file);
 	return $file_path if (-e $file_path and -r $file_path);
     }
     
@@ -250,7 +249,7 @@ sub _file_path
 	my $base_dir = File::Spec->canonpath ($dir);
 	$base_dir = File::Spec->rel2abs ($base_dir) unless ($base_dir =~ /^\//);
 	$base_dir =~ s/\/$//;
-	my $file_path = $base_dir . '/' . $file;
+	my $file_path = File::Spec->canonpath ($base_dir . '/' . $file);
 	return $file_path if (-e $file_path and -r $file_path);
     }
     

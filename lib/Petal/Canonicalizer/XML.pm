@@ -38,6 +38,10 @@ sub process
     my $data_ref = shift;
     $data_ref = (ref $data_ref) ? $data_ref : \$data_ref;
     
+    # grab anything that's before the first '<' tag
+    my ($header) = $$data_ref =~ /(^.*?)<(?!\?|\!)/sm;
+    $$data_ref =~ s/(^.*?)<(?!\?|\!)/\</sm;
+    
     # grab the <!...> tags which the parser is going to strip
     # in order to reinclude them afterwards
     my @decls = $$data_ref =~ /(<!.*?>)/gsm;
@@ -51,7 +55,7 @@ sub process
     
     $parser->process ($class, $data_ref);
     
-    my $res = (join "\n", @decls) . "\n" . (join '', @Result);
+    my $res = $header . (join '', @Result);
     $class->_processing_instructions_in (\$res, $pis);
     return \$res;
 }
