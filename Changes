@@ -1,6 +1,6 @@
 Revision history for Petal.
 
-0.74
+0.74 Mon Sep 30 14:35:25 2002
 	- Done some more optimization on Petal::Hash
 	- Fixed petal:set='foo string:"Hello"' bug
 	- Fixed double encoding on set + includes issue

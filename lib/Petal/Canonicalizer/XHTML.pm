@@ -97,6 +97,7 @@ sub StartTag
 		$command =~ s/^\$//;
 		$command =~ s/^\{//;
 		$command =~ s/\}$//;
+		$command = Petal::XML_Encode_Decode::encode_backslash_semicolon ($command);
 		$command = "<?petal:var name=\"$command\"?>";
 		$text =~ s/\Q$var\E/$command/g;
 	    }

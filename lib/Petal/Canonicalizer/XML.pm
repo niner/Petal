@@ -189,11 +189,11 @@ sub StartTag
 	    my $value = $att->{$key};
 	    if ($value =~ /^<\?petal:attr/)
 	    {
-		push @att_str, $value;  # Petal::XML_Encode_Decode::encode_backslash_semicolon ??
+		push @att_str, $value;
 	    }
 	    else
 	    {
-		push @att_str, $key . '=' . "\"$value\""; # Petal::XML_Encode_Decode::encode_backslash_semicolon ??
+		push @att_str, $key . '=' . "\"$value\"";
 	    }
 	}
 	
