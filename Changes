@@ -1,5 +1,7 @@
 Revision history for Petal.
 
+0.95 Fri Jun 27 15:44:12 2003
+	- Added $ENCODE_CHARSET and $DECODE_CHARSET options
 	- Changed the include mechanism to make faulty include non fatal
 	- Lengthy debug info is now written in tmp directory
 	- Patched with Fergal Daly's require.patch

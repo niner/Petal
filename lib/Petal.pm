@@ -80,7 +80,7 @@ our $CURRENT_INCLUDES = 0;
 
 
 # this is for CPAN
-our $VERSION = '0.94';
+our $VERSION = '0.95';
 
 
 # The CodeGenerator class backend to use.
@@ -301,21 +301,23 @@ sub process
     return "ERROR: MAX_INCLUDES : $CURRENT_INCLUDES" if ($CURRENT_INCLUDES > $MAX_INCLUDES);
     local $CURRENT_INCLUDES = $current_includes + 1;
     
-    my $hash = undef;
-    if (ref $_[0] eq 'Petal::Hash') { $hash = shift }
-    elsif (ref $_[0] eq 'HASH')     { $hash = new Petal::Hash (%{shift()}) }
-    else                            { $hash = new Petal::Hash (@_)         }
-    
-    my $coderef = $self->_code_memory_cached;
     my $res = undef;
-    eval { $res = $coderef->($hash) };
-    $self->_handle_error ($@) if (defined $@ and $@);
-    
-    $Petal::ENCODE_CHARSET and do {
-	require "Encode.pm";
-	$res = Encode::encode ($Petal::ENCODE_CHARSET, $res);
+    eval {
+	my $hash = undef;
+	if (ref $_[0] eq 'Petal::Hash') { $hash = shift }
+	elsif (ref $_[0] eq 'HASH')     { $hash = new Petal::Hash (%{shift()}) }
+	else                            { $hash = new Petal::Hash (@_)         }
+	
+	my $coderef = $self->_code_memory_cached;
+	$res = $coderef->($hash);
+	
+	$Petal::ENCODE_CHARSET and do {
+	    require "Encode.pm";
+	    $res = Encode::encode ($Petal::ENCODE_CHARSET, $res);
+	};
     };
     
+    $self->_handle_error ($@) if (defined $@ and $@);
     return $res;
 }
 
@@ -338,11 +340,6 @@ sub _handle_error
 	};
 	print "\n";
 	
-	print ERROR "Template perl code dump:\n";
-	print ERROR "========================\n";
-	my $dump = $self->_code_with_line_numbers();
-	($dump) ? print ERROR $dump : print ERROR "(no dump available)";
-	
 	print ERROR "Petal object dump:\n";
 	print ERROR "==================\n";
 	print ERROR Dumper ($self);
@@ -353,10 +350,15 @@ sub _handle_error
 	print ERROR Carp::longmess();
 	print ERROR "\n\n";
 	
+	print ERROR "Template perl code dump:\n";
+	print ERROR "========================\n";
+	my $dump = eval { $self->_code_with_line_numbers() };
+	($dump) ? print ERROR $dump : print ERROR "(no dump available)";
+	
 	die "[PETAL ERROR] $error. Debug info written in $debug.";
     };
     
-    not $Petal::DEBUG_DUMP and do {
+    ! $Petal::DEBUG_DUMP and do {
 	die "[PETAL ERROR] $error. No debug info written.";
     };
 }
@@ -423,7 +425,7 @@ sub _file_path
 	return $file_path if (-e $file_path and -r $file_path);
     }
     
-    confess ("Cannot find $file in @dirs. (typo? permission problem?)");
+    Carp::confess ("Cannot find $file in @dirs. (typo? permission problem?)");
 }
 
 
@@ -436,9 +438,11 @@ sub _file_data_ref
     my $self      = shift;
     my $file_path = $self->_file_path;
     
+    use bytes;
     open FP, "<$file_path" || die 'Cannot read-open $file_path';
     my $res = join '', <FP>;
     close FP;
+    no bytes;
     
     $Petal::DECODE_CHARSET and do {
 	require "Encode.pm";
@@ -848,12 +852,39 @@ The maximum number of recursive includes before Petal stops processing.  This
 is to guard against accidental infinite recursions.
 
 
+=head2 debug_dump => I<true> | I<false> (default: I<true>)
+
+If this option is true, when Petal cannot process a template it will
+output lots of debugging information in a temporary file which you can
+inspect.
+
+
+=head2 encode_charset => I<charset> (default: undef)
+
+This option will work only if you use Perl 5.8.
+
+If specified, Petal will assume encode the output in the character set
+I<charset>.  Please note that the utf-8 flag will be ALWAYS turned off, even if
+you specify I<utf8>.
+
+I<charset> can be any character set that can be used with the module L<Encode>. 
+
+
+=head2 decode_charser => I<charset> (default: undef)
+
+This option will work only if you use Perl 5.8.
+
+If specified, Petal will assume that the template to be processed (and its
+sub-templates) are in the character set I<charset>. 
+
+I<charset> can be any character set that can be used with the module L<Encode>. 
+
+
 =head2 Global Variables
 
-Earlier versions of Petal used global variables rather than constructor
-arguments to set the options described above.  That method of setting options
-is now deprecated, but you may encounter older code which uses the following
-variables:
+If you want to use an option throughout your entire program and don't want to
+have to pass it to the constructor each time, you can set them globally. They
+will then act as defaults unless you override them in the constructor.
 
   $Petal::BASE_DIR          (use base_dir option)
   $Petal::INPUT             (use input option)
@@ -863,6 +894,9 @@ variables:
   $Petal::MEMORY_CACHE      (use memory_cache option)
   $Petal::MAX_INCLUDES      (use max_includes option)
   $Petal::LANGUAGE          (use default_language option)
+  $Petal::DEBUG_DUMP        (use debug_dump option)
+  $Petal::ENCODE_CHARSET    (use encode_charset option)
+  $Petal::DECODE_CHARSET    (use decode_charset option)
 
 
 =head1 TAL SYNTAX

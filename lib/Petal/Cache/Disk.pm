@@ -141,10 +141,15 @@ sub cached
     
     open FP, "<$tmp/$key" or
         (Carp::cluck "Cannot read-open cached file for $tmp/$key" and return);
-    my $data = join '', <FP>;
+    my $res = join '', <FP>;
     close FP;
     
-    return $data;
+    $Petal::DECODE_CHARSET and do {
+	require "Encode.pm";
+	$res = Encode::decode ($Petal::DECODE_CHARSET, $res);
+    };
+    
+    return $res;
 }
 
 
