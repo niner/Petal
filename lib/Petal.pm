@@ -13,11 +13,6 @@ Petal - Perl Template Attribute Language
     some_object => $object,
   );
 
-Join the Petal mailing list:
-
-  http://lists.webarch.co.uk/mailman/listinfo/petal
-
-
 =head1 SUMMARY
 
 Petal is a XML based templating engine that is able to process any
@@ -35,10 +30,6 @@ the loops and ifs which happen behind the scenes.
 Besides, you can safely send the result of their work through HTML tidy
 to make sure that you always output neat, standard compliant, valid XML
 pages.
-
-To properly understand Petal, I would recomment that you quick-read the
-present documentation, then go read the Petal::Expressions article, and
-then read the present documentation properly.
 
 
 =head1 NAMESPACE
@@ -439,25 +430,7 @@ sub _canonicalize
 
 __END__
 
-=head1 Overview
-
-Currently, Petal supports three different syntaxes:
-
-* A 'Canonical' Syntax
-
-  This is my variable: <?petal:var name="my_variable"?>
-
-* A 'TAL-like' Syntax
-
-  This is my variable: <span petal:replace="my_variable">Dummy Variable</span>
-
-* An 'Inline' Syntax
-
-  This is my variable: $my_variable
-
-You can use all three syntaxes in the same template file. In order to ease
-maintenance, Petal internally re-writes your templates into the canonical
-syntax.
+=head1 Template cycle
 
 The cycle of a Petal template is the following:
 
@@ -495,6 +468,9 @@ as follows:
   $my_array/2
   $my_hash/some_key
 
+This syntax is documented in the L<Petal::Doc::Inline>
+article.
+
 
 =head2 "TAL-like" syntax, i.e.
 
@@ -507,6 +483,9 @@ Which if 'list' was ('foo', 'bar', 'baz') would output:
   <li>bar</li>
   <li>baz</li>
 
+This syntax is documented in the L<Petal::Doc::TAL>
+article.
+
 
 =head2 "Usual" syntax (like HTML::Template, Template::Toolkit, etc), i.e
 
@@ -516,270 +495,15 @@ Which if 'list' was ('foo', 'bar', 'baz') would output:
     <?end?>
   <?end?>
 
+This syntax is documented in the L<Petal::Doc::PIs>
+article.
+
 
 =head1 Variable expressions and modifiers
 
-This section has been moved into the Petal::Expressions article,
-where it's explained in detail.
-
-
-=head1 Petal TAL-like syntax
-
-This functionality is inspired from TAL, the specification of which is
-there: http://www.zope.org/Wikis/DevSite/Projects/ZPT/TAL. In order to
-save some typing I'll just point out the differences and important
-points:
-
-* The prefix is not tal:, but petal:. It's two extra characters to write but
-  although Petal is partly inspired from TAL, it does _NOT_ implement the TAL
-  specification which justifies the fact that a different namespace is used.
-
-
-=head2 define
-
-Abstract:
-
-  <tag petal:define="variable_name EXPRESSION">
-
-Example:
-
-  <!-- sets document/title to 'title' -->
-  <span petal:define="title document/title">
-
-
-=head2 condition (ifs)
-
-Abstract:
-
-  <tag petal:condition="true:EXPRESSION">
-     blah blah blah
-  </tag>
-
-Example:
-
-  <span petal:condition="true:user/is_authenticated">
-    Yo, authenticated!
-  </span>
-
-
-=head2 repeat (loops)
-
-Abstract:
-
-  <tag petal:repeat="element_name EXPRESSION">
-     blah blah blah
-  </tag>
-
-Example:
-
-  <li petal:repeat="user system/user_list">$user/real_name</li>
-
-
-=head2 attributes
-
-Abstract:
-
-  <tag petal:attributes="attr1 EXPRESSION_1; attr2 EXPRESSION_2"; ...">
-     blah blah blah
-  </tag>
-
-Example:
-
-  <a href="http://www.gianthard.com"
-     lang="en-gb"
-     petal:attributes="href document/href_relative; lang document/lang">
-
-
-=head2 content
-
-Abstract:
-
-  <tag petal:content="EXPRESSION">Dummy Data To Replace With EXPRESSION</tag>
-
-Example:
-
-  <span petal:content="title">Dummy Title</span>
-
-By default, the characters '<', '>', '"' and '&' are encoded to the entities
-'&lt', '&gt;', '&quot;' and '&amp;' respectively. If you don't want them to
-(because the result of your expression is already encoded) you have to use
-the 'structure' keyword.
-
-Example:
-
-  <span petal:content="structure some_modifier:some/encoded/variable">
-     blah blah blah
-  </span>
-
-
-=head2 replace
-
-Abstract:
-
-  <tag petal:content="EXPRESSION">
-    This time the entire tag is replaced
-    rather than just the content!
-  </tag>
-
-Example:
-
-  <span petal:replace="title">Dummy Title</span>
-
-Note:
-
-'petal:content' and 'petal:replace' are *NOT* aliases. The former will
-replace the contents of the tag, while the latter will replace the
-whole tag.
-
-You cannot use petal:content and petal:replace in the same tag.
-
-
-=head2 omit-tag
-
-omit-tag statements can be used to leave the contents of a tag in place
-while omitting the surrounding start and end tags if the expression which
-is evaluated is TRUE.
-
-Example:
-
-  <b petal:omit-tag="not:bold">I may not be bold.</b>
-
-If 'not:bold' is evaluated as TRUE, then the <b> tag will be omited.
-If 'not:bold' is evaluated as FALSE, then the <b> tag will stay in place.
-
-
-=head2 multiple commands
-
-You can do things like:
-
-  <p petal:define="children document/children"
-     petal:condition="children"
-     petal:repeat="child children"
-     petal:attributes="lang child/lang; xml:lang child/lang"
-     petal:content="child/data">Some Dummy Content</p>
-
-Given the fact that XML attributes are not ordered, withing the same tag
-statements will be executed in the following order: define, condition,
-repeat, (attributes, content) or (replace).
-
-
-=head2 Aliases
-
-On top of all that, for people who are lazy at typing the following
-aliases are provided (although I would recommend sticking to the
-defaults):
-
-  * petal:define     - petal:def, petal:set
-  * petal:condition  - petal:if
-  * petal:repeat     - petal:for, petal:loop, petal:foreach
-  * petal:attributes - petal:att, petal:attr, petal:atts
-  * petal:content    - petal:inner
-  * petal:replace    - petal:outer
-
-
-=head2 Simple Variable Interpolation
-
-It's the simplest way to insert values in the template:
-
-  Hello, $user/login
-  Your real name is $user/real_name!
-
-If $user is a hash reference, then the engine will fetch the value
-matching the 'login' key. If it's an object, it will try to see if there
-is a $user->login method, otherwise it will try to fetch $user->{login}. 
-
-
-=head1 XML Processing Instructions Syntax
-
-=head2 Variables and Modifiers
-
-  <?petal:var name="document/title"?>
-
-=head3 If / Else constructs
-
-Usual stuff:
-
-  <?petal:if name="user/is_birthay"?>
-    Happy Birthday, $user/real_name!
-  <?petal:else?>
-    What?! It's not your birthday?
-    A very merry unbirthday to you! 
-  <?petal:end?>
-
-You can use petal:condition instead of petal:if, and indeed you can use
-modifiers:
-
-  <?petal:condition name="false:user/is_birthay"?>
-    What?! It's not your birthday?
-    A very merry unbirthday to you! 
-  <?petal:else?>
-    Happy Birthday, $user/real_name!
-  <?petal:end?>
-
-Not much else to say!
-
-
-=head3 Loops
-
-Use either petal:for, petal:foreach, petal:loop or petal:repeat. They're
-all the same thing, which one you use is a matter of taste. Again no
-surprise:
-
-  <h1>Listing of user logins</h1>
-  <ul>
-    <?petal:repeat name="user system/list_users"?>
-      <li>$user/login : $user/real_name</li>
-    <?petal:end?>
-  </ul>
-  
-
-Variables are scoped inside loops so you don't risk to erase an existing
-'user' variable which would be outside the loop. The template engine
-also provides the following variables for you inside the loop:
-
-  <?petal:repeat name="foo bar"?>
-    $__count__    - iteration number, starting at 1
-    $__is_first__ - is it the first iteration
-    $__is_last__  - is it the last iteration
-    $__is_inner__ - is it not the first and not the last iteration
-    $__even__     - is the count even
-    $__odd__      - is the count odd
-  <?petal:end?>
-
-Again these variables are scoped, you can safely nest loops, ifs etc...
-as much as you like and everything should be fine. And if it's not,
-it's a bug :-)
-
-
-=head1 Includes
-
-Petal fully support includes using the following syntax:
-
-  <?petal:include file="include.xml"?>
-
-And it will include the file 'include.xml', using the current object
-base_dir attribute. Petal includes occur at RUN TIME. That means that
-there is NO SUPPORT to prevent infinite includes, which is usually not
-so much of a deal since they happen at run time...
-
-This should let you build templates which have a recursive behavior
-which can be useful to apply templates to any tree-shaped structure (i.e.
-sitemaps, threads, etc).
-
-If you want use XML::Parser to include files, you should make sure that
-the included files are valid XML themselves... FYI XML::Parser chokes on this:
-
-<p>foo</p>
-<p>bar</p>
-
-But this works:
-
-<div>
-  <p>foo</p>
-  <p>bar</p>
-</div>
-
-(having only one top element is part of the XML spec).
+Petal lets you transparently access arrays, hashes, objects, etc.
+trough a unified syntax called Petales (Petal Expression Syntax).
+It is documented in L<Petal::Doc::Petales>.
 
 
 =head1 EXPORT
@@ -792,13 +516,10 @@ None.
 The XML::Parser wrapper cannot expand any other entity than &lt;, &gt; &amp;
 and &quot;. Besides, I can't get it to NOT expand entities in 'Stream' mode :-(
 
-HTML::TreeBuilder expand all entities, hence &nbsp;s are lost / converted to
+HTML::TreeBuilder expands all entities, hence &nbsp;s are lost / converted to
 whitespaces.
 
 XML::Parser is deprecated and should be replaced by SAX handlers at some point.
-
-Problems have been reported with the petal cache on a (Apache + Windows +
-mod_perl) platform (?).
 
 
 =head1 AUTHOR
@@ -819,6 +540,7 @@ parsing.
 
 And everyone else I forgot :-)
 
+
 =head1 SEE ALSO
 
 Join the Petal mailing list:
@@ -831,6 +553,11 @@ Have a peek at the TAL / TALES / METAL specs:
   http://www.zope.org/Wikis/DevSite/Projects/ZPT/TALES
   http://www.zope.org/Wikis/DevSite/Projects/ZPT/METAL
 
-Any extra questions? jhiver@mkdoc.com
+The 3 Petal syntaxes, L<Petal::Doc::Inline>, L<Petal::Doc::PIs>,
+L<Petal::Doc::TAL> plus the Expression Syntax
+L<Petal::Doc::Petales>.
+
+Any extra questions? jhiver@mkdoc.com. Ooops, no,
+actually the mailing lis
 
 =cut
