@@ -8,6 +8,7 @@ lib/Petal/Cache/Memory.pm
 lib/Petal/Canonicalizer/XHTML.pm
 lib/Petal/Canonicalizer/XML.pm
 lib/Petal/CodeGenerator.pm
+lib/Petal/Entities.pm
 lib/Petal/Functions.pm
 lib/Petal/Hash.pm
 lib/Petal/Hash/String.pm
@@ -56,6 +57,7 @@ t/037_Set_Nested_Var.t
 t/038_Pass_Variables.t
 t/039_Access_Objects.t
 t/040_Tests_With_Zero.t
+t/041_Entities.t
 t/050_Opt_base_dir.t
 t/051_Opt_in_out.t
 t/052_Opt_language.t
@@ -74,6 +76,7 @@ t/data/comments.xml
 t/data/decl.xml
 t/data/delete_attribute.xml
 t/data/dummy_data.xml
+t/data/entities.html
 t/data/entities.xml
 t/data/error_on_undef_var.html
 t/data/eval.xml

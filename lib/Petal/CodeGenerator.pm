@@ -202,7 +202,7 @@ sub _include
         $class->add_code ("my \$res = eval { Petal->new (file => '$path', lang => '$lang')->process (\$hash->new()) };") :
 	$class->add_code ("my \$res = eval { Petal->new ('$path')->process (\$hash->new()) };");
     
-    $class->add_code ("\$res = \$\@ if (defined \$\@ and \$\@);");
+    $class->add_code ("\$res = \"<!--\\n\$\@\\n-->\" if (defined \$\@ and \$\@);");
     $class->add_code ("if (scalar keys \%Encode::) {");
     $class->indent_increment();
     $class->add_code ("\$res = Encode::decode (\$Petal::ENCODE_CHARSET, \$res) if (\$Petal::ENCODE_CHARSET);");
