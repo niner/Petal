@@ -1070,7 +1070,7 @@ A select list with one item selected:
     >Klingon</option>
   </select>
 
-A table with rows of alternation colours set via CSS:
+A table with rows of alternating colours set via CSS:
 
   <table>
     <div
