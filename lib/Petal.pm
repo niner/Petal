@@ -601,9 +601,9 @@ article.
 
 =head2 "Usual" syntax (like HTML::Template, Template::Toolkit, etc), i.e
 
-  <?petal:condition name="list"?>
-    <?petal:repeat name="element list"?>
-      <li><?petal:var name="element"?></li>
+  <?condition name="list"?>
+    <?repeat name="element list"?>
+      <li><?var name="element"?></li>
     <?end?>
   <?end?>
 

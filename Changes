@@ -1,6 +1,7 @@
 Revision history for Petal.
 
-0.85
+0.85 Mon Feb 10 16:48:29 2003
+	- Made it so that code generator backend can be changed @ runtime.
 	- Fixed entities not being encoded in static attributes fix!
 	- Fixed minor documentation bugs
 	- Fixed string: semicolon escaping bug
