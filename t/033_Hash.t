@@ -2,55 +2,40 @@
 package SomeObject;
 
 sub list { [ 1, 2, 3, 4 ] }
-
 sub as_string { 'Haro Genki' }
 
-
 package main;
-use warnings;
-use lib ('lib');
-use Test;
-
-
-BEGIN {print "1..3\n";}
-END {print "not ok 1\n" unless $loaded;}
-use Petal;
-$loaded = 1;
-print "ok 1\n";
 
 use strict;
-my $loaded = 1;
+use warnings;
+use lib ('lib');
+
+use Test::More qw( no_plan );
+use Petal;
 
 $|=1;
 
-$Petal::DISK_CACHE = 0;
+$Petal::BASE_DIR     = './t/data/';
+$Petal::DISK_CACHE   = 0;
 $Petal::MEMORY_CACHE = 0;
-$Petal::TAINT = 1;
-$Petal::BASE_DIR = './t/data';
+$Petal::TAINT        = 1;
+$Petal::INPUT        = "XML";
+$Petal::OUTPUT       = "XML";
 
-my $template;
+my $template = new Petal ('hash_mustpass.xml');
+my $object   = bless {}, 'SomeObject';
 my $string;
 
-
-$Petal::INPUT = "XML";
-$Petal::OUTPUT = "XML";
-
-eval {
-    $template = new Petal ('hash_mustpass.xml');
-    my $object = bless {}, 'SomeObject';
-    $string = $template->process (object => $object);
-};
-$loaded++;
-(defined $@ and $@) ? print "not ok $loaded\n" : print "ok $loaded\n";
+eval { $string = $template->process (object => $object); };
+ok(! $@, 'process hash_mustpass.xml' );
+diag ($@) if ($@);
 
 
-eval {
-    $template = new Petal ('hash_mustfail.xml');
-    my $object = bless {}, 'SomeObject';
-    $string = $template->process (object => $object);
-};
-$loaded++;
-(defined $@ and $@) ? print "ok $loaded\n" : print "not ok $loaded\n";
+$template = new Petal ('hash_mustfail.xml');
+$string   = undef;
+eval { $string = $template->process (object => $object); };
+ok( $@, 'process hash_mustfail.xml' );
+diag ($string) if ($string);
 
 
 __END__

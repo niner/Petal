@@ -3,29 +3,32 @@
 package main;
 use warnings;
 use lib ('lib');
-use Test;
 
-BEGIN {print "1..5\n";}
-END {print "not ok 1\n" unless $loaded;}
+use Test::More qw( no_plan );
 use Petal;
-$loaded = 1;
-print "ok 1\n";
+
+$|=1;
+
+$Petal::BASE_DIR     = './t/data/';
+$Petal::DISK_CACHE   = 0;
+$Petal::MEMORY_CACHE = 0;
+$Petal::TAINT        = 1;
+$Petal::INPUT        = "XML";
+$Petal::OUTPUT       = "XML";
 
 my $template_file = 'eval.xml';
-$Petal::DISK_CACHE = 0;
-$Petal::MEMORY_CACHE = 0;
-$Petal::TAINT = 1;
-$Petal::BASE_DIR = 't/data';
-$Petal::INPUT = "XML";
-$Petal::OUTPUT = "XML";
+my $template      = new Petal ($template_file);
+my $string        = $template->process;
 
-my $template = new Petal ($template_file);
-
-my $string = $template->process;
-$string =~ /should\s+appear/ ? print "ok 2\n" : print "not ok 2\n";
-$string =~ /booo/ ? print "ok 3\n" : print "not ok 3\n";
+like( $string, qr/should\s+appear/, 'should appear (XML out)' );
+like( $string, qr/booo/,            'booo (XML out)' );
+unlike( $string, qr/should\s+not\s+appear/, 'should not appear (XML out)' );
 
 $Petal::OUTPUT = "HTML";
 $string = $template->process;
-$string =~ /should\s+appear/ ? print "ok 4\n" : print "not ok 4\n";
-$string =~ /booo/ ? print "ok 5\n" : print "not ok 5\n";
+like( $string, qr/should\s+appear/, 'should appear (HTML out)' );
+like( $string, qr/booo/,            'booo (HTML out)' );
+unlike( $string, qr/should\s+not\s+appear/, 'should not appear (HTML out)' );
+
+
+__END__
