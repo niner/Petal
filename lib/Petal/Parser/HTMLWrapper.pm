@@ -20,7 +20,7 @@ use Petal::Canonicalizer::XML;
 use Petal::Canonicalizer::XHTML;
 
 
-use vars qw /@NodeStack @MarkedData $Canonicalizer/;
+use vars qw /@NodeStack @MarkedData $Canonicalizer @NameSpaces/;
 
 
 sub new
@@ -38,6 +38,7 @@ sub process
     my $data_ref = shift;
     local @MarkedData = ();
     local @NodeStack  = ();
+    local @NameSpaces = ();
     $data_ref = (ref $data_ref) ? $data_ref : \$data_ref;
     
     my $tree = HTML::TreeBuilder->new;
@@ -108,8 +109,22 @@ sub generate_events_start
     $_ = shift;
     $_ = "<$_>";
     %_ = %{shift()};
-    delete $_{'petal:mark'};
     delete $_{'/'};
+    
+    my $ns = (scalar @NameSpaces) ? $NameSpaces[$#NameSpaces] : $Petal::NS;
+    foreach my $key (keys %_)
+    {
+	my $value = $_{$key};
+	if ($value eq $Petal::NS_URI)
+	{
+	    delete $_{$key};
+	    $ns = $key;
+	    $ns =~ s/^xmlns\://;
+	}
+    }
+    
+    push @NameSpaces, $ns;
+    local ($Petal::NS) = $ns;
     $Canonicalizer->StartTag();
 }
 
@@ -118,6 +133,7 @@ sub generate_events_end
 {
     $_ = shift;
     $_ = "</$_>";
+    local ($Petal::NS) = pop (@NameSpaces);
     $Canonicalizer->EndTag();
 }
 
@@ -128,6 +144,8 @@ sub generate_events_text
     $data =~ s/\&/&amp;/g;
     $data =~ s/\</&lt;/g;
     $_ = $data;
+    
+    local ($Petal::NS) = $NameSpaces[$#NameSpaces];
     $Canonicalizer->Text();    
 }
 

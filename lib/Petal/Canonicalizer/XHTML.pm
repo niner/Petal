@@ -77,6 +77,8 @@ sub StartTag
     $class->_repeat ($tag, $att);
     $class->_replace ($tag, $att);
     
+    my $petal = quotemeta ($Petal::NS);
+    
     # if a petal:replace attribute was set, then at this point _is_inside_content_or_replace()
     # should return TRUE and this code should not be executed
     unless ($class->_is_inside_content_or_replace())
@@ -85,7 +87,7 @@ sub StartTag
 	# we need to convert $variable into <?petal:var name="variable"?>
 	foreach my $key (keys %{$att})
 	{
-	    next if ($key =~ /^petal:/);
+	    next if ($key =~ /^$petal:/);
 	    my $text = $att->{$key};
 	    my $token_re = $Petal::Hash::String::TOKEN_RE;
 	    my @vars = $text =~ /$token_re/gsm;
@@ -109,7 +111,7 @@ sub StartTag
 	my @att_str = ();
 	foreach my $key (keys %{$att})
 	{
-	    next if ($key =~ /^petal:/);
+	    next if ($key =~ /^$petal:/);
 	    my $value = $att->{$key};
 	    if ($value =~ /^<\?petal:attr/)
 	    {

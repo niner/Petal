@@ -153,6 +153,8 @@ sub StartTag
     $class->_repeat ($tag, $att);
     $class->_replace ($tag, $att);
     
+    my $petal = quotemeta ($Petal::NS);
+    
     # if a petal:replace attribute was set, then at this point _is_inside_content_or_replace()
     # should return TRUE and this code should not be executed
     unless ($class->_is_inside_content_or_replace())
@@ -161,7 +163,7 @@ sub StartTag
 	# we need to convert $variable into <?petal:var name="variable"?>
 	foreach my $key (keys %{$att})
 	{
-	    next if ($key =~ /^petal:/);
+	    next if ($key =~ /^$petal:/);
 	    my $text = $att->{$key};
 	    my $token_re = $Petal::Hash::String::TOKEN_RE;
 	    my @vars = $text =~ /$token_re/gsm;
@@ -185,7 +187,7 @@ sub StartTag
 	my @att_str = ();
 	foreach my $key (keys %{$att})
 	{
-	    next if ($key =~ /^petal:/);
+	    next if ($key =~ /^$petal:/);
 	    my $value = $att->{$key};
 	    if ($value =~ /^<\?petal:attr/)
 	    {
@@ -311,11 +313,13 @@ sub _define
 {
     my $class = shift;
     return if ($class->_is_inside_content_or_replace());
-    my $tag = shift;
-    my $att = shift;
-    my $expr = delete $att->{'petal:set'}    ||
-               delete $att->{'petal:def'}    ||
-               delete $att->{'petal:define'} || return;
+    
+    my $petal = quotemeta ($Petal::NS);
+    my $tag   = shift;
+    my $att   = shift;
+    my $expr  = delete $att->{"$petal:set"}    ||
+                delete $att->{"$petal:def"}    ||
+                delete $att->{"$petal:define"} || return;
     
     $expr = Petal::XML_Encode_Decode::encode_backslash_semicolon ($expr);
     push @Result, map { "<?petal:var name=\"set: $_\"?>" } $class->_split_expression ($expr);
@@ -331,11 +335,13 @@ sub _condition
 {
     my $class = shift;
     return if ($class->_is_inside_content_or_replace());
-    my $tag = shift;
-    my $att = shift;
-    my $expr = delete $att->{'petal:if'}        ||
-               delete $att->{'petal:condition'} || return;
 
+    my $petal = quotemeta ($Petal::NS);
+    my $tag   = shift;
+    my $att   = shift;
+    my $expr  = delete $att->{"$petal:if"}        ||
+                delete $att->{"$petal:condition"} || return;
+    
     $expr = Petal::XML_Encode_Decode::encode_backslash_semicolon ($expr);
     my @new = map { "<?petal:if name=\"$_\"?>" } $class->_split_expression ($expr);
     push @Result, @new;
@@ -352,12 +358,14 @@ sub _repeat
 {
     my $class = shift;
     return if ($class->_is_inside_content_or_replace());
+
+    my $petal = quotemeta ($Petal::NS);
     my $tag = shift;
     my $att = shift;
-    my $expr = delete $att->{'petal:for'}     ||
-               delete $att->{'petal:foreach'} ||
-               delete $att->{'petal:loop'}    ||
-               delete $att->{'petal:repeat'}  || return;
+    my $expr = delete $att->{"$petal:for"}     ||
+               delete $att->{"$petal:foreach"} ||
+               delete $att->{"$petal:loop"}    ||
+               delete $att->{"$petal:repeat"}  || return;
     
     my @exprs = $class->_split_expression ($expr);
     my @new = ();
@@ -380,10 +388,12 @@ sub _replace
 {
     my $class = shift;
     return if ($class->_is_inside_content_or_replace());
+    
+    my $petal = quotemeta ($Petal::NS);    
     my $tag = shift;
     my $att = shift;
-    my $expr = delete $att->{'petal:replace'} ||
-               delete $att->{'petal:outer'}   || return;
+    my $expr = delete $att->{"$petal:replace"} ||
+               delete $att->{"$petal:outer"}   || return;
     
     my @new = map {
 	$_ = Petal::XML_Encode_Decode::encode_backslash_semicolon ($_);
@@ -404,12 +414,14 @@ sub _attributes
 {
     my $class = shift;
     return if ($class->_is_inside_content_or_replace());
+    
+    my $petal = quotemeta ($Petal::NS);    
     my $tag = shift;
     my $att = shift;
-    my $expr = delete $att->{'petal:att'}        ||
-               delete $att->{'petal:attr'}       ||
-               delete $att->{'petal:atts'}       ||
-	       delete $att->{'petal:attributes'} || return;
+    my $expr = delete $att->{"$petal:att"}        ||
+               delete $att->{"$petal:attr"}       ||
+               delete $att->{"$petal:atts"}       ||
+	       delete $att->{"$petal:attributes"} || return;
     
     foreach my $string ($class->_split_expression ($expr))
     {
@@ -431,11 +443,13 @@ sub _content
 {
     my $class = shift;
     return if ($class->_is_inside_content_or_replace());
+    
+    my $petal = quotemeta ($Petal::NS);    
     my $tag = shift;
     my $att = shift;
-    my $expr = delete $att->{'petal:content'}  ||
-               delete $att->{'petal:contents'} ||
-	       delete $att->{'petal:inner'}    || return;
+    my $expr = delete $att->{"$petal:content"}  ||
+               delete $att->{"$petal:contents"} ||
+	       delete $att->{"$petal:inner"}    || return;
     my @new = map {
 	$_ = Petal::XML_Encode_Decode::encode_backslash_semicolon ($_);
 	"<?petal:var name=\"$_\"?>";

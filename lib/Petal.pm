@@ -136,6 +136,11 @@ our $MEMORY_CACHE = 1;
 our $VERSION = '0.74';
 
 
+# this is for XML namespace support. Can't touch this :-)
+our $NS = 'petal';
+our $NS_URI = 'http://purl.org/petal/1.0/';
+
+
 =head2 Example
 
   # at the beginning of your program:
