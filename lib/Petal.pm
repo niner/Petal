@@ -87,7 +87,7 @@ our $CURRENT_INCLUDES = 0;
 
 
 # this is for CPAN
-our $VERSION = '1.10_08';
+our $VERSION = '1.10';
 
 
 # The CodeGenerator class backend to use.
@@ -346,6 +346,8 @@ sub process
 	else                            { $hash = new Petal::Hash (@_)         }
 	
 	my $coderef = $self->_code_memory_cached;
+	die "\$coderef is undefined\n\n" unless $coderef;
+	die "\$hash is undefined\n\n" unless $hash;
 	$res = $coderef->($hash);
 	
 	$Petal::ENCODE_CHARSET and do {
@@ -594,9 +596,25 @@ sub _code_memory_cached
 	my $code_perl = $self->_code_disk_cached;
 	my $VAR1 = undef;
 	
-	eval "$code_perl";
-	confess ($@ . "\n" . $self->_code_with_line_numbers) if $@;
-	$code = $VAR1;
+	if ($TAINT)
+	{
+		# important line, don't remove
+		($code_perl) = $code_perl =~ m/^(.+)$/s;
+		die "\$code_perl is empty after untainting!" unless defined $code_perl && $code_perl;
+		my $cpt = Safe->new ("Petal::CPT");
+		$cpt->permit ('entereval');
+		$cpt->permit ('leaveeval');
+		$cpt->permit ('require');
+		$code = $cpt->reval($code_perl);
+		confess ("Error in reval:\n" . $@ . "\n" . $self->_code_with_line_numbers) if $@;
+		warn "\$code is empty after reval.\n" . Dumper($code, $Petal::CPT::VAR1, length($code_perl)) unless $code;
+	}
+	else
+	{
+	    eval "$code_perl";
+	    confess ($@ . "\n" . $self->_code_with_line_numbers) if $@;
+	    $code = $VAR1;
+	}
 	
 	Petal::Cache::Memory->set ($self->_file_path_with_macro, $code) if (defined $MEMORY_CACHE and $MEMORY_CACHE);	
     }
@@ -605,33 +623,7 @@ sub _code_memory_cached
 }
 
 
-=cut
 
-#($code_perl) = $code_perl =~ m/^(.+)$/s;
-#if ($TAINT)
-#{
-#   # important line, don't remove
-#	    ($code_perl) = $code_perl =~ m/^(.+)$/s;
-#	    my $cpt = Safe->new ("Petal::CPT");
-#	    $cpt->permit ('entereval');
-#	    $cpt->permit ('leaveeval');
-#	    $cpt->permit ('require');
-#	    $cpt->reval ($code_perl);
-#	    confess ($@ . "\n" . $self->_code_with_line_numbers) if $@;
-#	    
-#	    # remove silly warning '"Petal::CPT::VAR1" used only once'
-#	    $Petal::CPT::VAR1 if (0);
-#	    $code = $Petal::CPT::VAR1;
-#	}
-#	else
-#	{
-#	    eval "$code_perl";
-#	    confess ($@ . "\n" . $self->_code_with_line_numbers) if $@;
-#	    $code = $VAR1;
-#	}
-
-=cut
-	
 
 
 # $self->_code_cache;
@@ -662,6 +654,7 @@ sub _canonicalize
 
 
 1;
+
 
 =head1 NAME
 

@@ -195,12 +195,12 @@ sub process
 	}
 	else
 	{
-            my $string = $token;
-            $string =~ s/\@/\\\@/gsm;
-            $string =~ s/\$/\\\$/gsm;
-            $string =~ s/\n/\\n/gsm;
-            $string =~ s/\n//gsm;
-            $string =~ s/\"/\\\"/gsm;
+            my $string = quotemeta ($token);
+#            $string =~ s/\@/\\\@/gsm;
+#            $string =~ s/\$/\\\$/gsm;
+#            $string =~ s/\n/\\n/gsm;
+#            $string =~ s/\n//gsm;
+#            $string =~ s/\"/\\\"/gsm;
             $class->add_code($class->_add_res( '"' . $string . '";'));
         }
     }
@@ -416,7 +416,7 @@ sub _for
     $class->add_code ("my \$odd    = \$number % 2;");
     $class->add_code ("my \$even   = \$i % 2;");
     $class->add_code ("my \$start  = (\$i == 0);");
-    $class->add_code ("my \$end    = (\$i == \@array);");
+    $class->add_code ("my \$end    = (\$i == \$#array);");
     $class->add_code ("my \$inner  = (\$i and \$i < \@array);");
     
     # backwards compatibility

@@ -1,5 +1,11 @@
 Revision history for Petal.
 
+1.10_09
+	- Fixed CodeGenerator not backslashing backslashes properly
+	- Fixed repeat/end bug
+	- Added warning in case of weird-looking 'attributes' statement
+       
+
 1.10_08
 	- Fixed metal:use-macro not being parsed in XHTML output mode
 	- Fixed unnecessary warning
