@@ -67,7 +67,7 @@ our $CURRENT_INCLUDES = 0;
 
 
 # that's for CPAN
-our $VERSION = '0.91';
+our $VERSION = '0.92';
 
 
 # The CodeGenerator class backend to use.
