@@ -35,6 +35,10 @@ Besides, you can safely send the result of their work through HTML tidy
 to make sure that you always output neat, standard compliant, valid XML
 pages.
 
+To properly understand Petal, I would recomment that you quick-read the
+present documentation, then go read the Petal::Expressions article, and
+then read the present documentation properly.
+
 =cut
 package Petal;
 use Petal::Hash;
@@ -439,7 +443,7 @@ as follows:
 
 =head2 Template comments
 
-  <!--? This will not be in the output ?-->
+  <!--? This will not be in the output -->
 
 
 =head2 "Simple" syntax (Variable Interpolation)
@@ -473,131 +477,8 @@ Which if 'list' was ('foo', 'bar', 'baz') would output:
 
 =head1 Variable expressions and modifiers
 
-Petal has the ability to bind template variables to the following Perl
-datatypes: scalars, lists, hash, arrays and object.
-
-
-=head2 How it works
-
-  <?petal:var name="user/login"?>
-
-Is *EXACTLY* the same as writing
-
-  <?petal:var name="var:user/login"?>
-
-Which internally is turned into
-
-  push @out, $hash->{'var:user/login'};
-
-$hash is an highly magical hash which is tied to the Petal::Hash class,
-and uses the 'var:' information to pass the expression 'user/login' to
-the Petal::Hash::Var module.
-
-The Petal::Hash::Var module has access to $hash, and has the
-responsibility to resolve the user/login expression. So if
-$hash->{'user'} is an object and 'login' is a method on this object,
-'user/login' will do the 'Right Thing' and return
-$hash->{user}->login();
-
-
-=head2 Expression evaluation
-
-Using a uniform, simple syntax you can access:
-
-  * scalars: <?petal:var name="my_scalar"?>
-  * hashes: <?petal:var name="my_hash/key"?>
-  * arrays: <?petal:var name="my_array/12"?>
-  * objects methods: <?petal:var name="my_object/my_method" ?>
-
-Note that you can also pass arguments to object methods.  Let's say that
-you have an object 'math', you could do:
-
-  2+2 = <?petal:var name="math/add '2' '2'"?>
-
-Even more powerful, let's say that you have:
-
-  $hash = { math => $math_object, number => 3 }
-
-You could write the following:
-
-  $number+$number = <?petal:var name="math/add number number"?>
-
-Which would output:
-
-  3+3 = 6
-
-If you wonder how it all works, I suggest that you take a look at the
-Petal::Hash and Petal::Hash::Var modules.
-
-
-=head2 Expression modifiers
-
-We have seen that var: maps to Petal::Hash::Var, which evaluates
-expressions.
-
-There are other modifiers, which map to the following modules:
-
-  true:        => Petal::Hash::TRUE
-  false:       => Petal::Hash::FALSE
-  set:         => Petal::Hash::SET
-
-You can write your own modifiers easily by just subclassing
-Petal::Hash::VAR.  Look at the Petal::Hash POD for more information on
-how to do this.
-
-
-=head3 xml: / encode:
-
-These will let you output a variable, but encodes the XML entities.  Let
-us say that:
-
-  $user/name
-
-Produces:
-
-  Smith & Co.
-
-Which is invalid XML. You could write:
-
-  $encode:user/name
-
-Or
-
-  <?petal:var name="encode: user/name"?>
-
-Or
-
-  <span petal:replace="encode: user/name">User Name Here</span>
-
-
-=head3 true:
-
-Mainly to be used with expressions such as
-
-  <?petal:if name="true: user/has_access"?>
-
-
-=head3 false:
-
-I'm pretty sure you can work it out by yourself:-)
-
-
-=head3 set:
-
-This one is the wierdest modifier. It will return __NOTHING__ no matter
-what, but will set the result into the hash. For instance:
-
-  <?petal:var name="foo/bar"?>
-
-Could be rewritten:
-
-  <?petal:var name="set: newVariableNameForBar foo/bar"?>
-  <?petal:var name="newVariableNameForBar"?>
-
-This is mainly intended so that if you have a.very.very.long.expression,
-you can alias it to something like 'vLongExpr' and save some typing (as
-well as providing a slight performance boost if you're using the
-expression inside a loop).
+This section has been moved into the Petal::Expressions article,
+where it's explained in detail.
 
 
 =head1 Petal TAL-like syntax
@@ -614,40 +495,104 @@ points:
 
 =head2 define
 
+Abstract:
+
+  <tag petal:define="variable_name EXPRESSION">
+
+Example:
+
   <!-- sets document/title to 'title' -->
   <span petal:define="title document/title">
 
 
 =head2 condition (ifs)
 
-  <span petal:condition="user/is_authenticated">
+Abstract:
+
+  <tag petal:condition="true:EXPRESSION">
+     blah blah blah
+  </tag>
+
+Example:
+
+  <span petal:condition="true:user/is_authenticated">
     Yo, authenticated!
   </span>
 
 
 =head2 repeat (loops)
 
-  <li petal:repeat="user system/user_list">$xml:user/real_name</li>
+Abstract:
+
+  <tag petal:repeat="element_name EXPRESSION">
+     blah blah blah
+  </tag>
+
+Example:
+
+  <li petal:repeat="user system/user_list">$user/real_name</li>
 
 
 =head2 attributes
+
+Abstract:
+
+  <tag petal:attributes="attr1 EXPRESSION_1; attr2 EXPRESSION_2"; ...">
+     blah blah blah
+  </tag>
+
+Example:
 
   <a href="http://www.gianthard.com"
      lang="en-gb"
      petal:attributes="href document/href_relative; lang document/lang">
 
 
-=head2 interpolation
+=head2 content
 
-  <span petal:content="xml:title">Dummy Title</span>
-  <span petal:replace="xml:title">Dummy Title</span>
+Abstract:
+
+  <tag petal:content="EXPRESSION">Dummy Data To Replace With EXPRESSION</tag>
+
+Example:
+
+  <span petal:content="title">Dummy Title</span>
+
+By default, the characters '<', '>', '"' and '&' are encoded to the entities
+'&lt', '&gt;', '&quot;' and '&amp;' respectively. If you don't want them to
+(because the result of your expression is already encoded) you have to use
+the 'structure' keyword.
+
+Example:
+
+  <span petal:content="structure some_modifier:some/encoded/variable">
+     blah blah blah
+  </span>
+
+
+=head2 replace
+
+Abstract:
+
+  <tag petal:content="EXPRESSION">
+    This time the entire tag is replaced
+    rather than just the content!
+  </tag>
+
+Example:
+
+  <span petal:replace="title">Dummy Title</span>
+
+Note:
 
 'petal:content' and 'petal:replace' are *NOT* aliases. The former will
-replace the contents of the span tag, while the latter will replace the
-whole span tag.
+replace the contents of the tag, while the latter will replace the
+whole tag.
+
+You cannot use petal:content and petal:replace in the same tag.
 
 
-=head2 Composite constructs
+=head2 multiple commands
 
 You can do things like:
 
@@ -681,22 +626,14 @@ defaults):
 It's the simplest way to insert values in the template:
 
   Hello, $user/login
-  Your real name is $xml:user/real_name!
+  Your real name is $user/real_name!
 
 If $user is a hash reference, then the engine will fetch the value
 matching the 'login' key. If it's an object, it will try to see if there
 is a $user->login method, otherwise it will try to fetch $user->{login}. 
 
-The xml:user/real_name tells the template engine to XML encode the
-fetched value, i.e. 'John Smith & Son' will be converted to 'John Smith
-&amp; Son'.
 
-Alternatively, you could have used $encode:user/real_name to get the
-same behavior. This is it, you cannot do anything more complex than
-variable interpolation with that syntax.
-
-
-=head1 XML Declaration Syntax
+=head1 XML Processing Instructions Syntax
 
 =head2 Variables and Modifiers
 
@@ -707,7 +644,7 @@ variable interpolation with that syntax.
 Usual stuff:
 
   <?petal:if name="user/is_birthay"?>
-    Happy Birthday, $xml:user/real_name!
+    Happy Birthday, $user/real_name!
   <?petal:else?>
     What?! It's not your birthday?
     A very merry unbirthday to you! 
@@ -716,11 +653,11 @@ Usual stuff:
 You can use petal:condition instead of petal:if, and indeed you can use
 modifiers:
 
-  <?petal:condition name="false: user/is_birthay"?>
+  <?petal:condition name="false:user/is_birthay"?>
     What?! It's not your birthday?
     A very merry unbirthday to you! 
   <?petal:else?>
-    Happy Birthday, $xml:user/real_name!
+    Happy Birthday, $user/real_name!
   <?petal:end?>
 
 Not much else to say!
@@ -767,7 +704,7 @@ Petal fully support includes using the following syntax:
 And it will include the file 'include.xml', using the current object
 base_dir attribute. Petal includes occur at RUN TIME. That means that
 there is NO SUPPORT to prevent infinite includes, which is usually not
-so much of a deal since it happens at run time...
+so much of a deal since they happen at run time...
 
 This should let you build templates which have a recursive behavior
 which can be useful to apply templates to any tree-shaped structure (i.e.
