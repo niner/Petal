@@ -3,7 +3,7 @@ Revision history for Petal.
 0.85
 	- Fixed entities not being encoded in static attributes fix!
 	- Fixed minor documentation bugs
-
+	- Fixed string: semicolon escaping bug
 
 0.84 Wed Feb  5 14:12:08 2003
 	- Added 'use warnings' to all tests

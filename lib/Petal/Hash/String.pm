@@ -36,18 +36,45 @@ sub process
     my $self = shift;
     my $hash = shift;
     my $argument = shift;
-    my @interpolate = $argument =~ /($TOKEN_RE)/gsm;
-    for (@interpolate)
-    {
-	my $from = quotemeta ($_);
-	s/^\$//;
-	s/^\{//;
-	s/\}$//;
-	my $to   = $hash->fetch ($_);
-	$argument =~ s/$from/$to/;
-    }
     
-    return $argument;
+    my $tokens = $self->_tokenize (\$argument);
+    my @res = map {
+	($_ =~ /$TOKEN_RE/gsm) ?
+	    do {
+		s/^\$//;
+		s/^\{//;
+		s/\}$//;
+		$hash->fetch ($_);
+	    } :
+	    do {
+		s/\\(.)/$1/gsm;
+		$_;
+	    };
+    } @{$tokens};
+    
+    return join '', @res;
+}
+
+
+# $class->_tokenize ($data_ref);
+# ------------------------------
+#   Returns the data to process as a list of tokens:
+#   ( 'some text', '<% a_tag %>', 'some more text', '<% end-a_tag %>' etc.
+sub _tokenize
+{
+    my $self = shift;
+    my $data_ref = shift;
+    
+    my @tokens = $$data_ref =~ /($TOKEN_RE)/gs;
+    my @split  = split /$TOKEN_RE/s, $$data_ref;
+    my $tokens = [];
+    while (@split)
+    {
+        push @{$tokens}, shift (@split);
+        push @{$tokens}, shift (@tokens) if (@tokens);
+    }
+    push @{$tokens}, (@tokens);
+    return $tokens;
 }
 
 

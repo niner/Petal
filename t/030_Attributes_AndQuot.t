@@ -3,7 +3,7 @@ use warnings;
 use lib ('lib');
 use Test;
 
-BEGIN {print "1..17\n";}
+BEGIN {print "1..20\n";}
 END {print "not ok 1\n" unless $loaded;}
 use Petal;
 $loaded = 1;
@@ -137,6 +137,25 @@ my $string;
     ($string =~ /\?\>/) ? print "ok $loaded\n" : print "not ok $loaded\n";
 }
 
+
+{
+    $Petal::INPUT = "XML";
+    $Petal::OUTPUT = "XML";
+    $template = new Petal ('manipulate.html');
+    
+    $string = $template->process (
+	configuration => { get_identity_field_name => 'id' }
+       );
+    
+    $loaded++;
+    ($string =~ m!petal:attributes="value entry/id;"!) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    
+    $loaded++;
+    ($string =~ m!type="hidden"!) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    
+    $loaded++;
+    ($string =~ m!name="id"!) ? print "ok $loaded\n" : print "not ok $loaded\n";
+}
 
 1;
 
