@@ -1,3 +1,27 @@
+package Petal::CodeGenerator::Decode;
+use strict;
+use warnings;
+use base qw /MKDoc::XML::Decode/;
+
+
+##
+# $class->process ($xml);
+# -----------------------
+# Expands the entities &apos; &quot; &gt; &lt; and &amp;
+# into their ascii equivalents.
+##
+sub process
+{
+    (@_ == 2) or warn "MKDoc::XML::Encode::process() should be called with two arguments";
+    
+    my $self = shift;
+    my $data = join '', @_;
+    $data    =~ s/&(#?[0-9A-Za-z]+)\\;/$self->entity_to_char ($1)/eg;
+    
+    return $data;
+}
+
+
 # ------------------------------------------------------------------
 # Petal::CodeGenerator - Generates Perl code from canonical syntax
 # ------------------------------------------------------------------
@@ -447,8 +471,9 @@ sub _decode_backslash_semicolon
 {
     my $class = shift;
     my $data  = shift;
-    $data =~ s/&($MKDoc::XML::Decode::XML_Decode_Pattern)\\;/$MKDoc::XML::Decode::XML_Decode{$1}/go;
-    return $data;
+    
+    my $decode = new Petal::CodeGenerator::Decode ('xml');
+    return $decode->process ($data);
 }
 
 

@@ -15,7 +15,7 @@ use Petal::Canonicalizer::XML;
 use Petal::Canonicalizer::XHTML;
 
 use vars qw /@NodeStack @MarkedData $Canonicalizer
-	     @NameSpaces @XI_NameSpaces/;
+	     @NameSpaces @XI_NameSpaces $Decode/;
 
 
 # this avoid silly warnings
@@ -40,9 +40,12 @@ sub process
     my $self = shift;
     local $Canonicalizer = shift;
     my $data_ref = shift;
+    
     local @MarkedData = ();
     local @NodeStack  = ();
     local @NameSpaces = ();
+    local $Decode     = new MKDoc::XML::Decode (qw /xml numeric/);
+    
     $data_ref = (ref $data_ref) ? $data_ref : \$data_ref;
     
     my @top_nodes = MKDoc::XML::TreeBuilder->process_data ($$data_ref);
@@ -66,8 +69,8 @@ sub generate_events
     
     if (ref $tree)
     {
-	my $tag  = $tree->{_tag};	
-	my $attr = { map { /^_/ ? () : ( $_ => MKDoc::XML::Decode->process ($tree->{$_}) ) } keys %{$tree} };
+	my $tag  = $tree->{_tag};
+	my $attr = { map { /^_/ ? () : ( $_ => $Decode->process ($tree->{$_}) ) } keys %{$tree} };
 	
 	if ($tag eq '~comment')
 	{
@@ -78,7 +81,7 @@ sub generate_events
 	    # decode attributes
 	    for (keys %{$tree})
 	    {
-		$tree->{$_} = MKDoc::XML::Decode->process ( $tree->{$_} )
+		$tree->{$_} = $Decode->process ( $tree->{$_} )
 		   unless (/^_/);
 	    }
 	    
@@ -96,7 +99,7 @@ sub generate_events
     }
     else
     {
-	$tree = MKDoc::XML::Decode->process ( $tree );
+	$tree = $Decode->process ( $tree );
 	generate_events_text ($tree);
     }
 }
@@ -172,8 +175,6 @@ sub generate_events_text
 sub generate_events_comment
 {
     my $data = shift;
-    # $data =~ s/\&/&amp;/g;
-    # $data =~ s/\</&lt;/g;
     local $_ = '<!--' . $data . '-->';
     $Canonicalizer->Text();    
 }

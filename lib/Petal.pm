@@ -18,10 +18,10 @@ use File::Spec;
 use Carp;
 use Safe;
 use Data::Dumper;
-use MKDoc::XML::DecodeHO;
 use Scalar::Util;
 use strict;
 use warnings;
+use MKDoc::XML::Decode;
 
 
 # these are used as local variables when the XML::Parser
@@ -494,15 +494,17 @@ sub _file_data_ref
 	$res = Petal::Encode::p_decode ($Petal::DECODE_CHARSET, $res);
     };
     
-    if ($OUTPUT eq 'HTML' or $OUTPUT eq 'XHTML' or $INPUT eq 'HTML' or $INPUT eq 'XHTML')
-    {
-	Petal::Encode->p_utf8_on ($res);
-	$res = MKDoc::XML::DecodeHO->process ($res);
-	Petal::Encode->p_utf8_off ($res);
-    }
-    
     # kill template comments
     $res =~ s/\<!--\?.*?\-->//gsm;
+    
+    my $decode = ($OUTPUT =~ /HTML$/i or $INPUT =~ /HTML$/i) ?
+        new MKDoc::XML::Decode ('numeric', 'xhtml') :
+	new MKDoc::XML::Decode ('numeric');
+    
+    Petal::Encode->p_utf8_on ($res);
+    $res = $decode->process ($res);
+    Petal::Encode->p_utf8_off ($res);
+    
     return \$res;
 }
 
@@ -543,7 +545,13 @@ sub _code_memory_cached
 	eval "$code_perl";
 	confess ($@ . "\n" . $self->_code_with_line_numbers) if $@;
 	$code = $VAR1;
-	
+
+	Petal::Cache::Memory->set ($file, $code) if (defined $MEMORY_CACHE and $MEMORY_CACHE);	
+    }
+    
+    return $code;
+}
+
 =cut
 
 #($code_perl) = $code_perl =~ m/^(.+)$/s;
@@ -571,11 +579,6 @@ sub _code_memory_cached
 
 =cut
 	
-Petal::Cache::Memory->set ($file, $code) if (defined $MEMORY_CACHE and $MEMORY_CACHE);
-
-    }
-    return $code;
-}
 
 
 # $self->_code_cache;

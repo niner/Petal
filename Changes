@@ -1,6 +1,8 @@
 Revision history for Petal.
 
 1.10_06
+	- Refactored to work with MKDoc::XML 0.60
+	- Changed CodeGenerator.om decode_backslash_semicolon mechanism
 	- Fixed Petal dying on <--! <?pi?> --> comments
 	- Fixed generate_events_comment incorrectly encoding entities
 
