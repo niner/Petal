@@ -445,26 +445,22 @@ and you get something like:
 =head1 SUMMARY
 
 Petal is a XML based templating engine that is able to process any
-kind of XML. HTML parsing and XHTML is also supported.
+kind of XML, XHTML and HTML.
 
-Because Petal borrows a lot of good ideas from the Zope Page Templates
-TAL specification, it is very well suited for the creation of truly WYSIWYG
-XHTML editable templates.
+Petal borrows a lot of good ideas from the Zope Page Templates TAL
+specification, it is very well suited for the creation of WYSIWYG XHTML
+editable templates.
 
-The idea is to enforce even further the separation of logic and
-presentation. With Petal, graphic designers who use their favorite
-WYSIWYG editor can easily edit templates without having to worry about
-the loops and ifs which happen behind the scenes.
-
-Besides, you can safely send the result of their work through HTML tidy
-to make sure that you always output neat, standard compliant, valid XML
-pages.
+The idea is to further enforce the separation of logic from presentation. With
+Petal, graphic designers can use their favorite WYSIWYG editor to easily edit
+templates without having to worry about the loops and ifs which happen behind
+the scene.
 
 
 =head1 NAMESPACE
 
 Although this is not mandatory, Petal templates should include use the namespace
-http://purl.org/petal/1.0/. Example:
+L<http://purl.org/petal/1.0/>. Example:
 
     <html xml:lang="en"
           lang="en"
@@ -476,9 +472,9 @@ http://purl.org/petal/1.0/. Example:
       More blah blah...
     </html>
 
-If you do not specify the namespace, Petal will by default try to use the 'petal:'
-prefix. However, in all the examples of this POD we'll use the 'tal:' prefix to
-avoid too much typing. :-)
+If you do not specify the namespace, Petal will by default try to use the
+C<petal:> prefix. However, in all the examples of this POD we'll use the
+C<tal:> prefix to avoid too much typing.
 
 
 =head1 KICKSTART
@@ -487,6 +483,7 @@ Let's say you have the following Perl code:
 
     use Petal;
     local $Petal::OUTPUT = 'XHTML';
+
     my $template = new Petal ('foo.xhtml');
     template->process ( my_var => my_var() );
 
@@ -494,7 +491,7 @@ some_object() is a subroutine that returns some kind of object, may it be a scal
 object, array referebce or hash reference. Let's see what we can do...
 
 
-=head2 v1, prototype
+=head2 Version 1: Prototype
 
     <!--? This is a template comment.
           It will not appear in the output -->
@@ -505,7 +502,7 @@ object, array referebce or hash reference. Let's see what we can do...
     </html>
 
 
-And if 'my_var' contained 'Hello World', Petal would have outputted:
+And if C<my_var> contained I<Hello World>, Petal would have outputted:
 
     <html>
       <body>
@@ -514,7 +511,7 @@ And if 'my_var' contained 'Hello World', Petal would have outputted:
     </html>
 
 
-Now let's say that 'my_var' is a hash reference as follows:
+Now let's say that C<my_var> is a hash reference as follows:
 
     $VAR1 = { hello_world => 'Hello, World' }
 
@@ -524,10 +521,10 @@ To output the same result, you would write:
     This is the variable 'my_var' : ${my_var/hello_world}.
 
 
-=head2 v2, WYSIWYG friendly.
+=head2 Version 2: WYSIWYG friendly.
 
-The problem with the page above is that when you edit it with
-a WYSIWYG editor, or simply open it in your browser, you see:
+The problem with the above page is that when you edit it with a WYSIWYG editor,
+or simply open it in your browser, you will see:
 
     This is the variable 'my_var' : ${my_var/hello_world}.
 
@@ -538,16 +535,15 @@ you can do:
     This is the variable 'my_var' :
     <span tal:replace="my_var/hello_world">Hola, Mundo!</span>
 
-Now you can open your template in any WYSIWYG tool (mozilla
-composer, frontpage, dreamweaver, adobe golive...) and work
-without risking of change to an incorrect Petal syntax.
+Now you can open your template in any WYSIWYG tool (mozilla composer,
+frontpage, dreamweaver, adobe golive...) and work with less risk of damaging
+your petal commands.
 
 
-=head2 v3, object-oriented version!
+=head2 Version 3: Object-oriented version
 
-Let's now say that 'my_var' is actually an object with
-a method hello_world() that returns 'Hello World'. To output
-the same result, your line:
+Let's now say that C<my_var> is actually an object with a method hello_world()
+that returns I<Hello World>. To output the same result, your line:
 
     <span tal:replace="my_var/hello_world">Hola, Mundo!</span>
 
@@ -555,32 +551,32 @@ Would become:
 
     <span tal:replace="my_var/hello_world">Hola, Mundo!</span>
 
-Look carefully at those two lines. That's right. There are
-exactly identical. Petal lets you access hashes and objects in
-an entirely transparent way.
+Look carefully at those two lines. That's right. There are identical. Petal
+lets you access hashes and objects in an entirely transparent way.
 
-This high level of polymorphism means that in most cases you can
-maintain your code, swap hashes for objects, and not change a
-single line of your template code.
+This high level of polymorphism means that in most cases you can maintain your
+code, swap hashes for objects, and not change a single line of your template
+code.
 
 
-=head2 v4, personalizable
+=head2 Version 4: Personalizable
 
 Now let's say that your method some_object() can take an optional
-argument so that $my_var->hello_world ('Jack') returns 'Hello Jack'.
+argument so that C<$my_var->hello_world ('Jack')> returns I<Hello Jack>.
 
 You would write:
 
     <span tal:replace="my_var/hello_world 'Jack'">Hola, Mundo!</span>
 
 
-Optionally, you can get rid of the quotes by using double dashes:
+Optionally, you can get rid of the quotes by using two dashes, a la GNU
+command-line option:
 
     <span tal:replace="my_var/hello_world --Jack">Hola, Mundo!</span>
 
 
 So you can pass parameters to methods using double dashes or quotes.
-Now let us say that your my_var object also has a method current_user()
+Now let us say that your C<my_var> object also has a method current_user()
 that returns the current user real name. You can do:
 
     <span tal:replace="my_var/hello_world my_var/current_user">Hola, Mundo!</span>
@@ -592,13 +588,13 @@ You cannot write nested expressions such as:
 
     ${my_var/hello_world ${my_var/current_user}}
 
-Will not work.
+This will NOT work. At least, not yet.
 
 
-=head2 v5, internationalized
+=head2 Version 5: Internationalized
 
-This feature has been added in Petal 0.91. Let's say that you have
-a directory called hello-world with the following files:
+Let's say that you have a directory called C<hello_world> with the following
+files:
 
     hello_world/en.xhtml
     hello_world/fr.xhtml
@@ -608,63 +604,61 @@ You can use Petal as follows in your Perl code:
 
     use Petal;
     local $Petal::OUTPUT = 'XHTML';
-    my $template = new Petal (
-        file => 'hello_world',
-        lang => 'fr-CA',
-    );
+
+    my $template = new Petal ( file => 'hello_world', lang => 'fr-CA' );
     print $template->process ( my_var => my_var() );
 
-What will happen is that the $template object will try to find a
-file named 'fr-CA', then 'fr', then will default to 'en'. It should
-work fine for includes, too!
+What will happen is that the C<$template> object will try to find a file named
+C<fr-CA>, then C<fr>, then will default to <en>. It should work fine for
+includes, too!
+
+
+TIP:
+
+If you feel that 'en' should not be the default language, you can change the
+C<$Petal::LANGUAGE> variable to whatever you want.
+
+    local $Petal::LANGUAGE = 'fr'; # vive la France!
 
 
 TRAP:
 
-If you do specify the 'lang' option, you MUST use a path to a
-template directory.
+If you do specify the C<lang> option, you MUST use a path to a template
+directory, not a file directory.
 
-Reversely, if you do not specify a 'lang' option, you MUST use
-a path to a template file..
+Reversely, if you do not specify a C<lang> option, you MUST use a path to a
+template file, not a directory.
 
 
 =head1 OPTIONS
 
-The following options alter the way Petal works.
+=head2 C<$Petal::INPUT> - default: 'XML'
 
+Acceptable values are
 
-=head2 $Petal::INPUT - default: 'XML'
-
-Currently acceptable values are
-
-  'XML'   - Petal will use XML::Parser to parse the template
   'HTML'  - Petal will use HTML::TreeBuilder to parse the template
   'XHTML' - Alias for 'HTML'
+  'XML'   - Petal will use XML::Parser to parse the template
 
 Example:
 
   local $Petal::INPUT = 'XHTML';
 
 
-=head2 $Petal::OUTPUT - default: 'XML'
+=head2 C<$Petal::OUTPUT> - default: 'XML'
 
 Currently acceptable values are
 
-  'XML'   - Petal will use XML::Parser to parse the template
-  'HTML'  - Petal will use HTML::TreeBuilder to parse the template
+  'HTML'  - Petal will output XHTML, self-closing certain tags
   'XHTML' - Alias for 'HTML'
+  'XML'   - Petal will output generic XML 
 
 Example:
 
   local $Petal::OUTPUT = 'XHTML';
 
 
-=head2 $Petal::TAINT - default: FALSE
-
-If set to TRUE, makes perl taint mode happy.
-
-
-=head2 @Petal::BASE_DIR - default: ('.')
+=head2 @Petal::BASE_DIR - Default: ('.')
 
 Sets the base directories in which Petal looks for templates.
 
@@ -676,23 +670,28 @@ Example:
   local @Petal::BASE_DIR = ('.', 'templates', '/www/templates');
 
 
-=head2 $Petal::DISK_CACHE - default: TRUE
+=head2 C<$Petal::TAINT> - default: I<FALSE>
 
-If set to FALSE, Petal will not use the Petal::Cache::Disk module.
-
-
-=head2 $Petal::MEMORY_CACHE - default: TRUE
-
-If set to FALSE, Petal will not use the Petal::Cache::Memory module.
+If set to C<TRUE>, makes perl taint mode happy.
 
 
-=head2 $Petal::MAX_INCLUDES - default: 30
+=head2 C<$Petal::DISK_CACHE> - Default: I<TRUE>
 
-$MAX_INCLUDES - Maximum number of recursive includes before Petal stops processing.
-This is to prevent from accidental infinite recursions.
+If set to C<FALSE>, Petal will not use the C<Petal::Cache::Disk> module.
 
 
-=head2 $Petal::LANGUAGE - default: 'en'
+=head2 C<$Petal::MEMORY_CACHE> - Default: I<TRUE>
+
+If set to C<FALSE>, Petal will not use the C<Petal::Cache::Memory> module.
+
+
+=head2 C<$Petal::MAX_INCLUDES> - Default: I<30>
+
+C<$MAX_INCLUDES> - The maximum number of recursive includes before Petal stops
+processing.  This is to prevent from accidental infinite recursions.
+
+
+=head2 C<$Petal::LANGUAGE> - Default: I<en>
 
 Fallback template language when using Petal in multi-language mode.
 
@@ -704,10 +703,8 @@ Example:
 
 =head1 TAL SYNTAX
 
-This functionality is directly and shamelessly stolen from the excellent
-TAL specification, which is available there:
-
-http://www.zope.org/Wikis/DevSite/Projects/ZPT/TAL
+This functionality is directly and shamelessly stolen from the excellent TAL
+specification: L<http://www.zope.org/Wikis/DevSite/Projects/ZPT/TAL>.
 
 
 =head2 define
@@ -716,19 +713,18 @@ Abstract
 
   <tag tal:define="variable_name EXPRESSION">
 
-Evaluates EXPRESSION and assigns the returned value
-to variable_name.
+Evaluates C<EXPRESSION> and assigns the returned value to C<variable_name>.
 
 Example
 
-  <!-- sets document/title to 'title' -->
+  <!--? sets document/title to 'title' -->
   <span tal:define="title document/title">
 
 Why?
 
-This can be useful if you have a 'very/very/long/expression'.
-You can set it to let's say 'vvle' and then use 'vvle' instead
-of using 'very/very/long/expression'.
+This can be useful if you have a C<very/very/long/expression>.  You can set it
+to let's say C<vvle> and then use C<vvle> instead of using
+C<very/very/long/expression>.
 
 
 =head2 condition (ifs)
@@ -760,7 +756,7 @@ Abstract
      blah blah blah
   </tag>
 
-Example
+Example:
 
   <li tal:repeat="user system/user_list">$user/real_name</li>
 
@@ -786,8 +782,7 @@ Example
 
 Why?
 
-Attributes statements can be used to replace the values of the attributes
-which belong to the tag in which they are used.
+Attributes statements can be used to template a tag's attributes.
 
 
 =head2 content
@@ -796,10 +791,10 @@ Abstract
 
   <tag tal:content="EXPRESSION">Dummy Data To Replace With EXPRESSION</tag>
 
-By default, the characters greater than, lesser than, double quote and ampersand
-are encoded to the entities '&lt', '&gt;', '&quot;' and '&amp;' respectively.
-If you don't want them to (because the result of your expression is already encoded)
-you have to use the 'structure' keyword.
+By default, the characters greater than, lesser than, double quote and
+ampersand are encoded to the entities I<&lt;>, I<&gt;>, I<&quot;> and I<&amp;>
+respectively.  If you don't want them to (because the result of your expression
+is already encoded) you have to use the C<structure> keyword.
 
 Example
 
@@ -811,9 +806,9 @@ Example
 
 Why?
 
-Lets you replace the contents of a tag with whatever value the evaluation of
-EXPRESSION returned. This is handy because you can fill your XML/XHTML templates
-with dummy content which will make them usable in a WYSIWYG tool.
+It lets you replace the contents of a tag with whatever value the evaluation of
+EXPRESSION returned. This is handy because you can fill your templates with
+dummy content which will make them usable in a WYSIWYG tool.
 
 
 =head2 replace
@@ -831,11 +826,11 @@ Example
 
 Why?
 
-Similar reasons to 'content'. Note however that 'tal:content' and
-'tal:replace' are *NOT* aliases. The former will replace the contents
-of the tag, while the latter will replace the whole tag.
+Similar reasons to C<content>. Note however that C<tal:content> and
+C<tal:replace> are *NOT* aliases. The former will replace the contents of the
+tag, while the latter will replace the whole tag.
 
-Indeed you cannot use tal:content and tal:replace in the same tag.
+Indeed you cannot use C<tal:content> and C<tal:replace> in the same tag.
 
 
 =head2 omit-tag
@@ -848,14 +843,18 @@ Example
 
   <b tal:omit-tag="not:bold">I may not be bold.</b>
 
-If 'not:bold' is evaluated as TRUE, then the <b> tag will be omited.
-If 'not:bold' is evaluated as FALSE, then the <b> tag will stay in place.
+If C<not:bold> is evaluated as I<TRUE>, then the <b> tag will be omited.
+If C<not:bold> is evaluated as I<FALSE>, then the <b> tag will stay in place.
 
 Why?
 
-omit-tag statements can be used to leave the contents of a tag in place
-while omitting the surrounding start and end tags if the expression which
-is evaluated is TRUE.
+omit-tag statements can be used to leave the contents of a tag in place while
+omitting the surrounding start and end tags if the expression which is
+evaluated is TRUE.
+
+TIP:
+
+If you want to ALWAYS remove a tag, you can use C<omit-tag="string:1">
 
 
 =head2 on-error
@@ -873,7 +872,7 @@ Example
 Why?
 
 When Petal encounters an error, it usually dies with some obscure error
-message. The on-error statement lets you trap the error and replace it
+message. The C<on-error> statement lets you trap the error and replace it
 with a proper error message.
 
 
@@ -889,8 +888,18 @@ You can do things like:
      tal:on-error="string:Ouch!">Some Dummy Content</p>
 
 Given the fact that XML attributes are not ordered, withing the same tag
-statements will be executed in the following order: define, condition,
-repeat, (attributes, content) or (replace) or (omit-tag, content).
+statements will be executed in the following order:
+
+    define
+    condition
+    repeat
+        attributes
+        content
+    OR
+        replace
+    OR
+        omit-tag
+        content
 
 
 =head2 aliases
@@ -909,18 +918,18 @@ defaults):
 
 TRAP:
 
-Don't forget that the default prefix is petal: NOT tal:, until
+Don't forget that the default prefix is C<petal:> NOT C<tal:>, until
 you set the petal namespace in your HTML or XML document as follows:
 
-<html xmlns:tal="http://purl.org/petal/1.0/">
+    <html xmlns:tal="http://purl.org/petal/1.0/">
 
 
 =head1 INCLUDES
 
-Let's say that your base directory is '/templates',
-and you're editing '/templates/hello/index.html'.
+Let's say that your base directory is C</templates>,
+and you're editing C</templates/hello/index.html>.
 
-From there you want to include '/templates/includes/header.html'
+From there you want to include C</templates/includes/header.html>
 
 
 =head2 general syntax
@@ -952,15 +961,14 @@ etc.
 
 =head2 limitations
 
-The 'href' parameter does not support URIs, no other tag than
-xi:include is supported, and no other directive than the 'href'
-parameter is supported at the moment.
+The C<href> parameter does not support URIs, no other tag than C<xi:include> is
+supported, and no other directive than the C<href> parameter is supported at
+the moment.
 
-Also note that contrarily to the XInclude specification Petal DOES
-allow recursive includes up to $Petal::MAX_INCLUDES. This behavior
-is very useful when designing templates to display data which can
-be recursive such as sitemaps, database cursors, fibonacci suites,
-etc.
+Also note that contrarily to the XInclude specification Petal DOES allow
+recursive includes up to C<$Petal::MAX_INCLUDES>. This behavior is very useful
+when templating structures which fit well recursive processing such as trees,
+nested lists, etc.
 
 You can ONLY use the following Petal directives with Xinclude tags:
 
@@ -969,7 +977,7 @@ You can ONLY use the following Petal directives with Xinclude tags:
   * condition
   * repeat
 
-replace, content, omit-tag and attributes are NOT supported in
+C<replace>, C<content>, C<omit-tag> and C<attributes> are NOT supported in
 conjunction with XIncludes.
 
 
@@ -1107,7 +1115,7 @@ Petal expression
     Else
       Returns FALSE
 
-the true: modifiers should always be used when doing Petal conditions.
+the C<true:> modifiers should always be used when doing Petal conditions.
 
 
 =head2 false:EXPRESSION
@@ -1118,7 +1126,7 @@ I'm pretty sure you can work this one out by yourself :-)
 =head2 set:variable_name EXPRESSION
 
 Sets the value returned by the evaluation of EXPRESSION in
-$hash->{variable_name}. For instance:
+C<$hash->{variable_name}>. For instance:
 
 Perl expression:
 
@@ -1131,8 +1139,8 @@ Petal expression:
 
 =head2 string:STRING_EXPRESSION
 
-The string: modifier lets you interpolate petal expressions
-within a string and returns the value.
+The C<string:> modifier lets you interpolate petal expressions within a string
+and returns the value.
 
   string:Welcome $user/real_name, it is $date!
 
@@ -1140,9 +1148,8 @@ Alternatively, you could write:
 
   string:Welcome ${user/real_name}, it is ${date}!
   
-The advantage of using curly brackets is that it lets you
-interpolate expressions which invoke methods with parameters,
-i.e.
+The advantage of using curly brackets is that it lets you interpolate
+expressions which invoke methods with parameters, i.e.
 
   string:The current CGI 'action' param is: ${cgi/param --action}
 
@@ -1153,21 +1160,20 @@ For certain things which are not doable using TAL you can use what
 I call the UGLY SYNTAX. The UGLY SYNTAX is UGLY, but it can be handy
 in some cases.
 
-For example consider that you have a list of strings
+For example consider that you have a list of strings:
 
-    $my_var = [ 'Foo', 'Bar', 'Baz' ].
-    $template->process (my_var => $my_var);
+    $my_var = [ 'Foo', 'Bar', 'Baz' ];
+    $template->process (my_var => $my_var, buz => $buz);
 
 
 And you want to display:
 
-  <title>Foo : Bar : Baz</title>
-
+  <title>Hello : Foo : Bar : Baz</title>
 
 Which is not doable with TAL without making the XHTML invalid.
 With the UGLY SYNTAX you can do:
 
-    <title><?for name="string my_var"?> <?var name="string"?> <?end?></title>
+    <title>Hello<?for name="string my_var"?> : <?var name="string"?><?end?></title>
 
 Of course you can freely mix the UGLY SYNTAX with other Petal
 syntaxes. So:
@@ -1186,12 +1192,6 @@ instead of:
 is UGLY too. I would recommend to stick with TAL wherever you can.
 But let's not disgress too much.
 
-Petal UGLY SYNTAX is based on processing instructions.
-
-(Those used to be prefixed with 'petal:', however since processing
-instructions are not meant to support XML namespaces, this has been
-removed)
-
 
 =head2 variables
 
@@ -1205,8 +1205,8 @@ Example
 
 Why?
 
-Because if you don't have things which are replaced by real values
-in your template, it's probably a static page, not a template.
+Because if you don't have things which are replaced by real values in your
+template, it's probably a static page, not a template... :) 
 
 
 =head2 if / else constructs
@@ -1220,8 +1220,7 @@ Usual stuff:
     A very merry unbirthday to you! 
   <?end?>
 
-You can use 'condition' instead of 'if', and indeed you
-can use modifiers:
+You can use C<condition> instead of C<if>, and indeed you can use modifiers:
 
   <?condition name="false:user/is_birthay"?>
     What?! It's not your birthday?
@@ -1235,8 +1234,8 @@ Not much else to say!
 
 =head2 loops
 
-Use either for, foreach, loop or repeat. They're all the same thing,
-which one you use is a matter of taste. Again no surprise:
+Use either C<for>, C<foreach>, C<loop> or C<repeat>. They're all the same
+thing, which one you use is a matter of taste. Again no surprise:
 
   <h1>Listing of user logins</h1>
   <ul>
@@ -1248,8 +1247,8 @@ which one you use is a matter of taste. Again no surprise:
   
 
 Variables are scoped inside loops so you don't risk to erase an existing
-'user' variable which would be outside the loop. The template engine
-also provides the following variables for you inside the loop:
+C<user> variable which would be outside the loop. The template engine also
+provides the following variables for you inside the loop:
 
   <?repeat name="foo bar"?>
     <?var name="__count__"?>    - iteration number, starting at 1
@@ -1260,10 +1259,8 @@ also provides the following variables for you inside the loop:
     <?var name="__odd__"?>      - is the count odd?
   <?end?>
 
-
-Again these variables are scoped, you can safely nest loops, ifs etc...
-as much as you like and everything should be fine. And if it's not,
-it's a bug :-)
+Again these variables are scoped, you can safely nest loops, ifs etc...  as
+much as you like and everything should be fine.
 
 
 =head2 includes
@@ -1272,24 +1269,24 @@ The XInclude syntax should be preferred over this...
 
   <?include file="include.xml"?>
 
-It will include the file 'include.xml', using the current object @Petal::BASE_DIR
+It will include the file 'include.xml', using the current C<@Petal::BASE_DIR>
 directory list.
 
 If you want use XML::Parser to include files, you should make sure that
 the included files are valid XML themselves... FYI XML::Parser chokes on
 this:
 
-<p>foo</p>
-<p>bar</p>
+    <p>foo</p>
+    <p>bar</p>
 
 But this works:
 
-<div>
-  <p>foo</p>
-  <p>bar</p>
-</div>
+    <div>
+      <p>foo</p>
+      <p>bar</p>
+    </div>
 
-(having only one top element is part of the XML spec).
+(Having only one top element is part of the XML spec).
 
 
 =head1 ADVANCED PETAL
@@ -1301,7 +1298,7 @@ Petal lets you write your own modifiers, either using coderefs
 or modules.
 
 
-=head3 with coderefs...
+=head3 Coderefs
 
 Let's say that you want to write an uppercase: modifier, which
 would uppercase the result of an expression evaluation, as in:
@@ -1314,7 +1311,7 @@ Would return
 
 Here is what you can do:
 
-  # don't forget the trailing colon in 'uppercase:' !!
+  # don't forget the trailing colon in C<uppercase:> !!
   $Petal::Hash::MODIFIERS->{'uppercase:'} = sub {
       my $hash = shift;
       my $args = shift;
@@ -1324,11 +1321,10 @@ Here is what you can do:
   };
 
 
-=head3 ...or modules.
+=head3 Modules.
 
-For quite big modifiers, you might want to use a module rather
-than a coderef. Here is the example above reimplemented as a
-module:
+You might want to use a module rather than a coderef. Here is the example above
+reimplemented as a module:
 
     package Petal::Hash::UpperCase;
     use strict;
@@ -1347,7 +1343,7 @@ module:
 
 As long as your module is in the namespace Petal::Hash::<YourModifierName>,
 Petal will automatically pick it up and assign it to its lowercased
-name, i.e. in our example 'uppercase:'.
+name, i.e. in our example C<uppercase:>.
 
 If your modifier is OUTSIDE Petal::Hash::<YourModifierName>, you need to
 make Petal aware of its existence as follows:
@@ -1361,13 +1357,15 @@ make Petal aware of its existence as follows:
 
 =head3 XML encoding / structure keyword
 
-By default Petal will encode &, <, > and " to &amp; &lt;, &gt and &quot;
-respectively. However sometimes you might want to display an expression which
-is already encoded, in which case you can use the 'structure' keyword.
+By default Petal will encode C<&>, C<<>, C<>> and C<"> to C<&amp;>, C<&lt;>,
+C<&gt> and C<&quot;> respectively. However sometimes you might want to display
+an expression which is already encoded, in which case you can use the
+C<structure> keyword.
 
   structure my/encoded/variable
 
-Note that this is a KEYWORD, not a modifier. It does not use a trailing colon.
+Note that this is a language I<keyword>, not a modifier. It does not use a
+trailing colon.
 
 
 =head3 Petal::Hash caching and fresh keyword 
@@ -1383,17 +1381,17 @@ for loops because a new Petal::Hash object is used for each iteration in order
 to support proper scoping.
 
 However, in some rare cases you might not want to have that behavior, in which
-case you need to prefix your expression with the 'fresh' keyword, i.e. 
+case you need to prefix your expression with the C<fresh> keyword, i.e. 
 
   fresh string:$foo/bar, ${baz/buz/blah}
 
-You can use 'fresh' with 'structure' if you need to:
+You can use C<fresh> with C<structure> if you need to:
 
   fresh structure string:$foo/bar, ${baz/buz/blah}
 
 However the reverse does not work:
 
-  <!-- VERY BAD, WON'T WORK !!! -->
+  <!--? VERY BAD, WON'T WORK !!! -->
   structure fresh string:$foo/bar, ${baz/buz/blah}
 
 
@@ -1403,62 +1401,61 @@ However the reverse does not work:
 =head3 perl -MPetal -e canonical template.xml
 
 Displays the canonical template for template.xml.
-You can set $INPUT using by setting the PETAL_INPUT environment variable.
-You can set $OUTPUT using by setting the PETAL_OUTPUT environment variable.
+You can set C<$Petal::INPUT> using by setting the PETAL_INPUT environment variable.
+You can set C<$Petal::OUTPUT> using by setting the PETAL_OUTPUT environment variable.
 
 
 =head3 perl -MPetal -e code template.xml
 
 Displays the perl code for template.xml.
-You can set $INPUT using by setting the PETAL_INPUT environment variable.
-You can set $OUTPUT using by setting the PETAL_OUTPUT environment variable.
+You can set C<$Petal::INPUT> using by setting the PETAL_INPUT environment variable.
+You can set C<$Petal::OUTPUT> using by setting the PETAL_OUTPUT environment variable.
 
 
 =head3 perl -MPetal -e lcode template.xml
 
 Displays the perl code for template.xml, with line numbers.
-You can set $INPUT using by setting the PETAL_INPUT environment variable.
-You can set $OUTPUT using by setting the PETAL_OUTPUT environment variable.
+You can set C<$Petal::INPUT> using by setting the PETAL_INPUT environment variable.
+You can set C<$Petal::OUTPUT> using by setting the PETAL_OUTPUT environment variable.
 
 
 =head2 What does Petal do internally?
 
 The cycle of a Petal template is the following:
 
-  1. Read the source XML template
-  2. $INPUT (XML or HTML) throws XML events from the source file
-  3. $OUTPUT (XML or HTML) uses these XML events to canonicalize the template
-  4. Petal::CodeGenerator turns the canonical template into Perl code
-  5. Petal::Cache::Disk caches the Perl code on disk
-  6. Petal turns the perl code into a subroutine
-  7. Petal::Cache::Memory caches the subroutine in memory
-  8. Petal executes the subroutine
+    1. Read the source XML template
+    2. $INPUT (XML or HTML) throws XML events from the source file
+    3. $OUTPUT (XML or HTML) uses these XML events to canonicalize the template
+    4. Petal::CodeGenerator turns the canonical template into Perl code
+    5. Petal::Cache::Disk caches the Perl code on disk
+    6. Petal turns the perl code into a subroutine
+    7. Petal::Cache::Memory caches the subroutine in memory
+    8. Petal executes the subroutine
 
-If you are under a persistent environement a la mod_perl, subsequent calls
-to the same template will be reduced to step 8 until the source template
-changes.
+If you are under a persistent environement a la mod_perl, subsequent calls to
+the same template will be reduced to step 8 until the source template changes.
 
 Otherwise, subsequent calls will resume at step 6, until the source template
 changes.
 
 
-=head2 decrypting warnings and errors
+=head1 DECRYPTING WARNINGS AND ERRORS
 
 
-=head3 "Cannot import module $module. Reason: $@" (nonfatal)
+=head2 "Cannot import module $module. Reason: $@" (nonfatal)
 
 Petal was not able to import one of the modules. This error warning will be
 issued when Petal is unable to load a plugin because it has been badly install
 or is just broken.
 
 
-=head3 "Petal modifier encode: is deprecated" (nonfatal)
+=head2 "Petal modifier encode: is deprecated" (nonfatal)
 
 You don't need to use encode:EXPRESSION to XML-encode expression anymore,
 Petal does it for you. encode: has been turned into a no-op.
 
 
-=head3 Cannot find value for ... (FATAL)
+=head2 Cannot find value for ... (FATAL)
 
 You tried to invoke an/expression/like/this/one but Petal could not resolve
 it. This could be because an/expression/like evaluated to undef and hence the
@@ -1469,11 +1466,17 @@ code. You can look at the perl code to try to determine the faulty bit in
 your template.
 
 
-=head3 not well-formed (invalid token) at ... (FATAL)
+=head2 not well-formed (invalid token) at ... (FATAL)
 
 Petal was trying to parse a file that is not well-formed XML or that has strange
 entities in it. Try to run xmllint on your file to see if it's well formed or
 try to use the $Petal::INPUT = 'XHTML' option.
+
+
+=head2 other errors
+
+Either I've forgot to document it, or it's a bug. Send an email to the Petal
+mailing list or at L<mailto://jhiver@mkdoc.com>.
 
 
 =head1 EXPORTS
@@ -1483,9 +1486,8 @@ None.
 
 =head1 KNOWN BUGS
 
-The XML::Parser wrapper only cannot expand entities &lt;, &gt; &amp;
-and &quot;. Besides, I can't get it to NOT expand entities in 'Stream'
-mode. :-(
+The XML::Parser wrapper only cannot expand entities C<&lt;>, C<&gt;>, C<&amp;>
+and C<&quot;>. Besides, I can't get it to NOT expand entities in 'Stream' mode.
 
 HTML::TreeBuilder expands all entities, hence &nbsp;s are lost / converted to
 whitespaces.
@@ -1497,24 +1499,11 @@ XML::Parser is deprecated and should be replaced by SAX handlers at some point.
 
 Copyright 2002 - Jean-Michel Hiver <jhiver@mkdoc.com> 
 
-This module free software and is distributed under the
-same license as Perl itself. Use it at your own risk.
+This module free software and is distributed under the same license as Perl
+itself. Use it at your own risk.
 
-Thanks to everybody on the list who contributed to Petal
-in the form of patches, bug reports and suggestions, in
-particular thanks to:
-
-* William McKee <william@knowmad.com> for his early support,
-enthusiasm, useful suggestions, patches, and bug reports.
-
-* Sean M. Burke <sburke@cpan.org> for his kind improvements
-on his HTML::TreeBuilder module which tremendously helped
-with HTML parsing.
-
-* Kurt Stephens <kstep@pepsdesign.com> for his truly amazing
-bug reports.
-
-And everyone else I forgot :-)
+Thanks to everybody on the list who contributed to Petal in the form of
+patches, bug reports and suggestions. See README for a list of contributors.
 
 
 =head1 SEE ALSO
