@@ -88,25 +88,34 @@ use strict;
 use warnings;
 use Carp;
 
-use Petal::Hash::Var;
-use Petal::Hash::String;
+our $MODIFIERS = {};
 
-
-# This hash lists all the modules which have
-# been already imported.
-our $IMPORTED  = {
-    'Petal::Hash::Var'         => 1,
-    'Petal::Hash::String'      => 1,
-};
-
-
-# This is the list of modifiers, i.e. modules
-# which can be used to alter Petal expression
-# evaluation.
-our $MODIFIERS = {
-    'var:'    => 'Petal::Hash::Var',
-    'string:' => 'Petal::Hash::String',
-};
+# import all plugins once
+foreach my $include_dir (@INC)
+{
+    my $dir = "$include_dir/Petal/Hash";
+    if (-e $dir and -d $dir)
+    {
+	opendir DD, $dir or do {
+	    warn "Cannot open directory $dir. Reason: $!";
+	    next;
+	};
+	
+	my @modules = map { s/\.pm$//; $_ }
+	              grep /\.pm$/,
+		      grep !/^\./,
+		      readdir (DD);
+	
+	closedir DD;
+	
+	foreach my $module (@modules)
+	{
+	    eval "use Petal::Hash::$module";
+	    $@ and warn "Cannot import module $module. Reason: $@";
+	    $MODIFIERS->{lc ($module) . ':'} = "Petal::Hash::$module";
+	}
+    }
+}
 
 
 # set modifier
@@ -233,14 +242,7 @@ sub fetch
     $key =~ s/^\s+//;
     
     my $module = $MODIFIERS->{$mod} || confess "$mod is not a known modifier";
-    (defined $module and ref $module and ref $module eq 'CODE') and return $module->($self, $key);
-    
-    $IMPORTED->{$module} ||= do {
-	eval "use $module";
-	(defined $@ and $@) and confess "cannot import $module for modifier $mod";
-	1;
-    };
-    
+    (defined $module and ref $module and ref $module eq 'CODE') and return $module->($self, $key); 
     $module->process ($self, $key);
 }
 
