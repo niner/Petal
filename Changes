@@ -1,5 +1,8 @@
 Revision history for Petal.
 
+0.83
+	- Fixed a method parameter bug
+
 0.82 Mon Jan 27 15:03:21 2003
 	- Added limited support for XIncludes
 	- Added infinite recursion protection
@@ -8,13 +11,13 @@ Revision history for Petal.
 	- Added command line toy functions
 
 0.81 Wed Dec 11 14:19:24 2002
-	- fixed silly documentation bug
+	- Fixed silly documentation bug
 
 0.80 Wed Dec 11 14:19:24 2002
-	- this version breaks backward compatibility !!!
-	- removed prefixes from processing instructions
-	- implemented TAL's on-error statement
-	- updated test suite
+	- This version breaks backward compatibility !!!
+	- Removed prefixes from processing instructions
+	- Implemented TAL's on-error statement
+	- Updated test suite
 
 0.77 Wed Dec  4 15:05:28 2002
 	- Implemented TAL's omit-tag statement
