@@ -162,3 +162,4 @@ t/data/test_ns_attributes/test_rightWayOfDoing.xml
 t/data/tests_with_zero.xml
 t/data/xhtml.html
 t/data/xhtml_omit_tag.html
+META.yml                                 Module meta-data (added by MakeMaker)
