@@ -6,6 +6,7 @@ lib/Petal/Cache/Memory.pm
 lib/Petal/Canonicalizer/XHTML.pm
 lib/Petal/Canonicalizer/XML.pm
 lib/Petal/CodeGenerator.pm
+lib/Petal/Cookbook.pod
 lib/Petal/Deprecated.pm
 lib/Petal/Entities.pm
 lib/Petal/Functions.pm

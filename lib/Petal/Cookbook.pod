@@ -1,0 +1,212 @@
+=head1 NAME
+
+Petal::Cookbook - Recipes for building templates with Petal
+
+=head1 SYNOPSIS
+
+Not Applicable
+
+=head1 DESCRIPTION
+
+This document contains some examples of L<Petal|Petal> template usage. 
+
+
+=head1 NOTES
+I tend to use Petal to generate HTML files from HTML templates. I name these templates with the .tmpl extension to help distinguish templates from static html. Nonetheless, the templates should be in a non-web accessible directory if you are using Petal for developing web applications.
+
+
+=head1 BASICS
+
+=head2 Passing a hashreference to Petal::process
+An effective way to collate data to send to the Petal process command is via a hash reference. Used as follows, this technique allows you to build up your data to be passed to the template slowly:
+
+	my $hash = { object => $some_object, number => 3 };
+	$hash->{'foo'} = "bar";
+	my $template = new Petal ( 'test.tmpl' );
+	my $html = $template->process($hash);
+	# Output the results
+	print "Content-type: text/html\n\n";
+	print $html;
+
+
+=head1 INTERMEDIATE TIPS
+
+=head2 Assigning attributes (submitted by Warren Smith)
+
+Up until now, if I wanted to use petal to pre-select an item in a selectbox, I
+would have to do each item twice, like so:
+
+  <select>
+    <div petal:repeat="option options">
+      <option petal:condition="true: option/selected" petal:attributes="value option/value" petal:content="option/label" selected="selected">Option 1</option>
+      <option petal:condition="false: option/selected" petal:attributes="value option/value" petal:content="option/label">Option 2</option>
+    </div>
+  </select>
+
+  $VAR1 = [
+          { value => 1, label => 'Option 1', selected => 1 },
+          { value => 2, label => 'Option 2', selected => 0 },
+          { value => 4, label => 'Option 3', selected => 0 },
+  ];
+
+
+After reading the Petal source, I found that if you use petal:attributes
+to assign an attribute an undefined value, the attribute gets omitted,
+thus the above code can be replaced with the simpler version below:
+
+  <select>
+    <option petal:attributes="value option/value; selected option/selected" petal:content="option/label">Option 1</option>
+  </select>
+
+  $VAR1 = [
+          { value => 1, label => 'Option 1', selected => 1 },
+          { value => 2, label => 'Option 2' },
+          { value => 4, label => 'Option 3' },
+  ];
+
+It turns out that although not documented in Petal's documentation, this
+behavior is part of the TAL specification:
+
+         http://www.zope.org/Wikis/DevSite/Projects/ZPT/TAL
+
+Thanks to Warren Smith for this tip and Fergal Daly for his knowledge of the TAL specification.
+
+
+=head2 Generating even/odd rows (submitted by Warren Smith)
+I developed a decode: modifier that works similar to Oracle's decode
+statement. It should be making it into the next release of Petal::Utils. So,
+making even/odd rows of a table different classes, which allows you to do
+things like alter color, font-size, etc, is relatively easy.
+
+Example:
+
+  <table>
+    <tr class="decode: repeat/even 1 'even' 'odd'">...</tr>
+  </table>
+
+
+Thanks to Warren Smith for this tip.
+
+
+=head1 ADVANCED
+
+=head2 Invoking methods on objects
+Petal supports the ability to call an object's methods if passed in to Petal::process via the %hash. Say you wish to check whether a particular record is contained in a recordset returned from an SQL query. Using OO-Perl techniques, you could use the following technique as described by Jean-Michel:
+
+* all your records are hashrefs which come from some database
+* you have a list of them to display
+
+Let's say that the database table looks like this:
+
+Raters (id, first_name, last_name, relation, phone, email)
+
+You could bless each record into a package as is:
+
+    use MyApplication::Record::Rater;
+    my @records = complicated_query_somewhere_else();
+    bless $_, "MyApplication::Record::Rater" for (@records);
+
+
+Your module could look like that:
+
+    package MyApplication::Record::Rater;
+    use strict;
+    use warnings;
+    use CGI;
+    use Carp;
+
+    sub is_current_id
+    {
+        my $self = shift;
+        my $cgi  = CGI->new;
+        my $id = $cgi->param ('rater.id');
+        return unless (defined $id and $id and $id =~ /^\d+$/);
+        return $id == $self->{id};
+    }
+
+    1;
+
+Then on top of your existing data, you have a method which you can call
+from Petal, i.e.
+
+    <span petal:condition="true:record/is_current_id">
+      blah blah blah...
+    </span>
+
+This trick can also be used when you have foreign keys in database
+fields.
+
+<fictious_scenario>
+
+For example, let's imagine that you have a column called
+'friend_id'. It references another 'rater' which is supposed to be a
+friend of that person.
+
+You could defined the following subroutine:
+
+    # give me the friend record for that person
+    sub friend
+    {
+        my $self = shift;
+        my $friend_id = $self->{friend_id};
+        my $sql = 'select * from rater where id = ?';
+        my $sth = $::DBH_CONNECTION->prepare_cached ($sql);
+        $sth->execute ($friend_id);
+        my $hash = $sth->fetchrow_hashref;
+        return unless (defined $hash);
+
+        bless $hash, "MyApplication::Record::Rater";
+        return $hash;
+    }
+
+Then in your template, you could do:
+
+  <?petal:if name="true:rater/friend"?>
+  Your friend is:
+    $encode:rater/friend/first_name
+    $encode:rater/friend/last_name
+  <?petal:end?>
+
+</fictious_scenario>
+
+Thanks to Jean-Michel Hiver for this tip.
+
+
+			NEEDS TO BE TESTED
+			NEEDS TO BE TESTED
+=head2 Using CGI.pm to build forms
+			NEEDS TO BE TESTED
+			NEEDS TO BE TESTED
+Be sure to call CGI with the -compile option as follows:
+	use CGI(-compile [:all]);
+
+Calling the HTML generating methods of CGI.pm from the Petal template provides
+an extremely simple means to develop forms.  For example, the ususal ratnest of
+loops used to populate a checkbox group can be replaced by the simple elegant
+construct below.  You can put in a dummy checkbox to give the HTML designer
+something to look at.
+
+<span petal:replace="query/checkbox_group 'Choices' choices '' 'true'">
+<input name="Choices" type="checkbox" value="test">Test</input> </span>
+
+Thanks to Kurt Stephens for this tip.
+
+
+
+=head1 COPYRIGHT
+
+Copyright (c) 2002-2005 Knowmad Services Inc.  All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
+
+=head1 AUTHOR
+
+ William McKee <william@knowmad.com>.
+
+=head1 SEE ALSO
+
+L<Petal|Petal>, L<Petal::Utils|Petal::Utils>
+
+=cut
+
