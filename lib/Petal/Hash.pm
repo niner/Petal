@@ -149,7 +149,7 @@ $MODIFIERS->{'encode:'} = sub {
     warn "Petal modifier encode: is deprecated";
     my $hash = shift;
     my $argument = shift;
-    return $argument;
+    return $hash->fetch ($argument);
 };
 $MODIFIERS->{'xml:'}         = $MODIFIERS->{'encode:'};
 $MODIFIERS->{'html:'}        = $MODIFIERS->{'encode:'};
