@@ -155,7 +155,7 @@ sub cached
     }
     
     $Petal::DECODE_CHARSET and do {
-	$res = Petal::Encode::decode ($Petal::DECODE_CHARSET, $res);
+	$res = Petal::Encode::p_decode ($Petal::DECODE_CHARSET, $res);
     };
     
     return $res;

@@ -320,7 +320,7 @@ sub process
 	$res = $coderef->($hash);
 	
 	$Petal::ENCODE_CHARSET and do {
-	    $res = Petal::Encode::encode ($Petal::ENCODE_CHARSET, $res);
+	    $res = Petal::Encode::p_encode ($Petal::ENCODE_CHARSET, $res);
 	};
     };
     
@@ -487,14 +487,14 @@ sub _file_data_ref
     no bytes;
     
     $Petal::DECODE_CHARSET and do {
-	$res = Petal::Encode::decode ($Petal::DECODE_CHARSET, $res);
+	$res = Petal::Encode::p_decode ($Petal::DECODE_CHARSET, $res);
     };
     
     if ($OUTPUT eq 'HTML' or $OUTPUT eq 'XHTML')
     {
-	Petal::Encode::_utf8_on ($res);
+	Petal::Encode->p_utf8_on ($res);
 	$res = MKDoc::XML::DecodeHO->process ($res);
-	Petal::Encode::_utf8_off ($res);
+	Petal::Encode->p_utf8_off ($res);
     }
     
     # kill template comments
@@ -591,15 +591,6 @@ sub _canonicalize
     my $data_ref = $self->_file_data_ref;
     my $parser = $parser_type->new;
     return $canonicalizer_type->process ($parser, $data_ref);
-}
-
-
-sub _utf8_on
-{
-    my $class = shift;
-    my $res   = shift;
-    Petal::Encode::_utf8_on ($res);
-    return $res;
 }
 
 

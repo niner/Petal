@@ -88,6 +88,7 @@ sub code_header
     my $class = shift;
     $class->add_code("\$VAR1 = sub {");
     $class->indent_increment();
+    $class->add_code("require Petal::Encode;");
     $class->add_code("my \$hash = shift;");
     $class->add_code("my ".$class->_init_res.";");
     $class->add_code('local $^W = 0;') unless $Petal::WARN_UNINIT;
@@ -203,8 +204,8 @@ sub _include
 	$class->add_code ("my \$res = eval { Petal->new ('$path')->process (\$hash->new()) };");
     
     $class->add_code ("\$res = \"<!--\\n\$\@\\n-->\" if (defined \$\@ and \$\@);");
-    $class->add_code ("\$res = Petal::Encode::decode (\$Petal::ENCODE_CHARSET, \$res) if (\$Petal::ENCODE_CHARSET);");
-    $class->add_code ("\$res = Petal->_utf8_on (\$res);");
+    $class->add_code ("\$res = Petal::Encode::p_decode (\$Petal::ENCODE_CHARSET, \$res) if (\$Petal::ENCODE_CHARSET);");
+    $class->add_code ("Petal::Encode->p_utf8_on (\$res);");
     $class->add_code ("\$res;");
     $class->indent_decrement();
     $class->add_code ("} || '';");

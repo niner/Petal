@@ -9,47 +9,44 @@ package Petal::Encode;
 use strict;
 use warnings;
 
-
-($] > 5.007) and do {
-    require Encode;
-};
-$@ and die $@;
-
-
-sub decode
+sub p_decode
 {
     return @_ unless ($] > 5.007);
-    return Encode::decode (@_);
+    return @_ unless (scalar @_);
+    return Encode::decode ($_[0], $_[1]);
 }
 
 
-sub encode
+sub p_encode
 {
     return @_ unless ($] > 5.007);
-    return Encode::encode (@_);
+    return @_ unless (scalar @_);
+    return Encode::encode ($_[0], $_[1]);
 }
 
 
-sub _utf8_on
+sub p_utf8_on
 {
     return @_ unless ($] > 5.007);
-    return Encode::_utf8_on (@_);
+    return @_ unless (scalar @_);
+    Encode::_utf8_on ($_[1]);
 }
 
 
-sub _utf8_off
+sub p_utf8_off
 {
     return @_ unless ($] > 5.007);
-    return Encode::_utf8_off (@_);
+    return @_ unless (scalar @_);
+    Encode::_utf8_off ($_[1]);
 }
 
-
-sub is_utf8
+BEGIN
 {
-    return @_ unless ($] > 5.007);
-    return Encode::is_utf8 (@_);    
+    ($] > 5.007) and do {
+        require Encode;
+    };
+    $@ and warn $@;
 }
-
 
 1;
 
