@@ -1,0 +1,6 @@
+<t>
+a = <t petal:replace="a"/> ***
+    <t petal:define="a string:hello">
+a = <t petal:replace="a"/>
+    </t>
+</t>

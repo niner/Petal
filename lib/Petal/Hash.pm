@@ -51,6 +51,7 @@ $MODIFIERS->{'set:'} = sub {
     my $set   = shift (@split) or confess "bad syntax for 'set:': $argument (\$set)";
     my $value = $hash->fetch (join ' ', @split);
     $hash->{$set} = $value;
+    delete $hash->{__petal_hash_cache__}->{$set};
     return '';
 };
 $MODIFIERS->{'def:'}    = $MODIFIERS->{'set:'};
