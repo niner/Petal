@@ -1,6 +1,6 @@
 =head1 NAME
 
-Petal::Cache::Memory - Caches generated code on disk.
+Petal::Cache::Memory - Caches generated subroutines in memory.
 
 =head1 SYNOPSIS
 

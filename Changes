@@ -1,5 +1,11 @@
 Revision history for Petal.
 
+0.4
+	- Fixed documentation bugs
+	- Fixed multiple includes bug
+	- Fixed Petal::Parser::HTMLWrapper includes
+	- Added tests
+
 0.3 Fri Jul 19 11:20:30 2002
 	- Fixed critical include bug
 	- Added version number to cached file names

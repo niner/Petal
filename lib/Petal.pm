@@ -96,7 +96,7 @@ our $PARSERS = {
     'ANY'  => [ 'Petal::Parser::XMLWrapper', 'Petal::Parser::HTMLWrapper' ],
 };
 
-our $VERSION = '0.3';
+our $VERSION = '0.4';
 
 =head1 METHODS
 
@@ -569,7 +569,7 @@ points:
 
 =head2 repeat (loops)
 
-  <li petal:repeat="user system.user_list">$xml:user.real_name</span>
+  <li petal:repeat="user system.user_list">$xml:user.real_name</li>
 
 
 =head2 attributes
@@ -650,10 +650,10 @@ Usual stuff:
 
   <?petal:if name="user.is_birthay"?>
     Happy Birthday, $xml:user.real_name!
-  <?else?>
+  <?petal:else?>
     What?! It's not your birthday?
     Maybe tomorrow...
-  <?end?>
+  <?petal:end?>
 
 You can use petal:condition instead of petal:if, and indeed you can use
 modifiers:
@@ -661,9 +661,9 @@ modifiers:
   <?petal:condition name=":false user.is_birthay"?>
     What?! It's not your birthday?
     Maybe tomorrow...
-  <?else?>
+  <?petal:else?>
     Happy Birthday, $xml:user.real_name!
-  <?end?>
+  <?petal:end?>
 
 Not much else to say!
 
@@ -678,7 +678,7 @@ surprise:
   <ul>
     <?petal:repeat name="system.list_users" as="user"?>
       <li>$user.login : $user.real_name</li>
-    <?end?>
+    <?petal:end?>
   </ul>
   
 
@@ -693,7 +693,7 @@ also provides the following variables for you inside the loop:
     $__is_inner__ - is it not the first and not the last iteration
     $__even__     - is the count even
     $__odd__      - is the count odd
-  <?end?>
+  <?petal:end?>
 
 Again these variables are scoped, you can safely nest loops, ifs etc...
 as much as you like and everything should be fine. And if it's not,
@@ -755,8 +755,12 @@ Jean-Michel Hiver <jhiver@mkdoc.com>
 This module free software and is distributed under the
 same license as Perl itself.
 
-Thanks to William McKee <william@knowmad.com> for his useful
-suggestions, patches, and bug reports.
+Thanks to William McKee <william@knowmad.com> for his useful suggestions,
+patches, and bug reports.
+
+Thanks to Lucas Saud <lucas.marinho@uol.com.br> for the
+Petal::Hash::Encode_HTML he contributed.
+
 
 =head1 SEE ALSO
 

@@ -1,7 +1,6 @@
 =head1 NAME
 
-Petal::CodeGenerator - Turns canonicalized XML files
-into Perl code.
+Petal::CodeGenerator - Turns canonicalized XML files into Perl code.
 
 =head1 SYNOPSIS
 
@@ -19,10 +18,14 @@ use Carp;
 use vars qw /$petal_object $tokens $variables @code $indent $token_name %token_hash $token/;
 
 
-# $class->process ($data_ref, $petal_object);
-# -------------------------------------------
-#   This (too big) subroutine converts the canonicalized template
-#   data into Perl code which is ready to be evaled and executed
+=head1 METHODS
+
+=head2 $class->process ($data_ref, $petal_object);
+
+This (too big) subroutine converts the canonicalized template
+data into Perl code which is ready to be evaled and executed.
+
+=cut
 sub process
 {
     my $class = shift;
@@ -104,7 +107,6 @@ sub _include
     (defined $file and $file) or
         confess "Cannot parse $token : 'file' attribute is not defined";
     
-    # to __severely__ tweak...
     my $base_dir = $petal_object->_base_dir;
     $token_hash{base_dir} = '/';
     $token_hash{file} = $base_dir . '/' . $file;

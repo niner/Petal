@@ -35,8 +35,8 @@ File::Spec->tmpdir will be used instead.
 
 =head2 $PREFIX
 
-Name that should prefix the cached files. By default, set to 'petale_cache_',
-i.e. 'foo.html' might be stored as petale_cache_4e38e18f1c6bedaaf174f95310a938c2
+Name that should prefix the cached files. By default, set to 'petal_cache_',
+i.e. 'foo.html' might be stored as petal_cache_4e38e18f1c6bedaaf174f95310a938c2
 
 =cut
 our $TMP_DIR = File::Spec->tmpdir;

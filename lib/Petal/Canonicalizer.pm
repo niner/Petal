@@ -2,7 +2,7 @@
 
 Petal::Canonicalizer - a class which builds a canonical
 XML file from a XML / HTML / whatever parser's events. The canonical
-file can then be sent to the Petal::PerlBuilder module.
+file can then be sent to the Petal::CodeGenerator module.
 
 =head1 DESCRIPTION
 
@@ -14,7 +14,6 @@ use strict;
 use warnings;
 
 use vars qw /@Result @NodeStack/;
-our $VERSION = "0.1";
 
 
 =head2 $class->process ($parser, $data_ref);
@@ -62,7 +61,8 @@ sub process
 sub _processing_instructions_out
 {
     my $data_ref = shift;
-    my %pis = map { $_ => _compute_unique_string ($data_ref) } $$data_ref =~ /(<\?.*?\?>)/sm;
+    my %pis = map { $_ => _compute_unique_string ($data_ref) } $$data_ref =~ /(<\?.*?\?>)/gsm;
+    
     while (my ($key, $value) = each %pis) {
 	$$data_ref =~ s/\Q$key\E/$value/gsm;
     }
@@ -136,7 +136,7 @@ For example
 
 Is rewritten
 
-  <?if name="blah"?><foo>
+  <?petal:if name="blah"?><foo>...
 
 =cut
 sub StartTag
@@ -202,7 +202,7 @@ some 'condition' or 'repeat' statements, i.e.
 
 Could be rewritten
 
-  </li><?end?>
+  </li><?petal:end?>
 
 If the starting LI used a loop, i.e. <li petal:loop="element list">
 
