@@ -69,6 +69,7 @@ t/054_Opt_cache.t
 t/055_Opt_maxinc.t
 t/060_Metal_Define.t
 t/061_Metal_Use.t
+t/062_Metal_Self_Include.t
 t/benchmark.pl
 t/data/access_obj_array.html
 t/data/access_obj_hash.html
@@ -109,6 +110,7 @@ t/data/language/include/fr.html
 t/data/loop_error.xml
 t/data/manipulate.html
 t/data/metal_define_macro.xml
+t/data/metal_self_include.xml
 t/data/metal_use_macro.xml
 t/data/method_param.xml
 t/data/multiple_includes/includes/footer.tmpl

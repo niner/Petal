@@ -9,35 +9,71 @@ $Petal::MEMORY_CACHE = 0;
 $Petal::BASE_DIR = ('t/data');
 my $file     = 'metal_define_macro.xml';
 
+$Petal::OUTPUT = 'XML';
+
 {
     my $t = new Petal ( file => 'metal_define_macro.xml' );
     my $s = $t->process();
-    like ($s, qr/<test>Foo<\/test>/);
-    like ($s, qr/<test>Bar<\/test>/);
-    like ($s, qr/<test>Baz<\/test>/);
+    like ($s, qr/<span>Foo<\/span>/);
+    like ($s, qr/<span>Bar<\/span>/);
+    like ($s, qr/<span>Baz<\/span>/);
 }
 
 {
     my $t = new Petal ( file => 'metal_define_macro.xml#foo' );
     my $s = $t->process();
-    like ($s, qr/<test>Foo<\/test>/);
-    unlike ($s, qr/<test>Bar<\/test>/);
-    unlike ($s, qr/<test>Baz<\/test>/);
+    like ($s, qr/<span>Foo<\/span>/);
+    unlike ($s, qr/<span>Bar<\/span>/);
+    unlike ($s, qr/<span>Baz<\/span>/);
 }
 
 {
     my $t = new Petal ( file => 'metal_define_macro.xml#bar' );
     my $s = $t->process();
-    unlike ($s, qr/<test>Foo<\/test>/);
-    like ($s, qr/<test>Bar<\/test>/);
-    unlike ($s, qr/<test>Baz<\/test>/);
+    unlike ($s, qr/<span>Foo<\/span>/);
+    like ($s, qr/<span>Bar<\/span>/);
+    unlike ($s, qr/<span>Baz<\/span>/);
 }
 
 {
     my $t = new Petal ( file => 'metal_define_macro.xml#baz' );
     my $s = $t->process();
-    unlike ($s, qr/<test>Foo<\/test>/);
-    unlike ($s, qr/<test>Bar<\/test>/);
-    like ($s, qr/<test>Baz<\/test>/);
+    unlike ($s, qr/<span>Foo<\/span>/);
+    unlike ($s, qr/<span>Bar<\/span>/);
+    like ($s, qr/<span>Baz<\/span>/);
+}
+
+$Petal::OUTPUT = 'XHTML';
+
+{
+    my $t = new Petal ( file => 'metal_define_macro.xml' );
+    my $s = $t->process();
+    like ($s, qr/<span>Foo<\/span>/);
+    like ($s, qr/<span>Bar<\/span>/);
+    like ($s, qr/<span>Baz<\/span>/);
+}
+
+{
+    my $t = new Petal ( file => 'metal_define_macro.xml#foo' );
+    my $s = $t->process();
+    like ($s, qr/<span>Foo<\/span>/);
+    unlike ($s, qr/<span>Bar<\/span>/);
+    unlike ($s, qr/<span>Baz<\/span>/);
+}
+
+{
+    my $t = new Petal ( file => 'metal_define_macro.xml#bar' );
+    my $s = $t->process();
+    unlike ($s, qr/<span>Foo<\/span>/);
+    like ($s, qr/<span>Bar<\/span>/);
+    unlike ($s, qr/<span>Baz<\/span>/);
+}
+
+{
+    my $t = new Petal ( file => 'metal_define_macro.xml#baz' );
+    my $s = $t->process();
+    unlike ($s, qr/<span>Foo<\/span>/);
+    unlike ($s, qr/<span>Bar<\/span>/);
+    like ($s, qr/<span>Baz<\/span>/);
 }
 

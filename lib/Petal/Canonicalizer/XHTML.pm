@@ -68,6 +68,7 @@ sub StartTag
     ($tag) = $tag =~ /^<\s*((?:\w|\:|\-)*)/;
     my $att = { %_ };
 
+    $class->_use_macro ($tag, $att);
     $class->_on_error ($tag, $att);
     $class->_define ($tag, $att);
     $class->_condition ($tag, $att);

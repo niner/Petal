@@ -1,5 +1,5 @@
-<test>
-  <test metal:define-macro="foo">Foo</test>
-  <test metal:define-macro="bar">Bar</test>
-  <test xmlns:poot="http://xml.zope.org/namespaces/metal" poot:define-macro="baz">Baz</test>
-</test>
+<span>
+  <span metal:define-macro="foo">Foo</span>
+  <span metal:define-macro="bar">Bar</span>
+  <span xmlns:poot="http://xml.zope.org/namespaces/metal" poot:define-macro="baz">Baz</span>
+</span>
