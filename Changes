@@ -1,5 +1,8 @@
 Revision history for Petal.
 
+0.86 Tue Feb 25 11:30:06 2003
+	- Fixed tags with hyphens being trunkated.
+
 0.85 Mon Feb 10 16:48:29 2003
 	- Made it so that code generator backend can be changed @ runtime.
 	- Fixed entities not being encoded in static attributes fix!

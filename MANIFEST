@@ -49,6 +49,7 @@ t/028_Infinite_Includes.t
 t/029_Test_NS_Attributes.t
 t/030_Attributes_AndQuot.t
 t/031_Escape_Semicolon.t
+t/032_Hypen_XML.t
 t/data/attributes_andquot.xml
 t/data/autoload.xml
 t/data/canonical_error.html
@@ -59,6 +60,7 @@ t/data/dummy_data.xml
 t/data/entities.xml
 t/data/eval.xml
 t/data/hashref_list.html
+t/data/hypen.xml
 t/data/if.html
 t/data/if.xml
 t/data/include/deep/index.xml
@@ -98,4 +100,3 @@ t/data/test_ns_attributes/test_ns_attributes7.xml
 t/data/test_ns_attributes/test_rightWayOfDoing.xml
 t/data/xhtml.html
 t/data/xhtml_omit_tag.html
-t/test_manipulate.pl

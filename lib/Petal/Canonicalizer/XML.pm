@@ -145,7 +145,7 @@ sub StartTag
     return if ($class->_is_inside_content_or_replace());
     
     my $tag = $_;
-    ($tag) = $tag =~ /^<\s*((?:\w|:)*)/;
+    ($tag) = $tag =~ /^<\s*((?:\w|\:|\-)*)/;
     my $att = { %_ };
     
     $class->_on_error ($tag, $att);
@@ -253,7 +253,7 @@ sub EndTag
     my $class = shift;
     return if ($class->_is_inside_content_or_replace ( 'endtag' ));
     
-    my ($tag) = $_ =~ /^<\/\s*((?:\w|:)*)/;
+    my ($tag) = $_ =~ /^<\/\s*((?:\w|\:|\-)*)/;
     my $node = pop (@NodeStack);
     
     return if ($class->_is_xinclude ($tag));
