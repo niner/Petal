@@ -1,5 +1,6 @@
 Changes
 MANIFEST
+Makefile
 Makefile.PL
 README
 lib/Petal.pm
@@ -9,14 +10,8 @@ lib/Petal/Canonicalizer/XHTML.pm
 lib/Petal/Canonicalizer/XML.pm
 lib/Petal/CodeGenerator.pm
 lib/Petal/Hash.pm
-lib/Petal/Hash/Encode_HTML.pm
-lib/Petal/Hash/Encode_XML.pm
-lib/Petal/Hash/FALSE.pm
-lib/Petal/Hash/SET.pm
 lib/Petal/Hash/String.pm
-lib/Petal/Hash/TRUE.pm
-lib/Petal/Hash/UpperCase.pm
-lib/Petal/Hash/VAR.pm
+lib/Petal/Hash/Var.pm
 lib/Petal/Parser/HTMLWrapper.pm
 lib/Petal/Parser/XMLWrapper.pm
 t/001_Include.t
