@@ -1,5 +1,8 @@
 Revision history for Petal.
 
+	- Patched with Fergal Daly's require.patch
+	- Refactored very slightly CodeGenerator.pm
+
 0.94 Thu Jun 19 11:58:52 2003
 	- Patched with Fergal Daly's indent.patch, expr.patch, warn.patch
 	- Patched with Steve Purkis' contributed tests
