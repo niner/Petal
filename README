@@ -1,16 +1,21 @@
-Petal version 0.01
-==================
+Petal version 0.3
+=================
 
-The README is used to introduce the module and provide instructions on
-how to install the module, any machine dependencies it may have (for
-example C compilers and installed libraries) and any other information
-that should be provided before the module is installed.
+Petal stands for "Perl Template Attribute Language". It is inspired from the
+Zope Page Templates TAL specification, and lets you write very elegant,
+WYSIWYG-friendly templates such as:
 
-A README file is required for CPAN modules since CPAN extracts the
-README file from a module distribution so that people browsing the
-archive can use it get an idea of the modules uses. It is usually a
-good idea to provide version information here so that people can
-decide whether fixes for the module are worth downloading.
+<ul petal:condition="user.list">
+  <li petal:repeat="user user.list"
+      petal:content=":encode user.login">
+    Dummy UserName
+  </li>
+</ul>
+
+Petal prefers to process XML template files (that can be SVG, XHTML, VoiceXML,
+whatever) using XML::Parser, however for convenience HTML is also supported
+(using HTML::TreeBuilder).
+
 
 INSTALLATION
 
@@ -21,15 +26,18 @@ To install this module type the following:
    make test
    make install
 
+
 DEPENDENCIES
 
 This module requires these other modules and libraries:
 
-  blah blah blah
+  HTML::TreeBuilder
+  XML::Parser
 
 COPYRIGHT AND LICENCE
 
-Put the correct copyright and licence information here.
+This module free software and is distributed under the
+same license as Perl itself.
 
-Copyright (C) 2002 A. U. Thor blah blah blah
+Copyright (C) 2002 Jean-Michel Hiver <jhiver@mkdoc.com> 
 

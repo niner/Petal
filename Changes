@@ -1,5 +1,13 @@
 Revision history for Petal.
 
+0.3 Fri Jul 19 11:20:30 2002
+	- Fixed critical include bug
+	- Added more tests
+	- Added test data set
+	- Updated documentation
+	- Fixed wrong MANIFEST file
+	- Updated README file
+
 0.2 Tue Jul 16 11:54:55 2002
 	- Fixed critical bug in Petal::Canonicalizer
 	- Fixed documentation bug

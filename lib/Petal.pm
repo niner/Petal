@@ -640,15 +640,6 @@ variable interpolation with that syntax, so that's half a syntax ;-)
 
 =head1 XML Declaration Syntax
 
-=head2 Includes
-
-  <?petal:include file="path/relative/to/base_dir/template.html"?>
-
-Note that there is no protection against recursive includes. The include
-is done at runtime rather than compile time, which enables you to
-construct templates that have a recursive behavior (useful for
-hierarchical sitemaps for example)...
-
 =head2 Variables and Modifiers
 
   <?petal:var name="document.title"?>
@@ -704,9 +695,46 @@ also provides the following variables for you inside the loop:
     $__odd__      - is the count odd
   <?end?>
 
-Again these variables are scoped, you can safely nest loops, ifs and
-includes as much as you like and everything should be fine. And if it's
-not, it's a bug :-)
+Again these variables are scoped, you can safely nest loops, ifs etc...
+as much as you like and everything should be fine. And if it's not,
+it's a bug :-)
+
+
+=head1 Includes
+
+Petal fully support includes using the following syntax:
+
+<?petal:include file="include.xml"?>
+
+And it will include the file 'include.xml', using the current object
+base_dir attribute. Petal includes occur at RUN TIME. That means that
+there is NO SUPPORT to prevent infinite includes, which is not so much
+of a deal since it happens at run time...
+
+This should let you build templates which have a recursive behavior
+which can be useful to apply templates to any tree-shaped structure.
+
+Because the include happens at run time, you need to specify any Petal
+options which you might want to use in the template, i.e.
+
+<?petal:include file="include.xml" disk_cache="0" taint="1" ?>
+
+You cannot specify base_dir, which is inherited from the parent template.
+
+If you want use XML::Parser to include files, you should make sure that
+the included files are valid XML themselves... FYI XML::Parser chokes on this:
+
+<p>foo</p>
+<p>bar</p>
+
+But this works:
+
+<div>
+  <p>foo</p>
+  <p>bar</p>
+</div>
+
+(having only one top element is part of the XML spec).
 
 
 =head1 EXPORT
@@ -724,10 +752,11 @@ squash 'em all! Begon jaune a l'attaque!
 
 Jean-Michel Hiver <jhiver@mkdoc.com>
 
-This module free software and has the same license as Perl itself.
+This module free software and is distributed under the
+same license as Perl itself.
 
-Thanks to William McKee <william@knowmad.com> for his useful suggestions,
-patches, and debugging help.
+Thanks to William McKee <william@knowmad.com> for his useful
+suggestions, patches, and bug reports.
 
 =head1 SEE ALSO
 
