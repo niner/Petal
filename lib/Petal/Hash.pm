@@ -179,9 +179,21 @@ sub get
     delete $self->{__petal_hash_cache__}->{$key} if ($fresh);
     exists $self->{__petal_hash_cache__}->{$key} and return $self->{__petal_hash_cache__}->{$key};
     
+    # if we're not the top hash, whenever the expression cannot be resolved,
+    # we need to return undefined rather that dying...
     my $parent = $self->parent();
-    my $res    = $self->__FETCH ($key);
-    $res = $parent->get ($key) if (not defined $res and defined $parent);
+    my $res;
+    if (defined $parent)
+    {
+	local $Petal::Hash::Var::ReturnUndefInsteadOfDie = 1;
+	$res = $self->__FETCH ($key) || $parent->get ($key);
+    }
+    else
+    {
+	local $Petal::Hash::Var::ReturnUndefInsteadOfDie = 0;
+	$res = $self->__FETCH ($key);
+    }
+    
     $self->{__petal_hash_cache__}->{$key} = $res;
     return $res;
 }

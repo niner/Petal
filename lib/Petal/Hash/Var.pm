@@ -26,6 +26,7 @@ use strict;
 use warnings;
 use Carp;
 
+our $ReturnUndefInsteadOfDie = 0;
 
 our $STRING_RE_DOUBLE = qq |(?<!\\\\)\\".*?(?<!\\\\)\\"|;
 our $STRING_RE_SINGLE = qq |(?<!\\\\)\\'.*?(?<!\\\\)\\'|;
@@ -38,13 +39,14 @@ sub process
 {
     my $class = shift;
     my $hash  = shift;
+    
     my $argument = shift;
    
     my @tokens = $argument =~ /($TOKEN_RE)/gsm;
     my $path   = shift (@tokens) or confess "bad syntax for $class: $argument (\$path)";
     my @path = split /\/|\./, $path;    
     my @args = @tokens;
-
+    
     # replace variable names by their value
     for (my $i=0; $i < @args; $i++)
     {
@@ -139,6 +141,8 @@ sub process
 	# let's croak and return
 	else
 	{
+	    return if ($ReturnUndefInsteadOfDie);
+	    
 	    my $warnstr = "Cannot find value for $argument: $next cannot be retrieved\n";
 	    $warnstr .= "(current value was ";
 	    $warnstr .= (defined $current) ? "'$current'" : 'undef';
