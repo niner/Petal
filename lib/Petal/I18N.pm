@@ -169,6 +169,8 @@ sub _process
 sub _canonicalize
 {
     my $string = shift;
+    return '' unless (defined $string);
+
     $string =~ s/\s+/ /gsm;
     $string =~ s/^ //;
     $string =~ s/ $//;

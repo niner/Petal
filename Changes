@@ -1,5 +1,8 @@
 Revision history for Petal.
 
+2.15
+    - Fixed some 'used of uninitialized values' warnings
+
 2.14 Thu Sep  2 15:07:39 2004
     - Fixed broken I18N attributes parsing
     - Added I18N to string:
