@@ -9,6 +9,8 @@ use warnings;
 use lib 'lib';
 
 use Petal;
+use Petal::Parser::HTB;
+$Petal::INPUT = 'HTML';
 use File::Spec;
 
 $Petal::DISK_CACHE = 0;

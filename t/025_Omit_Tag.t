@@ -4,6 +4,8 @@ use strict;
 use lib ('lib');
 use Test::More 'no_plan';
 use Petal;
+use Petal::Parser::HTB;
+$Petal::INPUT = 'HTML';
 
 my $template_file = 'omit-tag.xml';
 $Petal::DISK_CACHE = 0;

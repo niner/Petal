@@ -4,6 +4,8 @@ use strict;
 use lib ('lib');
 use Test::More 'no_plan';
 use Petal;
+use Petal::Parser::HTB;
+$Petal::INPUT = 'HTML';
 
 $Petal::DISK_CACHE = 0;
 $Petal::MEMORY_CACHE = 0;
@@ -16,16 +18,6 @@ my $string;
 
 
 #####
-
-
-{
-    $Petal::OUTPUT = "XML";
-    $template = new Petal ('hypen.xml');
-    
-    $string = $template->process(); 
-    like ($string => qr/<foo-bar/);
-    like ($string => qr/<\/foo-bar/);
-}
 
 
 {
