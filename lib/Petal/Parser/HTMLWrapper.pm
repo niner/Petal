@@ -19,7 +19,8 @@ use HTML::Parser;
 use Petal::Canonicalizer::XML;
 use Petal::Canonicalizer::XHTML;
 
-use vars qw /@NodeStack @MarkedData $Canonicalizer @NameSpaces/;
+use vars qw /@NodeStack @MarkedData $Canonicalizer
+	     @NameSpaces @XI_NameSpaces/;
 
 
 # this avoid silly warnings
@@ -124,6 +125,7 @@ sub generate_events_start
 	my $value = $_{$key};
 	if ($value eq $Petal::NS_URI)
 	{
+	    next unless ($key =~ /^xmlns\:/);
 	    delete $_{$key};
 	    $ns = $key;
 	    $ns =~ s/^xmlns\://;

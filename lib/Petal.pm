@@ -44,7 +44,7 @@ Example:
     <html xml:lang="en"
           lang="en-"
           xmlns="http://www.w3.org/1999/xhtml"
-          petal:xmlns="http://purl.org/petal/1.0/">
+          xmlns:petal="http://purl.org/petal/1.0/">
 
       Blah blah blah...
       Content of the file
@@ -151,6 +151,9 @@ our $VERSION = '0.81';
 # this is for XML namespace support. Can't touch this :-)
 our $NS = 'petal';
 our $NS_URI = 'http://purl.org/petal/1.0/';
+
+our $XI_NS = 'xi';
+our $XI_NS_URI = 'http://www.w3.org/2001/XInclude';
 
 
 =head2 Example

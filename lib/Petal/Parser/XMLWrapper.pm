@@ -16,7 +16,7 @@ use Petal::Canonicalizer::XML;
 use Petal::Canonicalizer::XHTML;
 use XML::Parser;
 
-use vars qw /$Canonicalizer @NameSpaces/;
+use vars qw /$Canonicalizer @NameSpaces @XI_NameSpaces/;
 
 
 # this avoid silly warnings
@@ -54,12 +54,14 @@ sub process
 
 sub StartTag
 {
+    # process the Petal namespace...
     my $ns = (scalar @NameSpaces) ? $NameSpaces[$#NameSpaces] : $Petal::NS;
     foreach my $key (keys %_)
     {
 	my $value = $_{$key};
 	if ($value eq $Petal::NS_URI)
 	{
+	    next unless ($key =~ /^xmlns\:/);
 	    delete $_{$key};
 	    $ns = $key;
 	    $ns =~ s/^xmlns\://;
@@ -69,6 +71,23 @@ sub StartTag
     push @NameSpaces, $ns;
     local ($Petal::NS) = $ns;
     
+    # process the XInclude namespace
+    my $xi_ns = (scalar @XI_NameSpaces) ? $XI_NameSpaces[$#XI_NameSpaces] : $Petal::XI_NS;
+    foreach my $key (keys %_)
+    {
+	my $value = $_{$key};
+	if ($value eq $Petal::XI_NS_URI)
+	{
+	    next unless ($key =~ /^xmlns\:/);
+	    delete $_{$key};
+	    $xi_ns = $key;
+	    $xi_ns =~ s/^xmlns\://;
+	}
+    }
+    
+    push @XI_NameSpaces, $xi_ns;
+    local ($Petal::XI_NS) = $xi_ns;
+    
     $Canonicalizer->StartTag();
 }
 
@@ -76,6 +95,7 @@ sub StartTag
 sub EndTag
 {
     local ($Petal::NS) = pop (@NameSpaces);
+    local ($Petal::XI_NS) = pop (@XI_NameSpaces);
     $Canonicalizer->EndTag()
 }
 
@@ -83,6 +103,7 @@ sub EndTag
 sub Text
 {
     local ($Petal::NS) = $NameSpaces[$#NameSpaces];
+    local ($Petal::XI_NS) = $XI_NameSpaces[$#XI_NameSpaces];
     s/\&/\&amp;/g;
     s/\</\&lt\;/g;
     $Canonicalizer->Text();

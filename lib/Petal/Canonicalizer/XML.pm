@@ -151,7 +151,8 @@ sub StartTag
     $class->_on_error ($tag, $att);
     $class->_define ($tag, $att);
     $class->_condition ($tag, $att);
-    $class->_repeat ($tag, $att);
+    $class->_repeat ($tag, $att);    
+    $class->_is_xinclude ($tag) and $class->_xinclude ($tag, $att) and return;
     $class->_replace ($tag, $att);
     
     my $petal = quotemeta ($Petal::NS);
@@ -242,6 +243,8 @@ sub EndTag
     
     my ($tag) = $_ =~ /^<\/\s*((?:\w|:)*)/;
     my $node = pop (@NodeStack);
+    
+    return if ($class->_is_xinclude ($tag));
     
     unless (defined $node->{replace} and $node->{replace})
     {
@@ -464,8 +467,8 @@ sub _replace
 
 # _attributes;
 # ------------
-#   Rewrites <?tag attributes="[name1] [expression]"?>
-#   as <tag name1="<?var name="[expression]"?>
+# Rewrites <?tag attributes="[name1] [expression]"?>
+# as <tag name1="<?var name="[expression]"?>
 sub _attributes
 {
     my $class = shift;
@@ -493,8 +496,8 @@ sub _attributes
 
 # _content;
 # ---------
-#   Rewrites <tag petal:inner="[expression]"> as <tag><?petal:var name="[expression]"?>
-#   All the descendent nodes of 'tag' will be skipped
+# Rewrites <tag petal:inner="[expression]"> as <tag><?petal:var name="[expression]"?>
+# All the descendent nodes of 'tag' will be skipped
 sub _content
 {
     my $class = shift;
@@ -513,6 +516,45 @@ sub _content
     push @Result, @new;
     $NodeStack[$#NodeStack]->{content} = 'true';
     return 1;
+}
+
+
+# _xinclude ($tag, $att);
+# -----------------------
+# Rewrites <xi:include href="../foo.xml" /> into
+# <?include file="../foo.xml"?>.
+sub _xinclude
+{
+    my $class = shift;
+    return if ($class->_is_inside_content_or_replace());
+    
+    my $tag = shift;
+    my $att = shift;
+    
+    if ($class->_is_xinclude ($tag))
+    {
+	# strip remaining Petal tags
+	my $petal = quotemeta ($Petal::NS);
+	$att = { map { $_ =~ /^$petal:/ ? () : $_ => $att->{$_} } keys %{$att} };
+	
+	my $expr = delete $att->{'href'};
+	$expr = Petal::XML_Encode_Decode::encode_backslash_semicolon ($expr);
+	push @Result, "<?include file=\"$expr\"?>";
+    }
+    return 1;
+}
+
+
+# _is_xinclude ($tag);
+# --------------------
+# Returns TRUE if $tag is a Xinclude directive,
+# FALSE otherwise.
+sub _is_xinclude
+{
+    my $class = shift;
+    my $tag = shift;
+    my $xi = quotemeta ($Petal::XI_NS);
+    return $tag =~ /^$xi:/
 }
 
 
