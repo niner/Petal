@@ -1,6 +1,6 @@
 Revision history for Petal.
 
-0.62 
+0.62 Fri Aug 16 11:17:10 2002
 	- Added tests
 	- Fixed entity bug due to XML::Parser expanding entities
 	- Fixed method parameters bug
