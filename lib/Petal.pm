@@ -205,13 +205,30 @@ sub process
 # $self->code_with_line_numbers;
 # ------------------------------
 #   utility method to return the Perl code, each line being prefixed with
-#   its number... handy for debugging templates
+#   its number... handy for debugging templates. The nifty line number padding
+#   patch was provided by Lucas Saud <lucas.marinho@uol.com.br>.
 sub _code_with_line_numbers
 {
     my $self = shift;
     my $code = $self->_code_disk_cached;
+
+    # get lines of code
+    my @lines = split(/\n/, $code);
+
+    # add line numbers
     my $count = 0;
-    return join "\n", map { ++$count; "$count. $_" } split /\n/, $code;
+    @lines = map {
+      my $cur_line = $_;
+      $count++;
+
+      # space padding so the line numbers nicely line up with each other
+      my $line_num = sprintf("%" . length(scalar(@lines)) . "d", $count);
+
+      # put line number and line back together
+      "${line_num} ${cur_line}";
+    } @lines;
+
+    return join("\n", @lines);
 }
 
 
@@ -721,7 +738,7 @@ surprise:
 
   <h1>Listing of user logins</h1>
   <ul>
-    <?petal:repeat name="system/list_users" as="user"?>
+    <?petal:repeat name="user system/list_users"?>
       <li>$user/login : $user/real_name</li>
     <?petal:end?>
   </ul>

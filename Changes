@@ -4,6 +4,9 @@ Revision history for Petal.
 	- Fixed inline interpolation ${expr} bug
 	- Everything is now XML encoded unless the 'structure' keyword is present
 	- Added coderefs modifiers
+	- Turned most modifiers into coderefs in Petal::Hash
+	- Added Lucas Saud's <lucas.marinho@uol.com.br> patch for code padding
+	- Fixed <?petal:repeat name="element list"?> bug
 
 0.64 Tue Sep  3 15:48:23 2002
 	- Fixed extra AUTOLOAD bug

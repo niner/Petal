@@ -204,12 +204,13 @@ sub _for
     (defined $variable and $variable) or
     confess "Cannot parse $token : 'name' attribute is not defined";
     
-    my $as = $token_hash{as} or
-    confess "Cannot parse $token : 'as' attribute is not defined";
+    $variable =~ s/^\s+//;
+    my $as;
+    ($as, $variable) = split /\s+/, $variable, 2;
     
-    (defined $as and $as) or
-    confess "Cannot parse $token : 'as' attribute is not defined";
-
+    (defined $as and defined $variable) or
+        confess "Cannot parse $token : loop name not specified";
+    
     # set the variable in the $variables hash
     my $tmp = $variable;
     $tmp =~ s/\..*//;

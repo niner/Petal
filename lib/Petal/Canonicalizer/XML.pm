@@ -358,8 +358,7 @@ sub _repeat
     my @new = ();
     foreach $expr (@exprs)
     {
-	my ($as, $name) = split /\s+/, $expr, 2;
-	push @new, "<?petal:for name=\"$name\" as=\"$as\"?>"
+	push @new, "<?petal:for name=\"$expr\"?>"
     }
     push @Result, @new;
     $NodeStack[$#NodeStack]->{repeat} = scalar @new;

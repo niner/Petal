@@ -1,6 +1,5 @@
 Changes
 MANIFEST
-Makefile
 Makefile.PL
 README
 lib/Petal.pm
@@ -19,7 +18,7 @@ t/002_Set_Modifier.t
 t/003_More_Include.t
 t/004_Misc_Tests.t
 t/005_If_Nested_Tag.t
-t/006_Nested_Mods.t
+t/006_Split_Expression.t
 t/007_String_Modifier.t
 t/008_Quoted_Params.t
 t/009_Style_AndAmp.t
@@ -34,8 +33,9 @@ t/017_Entities.t
 t/018_String_Count.t
 t/019_Autoload.t
 t/020_Comments.t
-t/021_Split_Expression.t
+t/021_Canonical_Error.t
 t/data/autoload.xml
+t/data/canonical_error.html
 t/data/comments.xml
 t/data/decl.xml
 t/data/delete_attribute.xml
