@@ -10,7 +10,6 @@ use strict;
 use warnings;
 use File::Spec;
 use Digest::MD5 qw /md5_hex/;
-use Petal::Encode;
 use Carp;
 
 
@@ -58,10 +57,15 @@ sub set
     my $key   = $class->compute_key ($file);
     my $tmp   = $class->tmp;
     {
-	no utf8;
-	use bytes;
-	open FP, ">$tmp/$key" or
-        ( Carp::cluck "Cannot write-open $tmp/$key" and return );
+	if ($] > 5.007)
+	{
+	    open FP, ">:utf8", "$tmp/$key" or ( Carp::cluck "Cannot write-open $tmp/$key" and return );
+	}
+	else
+	{
+	    open FP, ">$tmp/$key" or ( Carp::cluck "Cannot write-open $tmp/$key" and return );
+	}
+	
 	print FP $data;
 	close FP;
     }
@@ -147,17 +151,18 @@ sub cached
 
     my $res = undef;
     {
-	no utf8;
-	use bytes;
-	open FP, "<$tmp/$key" or
-            (Carp::cluck "Cannot read-open cached file for $tmp/$key" and return);
+	if ($] > 5.007)
+	{
+	    open FP, "<:utf8", "$tmp/$key" or ( Carp::cluck "Cannot read-open $tmp/$key" and return );
+	}
+	else
+	{
+	    open FP, "<$tmp/$key" or ( Carp::cluck "Cannot read-open $tmp/$key" and return );
+	}
+	
 	$res = join '', <FP>;
 	close FP;
     }
-    
-    $Petal::DECODE_CHARSET and do {
-	$res = Petal::Encode::p_decode ($Petal::DECODE_CHARSET, $res);
-    };
     
     return $res;
 }

@@ -19,7 +19,9 @@ ok (1);
 if ($] > 5.007)
 {
     my $string = Petal->new ( 'entities.html' )->process();
-    like ($string, qr/©/ => 'Copyright');
-    like ($string, qr/®/ => 'Registered');
+    my $copy   = chr (169);
+    my $reg    = chr (174);
+    like ($string, qr/$copy/ => 'Copyright');
+    like ($string, qr/$reg/ => 'Registered');
 }
 

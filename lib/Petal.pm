@@ -13,7 +13,6 @@ use Petal::Canonicalizer::XML;
 use Petal::Canonicalizer::XHTML;
 use Petal::Functions;
 use Petal::Entities;
-use Petal::Encode;
 use File::Spec;
 use Carp;
 use Safe;
@@ -24,14 +23,24 @@ use warnings;
 use MKDoc::XML::Decode;
 
 
+BEGIN
+{
+    ($] > 5.007) and do {
+        require Encode;
+    };
+    $@ and warn $@;
+}
+
+
+
 # these are used as local variables when the XML::Parser
 # is crunching templates...
 use vars qw /@tokens @nodeStack/;
 
 
 # Encode / Decode info...
-our $DECODE_CHARSET = undef;
-our $ENCODE_CHARSET = undef;
+our $DECODE_CHARSET = 'utf8';
+our $ENCODE_CHARSET = 'utf8'; # deprecated
 
 
 # Prints as much info as possible when this is enabled.
@@ -87,7 +96,7 @@ our $CURRENT_INCLUDES = 0;
 
 
 # this is for CPAN
-our $VERSION = '1.10';
+our $VERSION = '2.01';
 
 
 # The CodeGenerator class backend to use.
@@ -148,6 +157,7 @@ sub main::lcode
     local $Petal::MEMORY_CACHE = 0;
     print Petal->new ($file)->_code_with_line_numbers;
 }
+
 
 sub load_code_generator
 {
@@ -331,7 +341,7 @@ sub process
     local $LANGUAGE           = defined $self->{default_language}   ? $self->{default_language}   : $LANGUAGE;
     local $DEBUG_DUMP         = defined $self->{debug_dump}         ? $self->{debug_dump}         : $DEBUG_DUMP;
     local $DECODE_CHARSET     = defined $self->{decode_charset}     ? $self->{decode_charset}     : $DECODE_CHARSET;
-    local $ENCODE_CHARSET     = defined $self->{encode_charset}     ? $self->{encode_charset}     : $ENCODE_CHARSET;
+    # local $ENCODE_CHARSET     = defined $self->{encode_charset}     ? $self->{encode_charset}     : $ENCODE_CHARSET;
     
     # prevent infinite includes from happening...
     my $current_includes = $CURRENT_INCLUDES;
@@ -349,12 +359,6 @@ sub process
 	die "\$coderef is undefined\n\n" unless $coderef;
 	die "\$hash is undefined\n\n" unless $hash;
 	$res = $coderef->($hash);
-	
-	$Petal::ENCODE_CHARSET and do {
-            # bug...
-	    # $res = Petal::Encode::p_encode ($Petal::ENCODE_CHARSET, $res);
-            # Petal::Encode::p_utf8_on ($res) if ($Petal::ENCODE_CHARSET eq 'UTF-8');
-	};
     };
     
     $self->_handle_error ($@) if (defined $@ and $@);
@@ -537,15 +541,18 @@ sub _file_data_ref
     my $file_path = $self->_file_path;
     $file_path =~ s/#.*$//;
     
-    use bytes;
-    open FP, "<$file_path" || die 'Cannot read-open $file_path';
+    if ($] > 5.007)
+    {
+	my $encoding = Encode::resolve_alias ($DECODE_CHARSET) || 'utf8';
+	open FP, "<:$encoding", "$file_path" || die 'Cannot read-open $file_path';
+    }
+    else
+    {
+	open FP, "<$file_path" || die 'Cannot read-open $file_path';
+    }
+    
     my $res = join '', <FP>;
     close FP;
-    no bytes;
-    
-    $Petal::DECODE_CHARSET and do {
-	$res = Petal::Encode::p_decode ($Petal::DECODE_CHARSET, $res);
-    };
     
     # kill template comments
     $res =~ s/\<!--\?.*?\-->//gsm;
@@ -554,10 +561,7 @@ sub _file_data_ref
         new MKDoc::XML::Decode ('numeric', 'xhtml') :
 	new MKDoc::XML::Decode ('numeric');
     
-    Petal::Encode->p_utf8_on ($res);
-    $res = $decode->process ($res);
-    Petal::Encode->p_utf8_off ($res);
-    
+    $res = $decode->process ($res);    
     return \$res;
 }
 
@@ -600,16 +604,16 @@ sub _code_memory_cached
 	
 	if ($TAINT)
 	{
-		# important line, don't remove
-		($code_perl) = $code_perl =~ m/^(.+)$/s;
-		die "\$code_perl is empty after untainting!" unless defined $code_perl && $code_perl;
-		my $cpt = Safe->new ("Petal::CPT");
-		$cpt->permit ('entereval');
-		$cpt->permit ('leaveeval');
-		$cpt->permit ('require');
-		$code = $cpt->reval($code_perl);
-		confess ("Error in reval:\n" . $@ . "\n" . $self->_code_with_line_numbers) if $@;
-		warn "\$code is empty after reval.\n" . Dumper($code, $Petal::CPT::VAR1, length($code_perl)) unless $code;
+	    # important line, don't remove
+	    ($code_perl) = $code_perl =~ m/^(.+)$/s;
+	    die "\$code_perl is empty after untainting!" unless defined $code_perl && $code_perl;
+	    my $cpt = Safe->new ("Petal::CPT");
+	    $cpt->permit ('entereval');
+	    $cpt->permit ('leaveeval');
+	    $cpt->permit ('require');
+	    $code = $cpt->reval($code_perl);
+	    confess ("Error in reval:\n" . $@ . "\n" . $self->_code_with_line_numbers) if $@;
+	    warn "\$code is empty after reval.\n" . Dumper($code, $Petal::CPT::VAR1, length($code_perl)) unless $code;
 	}
 	else
 	{
@@ -623,9 +627,6 @@ sub _code_memory_cached
     
     return $code;
 }
-
-
-
 
 
 # $self->_code_cache;
@@ -661,6 +662,19 @@ sub _canonicalize
 =head1 NAME
 
 Petal - Perl Template Attribute Language - TAL for Perl!
+
+
+=head1 IMPORTANT NOTE 
+
+From version 2.00 onwards Petal *requires* that you use well-formed XML. This
+is because Petal now uses L<MKDoc::XML::TreeBuilder> rather than
+L<HTML::TreeBuilder> and L<XML::Parser>.
+
+In particular, this version of Petal *CAN* break backwards compatibility if you
+were using Petal's HTML mode will non well formed XHTML.
+
+If you still want to use broken XHTML, you can Petal 2.00 in conjunction with
+L<Petal::Parser::HTB> which has been created for this purpose.
 
 
 =head1 SYNOPSIS
@@ -977,21 +991,22 @@ inspect.
 
 =head2 encode_charset => I<charset> (default: undef)
 
-This option will work only if you use Perl 5.8.
+This option is _DEPRECATED_ as of Petal 2.01.
+Petal will now always return results in Perl's internal form.
 
-If specified, Petal will assume encode the output in the character set
-I<charset>.  Please note that the utf-8 flag will be ALWAYS turned off, even if
-you specify I<utf8>.
+It doesn't guarantee that the result will be in UTF-8 or in your
+local encoding, but at least the UTF-8 flag should be set properly.
 
-I<charset> can be any character set that can be used with the module L<Encode>. 
+If you want to encode the results for a specific charset, you
+should look at the module L<Encode>.
 
 
-=head2 decode_charser => I<charset> (default: undef)
+=head2 decode_charset => I<charset> (default: undef)
 
-This option will work only if you use Perl 5.8.
+This option will work only if you use Perl 5.8 or greater.
 
 If specified, Petal will assume that the template to be processed (and its
-sub-templates) are in the character set I<charset>. 
+sub-templates) are in the character set I<charset>.
 
 I<charset> can be any character set that can be used with the module L<Encode>. 
 
@@ -1012,7 +1027,7 @@ will then act as defaults unless you override them in the constructor.
   $Petal::MAX_INCLUDES       (use max_includes option)
   $Petal::LANGUAGE           (use default_language option)
   $Petal::DEBUG_DUMP         (use debug_dump option)
-  $Petal::ENCODE_CHARSET     (use encode_charset option)
+    # $Petal::ENCODE_CHARSET     (use encode_charset option) -- _DEPRECATED_
   $Petal::DECODE_CHARSET     (use decode_charset option)
 
 

@@ -1,10 +1,17 @@
 Revision history for Petal.
 
+2.01
+	- Fixed annoying unicode issues
+
+
+2.00 Thu Nov  6 12:05:13 2003
+	- This version *can* break backwards compatibility
+	- Simple re-release of 1.10_09 which seems stable
+
 1.10_09
 	- Fixed CodeGenerator not backslashing backslashes properly
 	- Fixed repeat/end bug
 	- Added warning in case of weird-looking 'attributes' statement
-       
 
 1.10_08
 	- Fixed metal:use-macro not being parsed in XHTML output mode
