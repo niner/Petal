@@ -1,9 +1,9 @@
-Petal version 0.7
-=================
+Petal version 0.71
+==================
 
 Petal stands for "Perl Template Attribute Language". It is inspired from the
-Zope Page Templates TAL specification, and lets you write very elegant,
-WYSIWYG-friendly templates such as:
+Zope Page Templates TAL specification, and lets you write elegant, WYSIWYG
+friendly templates such as:
 
 <ul petal:condition="user/list">
   <li petal:repeat="user user/list"
@@ -21,10 +21,12 @@ INSTALLATION
 
 To install this module type the following:
 
-   perl Makefile.PL
-   make
-   make test
-   make install
+  perl Makefile.PL
+  make
+  make test
+  make install
+
+Or better, use CPAN.pm
 
 
 DEPENDENCIES
@@ -35,9 +37,29 @@ This module requires these other modules and libraries:
   XML::Parser
 
 
+THANKS TO
+
+  * William McKee
+      for his useful bug reports, suggestions and patches
+
+  * Sean M. Burke
+      for his improvements on the HTML::TreeBuilder module
+      which Petal uses
+
+  * Kurt Stephens for his AUTOLOAD bug report & patch
+  * Lucas Saud    for his code padding patch
+  * Bruno Postle  for his coderef modifier suggestion
+
+
+MISCELLEANOUS
+
+  Join the Petal community!
+  http://lists.webarch.co.uk/mailman/listinfo/petal
+ 
+
 COPYRIGHT AND LICENCE
 
-This module free software and is distributed under the
-same license as Perl itself.
+  This module free software and is distributed under the
+  same license as Perl itself.
 
-Copyright (C) 2002 Jean-Michel Hiver <jhiver@mkdoc.com> 
+  Copyright (C) 2002 Jean-Michel Hiver <jhiver@mkdoc.com> 

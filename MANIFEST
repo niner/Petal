@@ -8,6 +8,7 @@ lib/Petal/Cache/Memory.pm
 lib/Petal/Canonicalizer/XHTML.pm
 lib/Petal/Canonicalizer/XML.pm
 lib/Petal/CodeGenerator.pm
+lib/Petal/Expressions.pm
 lib/Petal/Hash.pm
 lib/Petal/Hash/String.pm
 lib/Petal/Hash/Var.pm
@@ -34,6 +35,7 @@ t/018_String_Count.t
 t/019_Autoload.t
 t/020_Comments.t
 t/021_Canonical_Error.t
+t/022_Hashref_List.t
 t/data/autoload.xml
 t/data/canonical_error.html
 t/data/comments.xml
@@ -41,6 +43,7 @@ t/data/decl.xml
 t/data/delete_attribute.xml
 t/data/dummy_data.xml
 t/data/entities.xml
+t/data/hashref_list.html
 t/data/if.html
 t/data/if.xml
 t/data/include/included.xml
