@@ -15,6 +15,7 @@ lib/Petal/Doc/TAL.pm
 lib/Petal/Expressions.pm
 lib/Petal/Hash.pm
 lib/Petal/Hash/String.pm
+lib/Petal/Hash/Test.pm
 lib/Petal/Hash/Var.pm
 lib/Petal/Parser/HTMLWrapper.pm
 lib/Petal/Parser/XMLWrapper.pm
@@ -51,6 +52,7 @@ t/030_Attributes_AndQuot.t
 t/031_Escape_Semicolon.t
 t/032_Hypen_XML.t
 t/033_Hash.t
+t/034_Plugin.t
 t/data/attributes_andquot.xml
 t/data/autoload.xml
 t/data/canonical_error.html
@@ -85,6 +87,7 @@ t/data/namespaces.xml
 t/data/nested_modifiers/test1.xml
 t/data/nested_modifiers/test2.xml
 t/data/omit-tag.xml
+t/data/plugin.xml
 t/data/prefix.xml
 t/data/quoted_params.xml
 t/data/set_modifier/index.xml

@@ -1,5 +1,8 @@
 Revision history for Petal.
 
+0.90 Wed Apr  2 14:02:27 2003
+	- Re-done plugin system
+
 0.89 Tue Mar 25 13:57:24 2003
 	- Fixed another critical bug due to changes in 0.87.
 

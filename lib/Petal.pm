@@ -154,7 +154,7 @@ This is to prevent from accidental infinite recursions.
 our $MAX_INCLUDES = 30;
 our $CURRENT_INCLUDES = 0;
 
-our $VERSION = '0.89';
+our $VERSION = '0.90';
 
 
 =pod
