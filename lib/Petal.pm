@@ -731,18 +731,18 @@ But this works:
 None.
 
 
-=head1 BUGS
+=head1 KNOWN BUGS
 
 The XML::Parser wrapper cannot expand any other entity than &lt;, &gt; &amp;
-and &quot;.
+and &quot;. Besides, I can't get it to NOT expand entities in 'Stream' mode :-(
 
-Both XML::Parser and HTML::TreeBuilder expand all entities, hence &nbsp;s are
-lost.
+HTML::TreeBuilder expand all entities, hence &nbsp;s are lost / converted to
+whitespaces.
 
 XML::Parser is deprecated and should be replaced by SAX handlers at some point.
 
 Problems have been reported with the petal cache on a (Apache + Windows +
-mod_perl) platform.
+mod_perl) platform (?).
 
 
 =head1 AUTHOR
@@ -761,9 +761,7 @@ Sean M. Burke <sburke@cpan.org> for his improvements on the
 HTML::TreeBuilder module which tremendously helped with HTML
 parsing.
 
-Lucas Saud <lucas.marinho@uol.com.br> for the
-Petal::Hash::Encode_HTML he contributed.
-
+And everyone else I forgot :-)
 
 =head1 SEE ALSO
 
