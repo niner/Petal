@@ -152,10 +152,8 @@ sub _initialize
     @dirs = map { "$_/$self->{file}" } @dirs;
 
     $self->{file} =~ s/\/$//;
-    my $filename = Petal::Functions::find_filename ($lang, @dirs) ||
-        confess "Could not find language template for $lang";
-    
-    $self->{file} .= "/$filename";
+    my $filename = Petal::Functions::find_filename ($lang, @dirs);
+    $self->{file} .= "/$filename" if ($filename); 
 }
 
 
