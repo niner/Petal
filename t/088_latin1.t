@@ -15,9 +15,6 @@ my $string   = $template->process;
 my $copy     = chr (169);
 my $acirc    = chr (194);
 
-TODO: {
-    local $TODO = 'decode_charset only works when we are using utf-8';
 
 like   ($string, qr/$copy/);
-};
 unlike ($string, qr/$acirc/);

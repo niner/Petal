@@ -578,7 +578,7 @@ sub _file_data_ref
     if ($] > 5.007)
     {
 	my $encoding = Encode::resolve_alias ($DECODE_CHARSET) || 'utf8';
-	open FP, "<:$encoding", "$file_path" || die 'Cannot read-open $file_path';
+	open FP, "<:encoding($encoding)", "$file_path" or die "Cannot read-open $file_path";
     }
     else
     {

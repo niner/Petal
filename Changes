@@ -8,6 +8,7 @@ Revision history for Petal.
     - $Petal::Hash::String::VARIABLE_RE_BRACKETS no longer treats ${1} as a variable
     - Fix that adds language to the mix when generating cache keys
     - tests 088 & 089 check for correct decode_charset behaviour
+    - Fix to allow decode_charset to be other than utf-8 (William McKee)
 
 2.15 Wed Jan  5 15:31:00 2005
     - Fixed some 'used of uninitialized values' warnings
