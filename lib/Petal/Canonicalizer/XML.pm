@@ -17,6 +17,7 @@ Might be canonicalized to something like
 
 =cut
 package Petal::Canonicalizer::XML;
+use Petal::Hash::String;
 use strict;
 use warnings;
 
@@ -161,13 +162,16 @@ sub StartTag
 	{
 	    next if ($key =~ /^petal:/);
 	    my $text = $att->{$key};
-	    my @vars = $text =~ /((?<!\\)\$(?:\w|\.|\:|\/)+)/g;
+	    my $token_re = $Petal::Hash::String::TOKEN_RE;
+	    my @vars = $text =~ /$token_re/gsm;
 	    my %vars = map { $_ => 1 } @vars;
 	    @vars = keys %vars;
 	    foreach my $var (@vars)
 	    {
 		my $command = $var;
 		$command =~ s/^\$//;
+		$command =~ s/^\{//;
+		$command =~ s/\}$//;
 		$command = "<?petal:var name=\"$command\"?>";
 		$text =~ s/\Q$var\E/$command/g;
 	    }
@@ -240,13 +244,16 @@ sub Text
     my $class = shift;
     return if ($class->_is_inside_content_or_replace());
     my $text = $_;
-    my @vars = $text =~ /((?<!\\)\$(?:\w|\.|\:|\/)+)/g;
+    my $token_re = $Petal::Hash::String::TOKEN_RE;
+    my @vars = $text =~ /$token_re/gsm;
     my %vars = map { $_ => 1 } @vars;
     @vars = keys %vars;
     foreach my $var (@vars)
     {
 	my $command = $var;
 	$command =~ s/^\$//;
+	$command =~ s/^\{//;
+	$command =~ s/\}$//;
 	$command = "<?petal:var name=\"$command\"?>";
 	$text =~ s/\Q$var\E/$command/g;
     }

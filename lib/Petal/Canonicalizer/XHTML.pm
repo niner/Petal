@@ -87,13 +87,16 @@ sub StartTag
 	{
 	    next if ($key =~ /^petal:/);
 	    my $text = $att->{$key};
-	    my @vars = $text =~ /((?<!\\)\$(?:\w|\.|\:|\/)+)/g;
+	    my $token_re = $Petal::Hash::String::TOKEN_RE;
+	    my @vars = $text =~ /$token_re/gsm;
 	    my %vars = map { $_ => 1 } @vars;
 	    @vars = keys %vars;
 	    foreach my $var (@vars)
 	    {
 		my $command = $var;
 		$command =~ s/^\$//;
+		$command =~ s/^\{//;
+		$command =~ s/\}$//;
 		$command = "<?petal:var name=\"$command\"?>";
 		$text =~ s/\Q$var\E/$command/g;
 	    }
