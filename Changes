@@ -1,6 +1,7 @@
 Revision history for Petal.
 
 0.6
+	- Fixed Petal::CodeGenerator bug && added test
 	- Applied William's patch to reduce amount of issued warnings
 	- Fixed a bug that prevents __is_last__ to be accessed
 

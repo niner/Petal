@@ -125,6 +125,7 @@ sub _var
     $tmp =~ s/\..*//;
     $variables->{$tmp} = 1;
     
+    $variable =~ s/\'/\\\'/g;
     push @code, ("    " x $indent . "push \@res, \$hash->{'$variable'};");
 }
 
@@ -145,6 +146,7 @@ sub _if
     $tmp =~ s/\..*//;
     $variables->{$tmp} = 1;
     
+    $variable =~ s/\'/\\\'/g;
     push @code, ("    " x $indent . "if (\$hash->{'$variable'}) {");
     $indent++;
 }
@@ -178,13 +180,13 @@ sub _for
     
     (defined $as and $as) or
     confess "Cannot parse $token : 'as' attribute is not defined";
-    
+
     # set the variable in the $variables hash
     my $tmp = $variable;
     $tmp =~ s/\..*//;
     $variables->{$tmp} = 1;
     
-    #push @code, ("    " x $indent . "my \@array = \@{\$hash->{'$variable'}};");
+    $variable =~ s/\'/\\\'/g;
     push @code, ("    " x $indent . "\@array = \@{\$hash->{'$variable'}};");
     push @code, ("    " x $indent . "for (my \$i=0; \$i < \@array; \$i++) {");
     $indent++;
