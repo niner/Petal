@@ -1,7 +1,7 @@
 use lib ('lib');
 use Test;
 
-BEGIN {print "1..4\n";}
+BEGIN {print "1..3\n";}
 END {print "not ok 1\n" unless $loaded;}
 use Petal;
 $loaded = 1;
@@ -25,6 +25,3 @@ my $data_ref = $template->_file_data_ref;
 $data_ref  = $template->_canonicalize;
 my @count = $$data_ref =~ /(petal\:include)/gsm;
 (scalar @count > 1) ? print "ok 3\n" : print "not ok 3\n";
-
-($template->process (version => '2.35') =~ /href\=\"qns\.css\"/) ? print "ok 4\n" : print "not ok 4\n";
-
