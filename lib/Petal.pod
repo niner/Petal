@@ -73,6 +73,8 @@ object, array referebce or hash reference. Let's see what we can do...
 
 =head2 v1, prototype
 
+    <!--? This is a template comment.
+          It will not appear in the output -->
     <html xmlns:tal="http://purl.org/petal/1.0/">
       <body>
         This is the variable 'my_var' : ${my_var}.
@@ -947,7 +949,7 @@ make Petal aware of its existence as follows:
 =head1 Expression keywords
 
 
-=head2 XML encoding / structure keyword
+=head3 XML encoding / structure keyword
 
 By default Petal will encode &, <, > and " to &amp; &lt;, &gt and &quot;
 respectively. However sometimes you might want to display an expression which
@@ -956,7 +958,7 @@ is already encoded, in which case you can use the 'structure' keyword.
   structure my/encoded/variable
 
 
-=head2 Petal::Hash caching and fresh keyword 
+=head3 Petal::Hash caching and fresh keyword 
 
 Petal caches the expressions which it resolves, i.e. if you write the
 expression:
@@ -983,7 +985,81 @@ However the reverse does not work:
   structure fresh string:$foo/bar, ${baz/buz/blah}
 
 
-=head2 warning and errors
+=head2 TOY FUNCTIONS (For debugging or if you're curious)
+
+
+=head3 perl -MPetal -e canonical template.xml
+
+Displays the canonical template for template.xml.
+You can set $INPUT using by setting the PETAL_INPUT environment variable.
+You can set $OUTPUT using by setting the PETAL_OUTPUT environment variable.
+
+=cut
+sub main::canonical
+{
+    my $file = shift (@ARGV);
+    local $Petal::DISK_CACHE = 0;
+    local $Petal::MEMORY_CACHE = 0;
+    local $Petal::INPUT  = $ENV{PETAL_INPUT}  || 'XML';
+    local $Petal::OUTPUT = $ENV{PETAL_OUTPUT} || 'XHTML';
+    print ${Petal->new ($file)->_canonicalize()};
+}
+
+
+=head3 perl -MPetal -e code template.xml
+
+Displays the perl code for template.xml.
+You can set $INPUT using by setting the PETAL_INPUT environment variable.
+You can set $OUTPUT using by setting the PETAL_OUTPUT environment variable.
+
+=cut
+sub main::code
+{
+    my $file = shift (@ARGV);
+    local $Petal::DISK_CACHE = 0;
+    local $Petal::MEMORY_CACHE = 0;
+    print Petal->new ($file)->_code_disk_cached;
+}
+
+
+=head3 perl -MPetal -e lcode template.xml
+
+Displays the perl code for template.xml, with line numbers.
+You can set $INPUT using by setting the PETAL_INPUT environment variable.
+You can set $OUTPUT using by setting the PETAL_OUTPUT environment variable.
+
+=cut
+sub main::lcode
+{
+    my $file = shift (@ARGV);
+    local $Petal::DISK_CACHE = 0;
+    local $Petal::MEMORY_CACHE = 0;
+    print Petal->new ($file)->_code_with_line_numbers;
+}
+
+
+=head2 What does Petal do internally?
+
+The cycle of a Petal template is the following:
+
+  1. Read the source XML template
+  2. $INPUT (XML or HTML) throws XML events from the source file
+  3. $OUTPUT (XML or HTML) uses these XML events to canonicalize the template
+  4. Petal::CodeGenerator turns the canonical template into Perl code
+  5. Petal::Cache::Disk caches the Perl code on disk
+  6. Petal turns the perl code into a subroutine
+  7. Petal::Cache::Memory caches the subroutine in memory
+  8. Petal executes the subroutine
+
+If you are under a persistent environement a la mod_perl, subsequent calls
+to the same template will be reduced to step 8 until the source template
+changes.
+
+Otherwise, subsequent calls will resume at step 6, until the source template
+changes.
+
+
+=head2 decrypting warnings and errors
 
 ./lib/Petal/Hash.pm:        warn "Cannot open directory $dir. Reason: $!";
 ./lib/Petal/Hash.pm:        $@ and warn "Cannot import module $module. Reason: $@";

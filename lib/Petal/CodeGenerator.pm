@@ -1,15 +1,11 @@
-=head1 NAME
-
-Petal::CodeGenerator - Turns canonicalized XML files into Perl code.
-
-=head1 SYNOPSIS
-
-  use Petal::CodeGenerator;
-  $code_data_ref = Petal::CodeGenerator->process ($base_dir, $canonical_data);
-
-=head1 DESCRIPTION
-
-=cut
+# ------------------------------------------------------------------
+# Petal::CodeGenerator - Generates Perl code from canonical syntax
+# ------------------------------------------------------------------
+# Author: Jean-Michel Hiver
+# Description: This class parses a template in 'canonical syntax'
+# (referred as the 'UGLY SYNTAX' in the manual) and generates Perl
+# code that can be turned into a subroutine using eval().
+# ------------------------------------------------------------------
 package Petal::CodeGenerator;
 use Petal::XML_Encode_Decode;
 use strict;
@@ -20,14 +16,10 @@ our $PI_RE = '^<\?(?:\s|\r|\n)*(attr|include|var|if|condition|else|repeat|loop|f
 use vars qw /$petal_object $tokens $variables @code $indent $token_name %token_hash $token $my_array/;
 
 
-=head1 METHODS
-
-=head2 $class->process ($data_ref, $petal_object);
-
-This (too big) subroutine converts the canonicalized template
-data into Perl code which is ready to be evaled and executed.
-
-=cut
+# $class->process ($data_ref, $petal_object);
+# -------------------------------------------
+# This (too big) subroutine converts the canonicalized template
+# data into Perl code which is ready to be evaled and executed.
 sub process
 {
     my $class = shift;
@@ -111,7 +103,7 @@ sub process
 
 # $class->_include;
 # -----------------
-#   process a <?include file="/foo/blah.html"?> file
+# process a <?include file="/foo/blah.html"?> file
 sub _include
 {
     my $class = shift;
@@ -131,7 +123,7 @@ sub _include
 
 # $class->_var;
 # -------------
-#   process a <?var name="blah"?> statement
+# process a <?var name="blah"?> statement
 sub _var
 {
     my $variable = $token_hash{name} or
@@ -152,7 +144,7 @@ sub _var
 
 # $class->_if;
 # ------------
-#   process a <?if name="blah"?> statement
+# process a <?if name="blah"?> statement
 sub _if
 {
     my $variable = $token_hash{name} or
@@ -174,7 +166,7 @@ sub _if
 
 # $class->_eval;
 # -------------------
-#   process a <?eval?> statement
+# process a <?eval?> statement
 sub _eval
 {
     push @code, ("    " x $indent . "push \@res, eval {");    
@@ -187,7 +179,7 @@ sub _eval
 
 # $class->_endeval;
 # -----------------
-#   process a <?endeval errormsg="..."?> statement
+# process a <?endeval errormsg="..."?> statement
 sub _endeval
 {   
     my $variable = $token_hash{'errormsg'} or
@@ -208,7 +200,7 @@ sub _endeval
 
 # $class->_attr;
 # --------------
-#   process a <?attr name="blah"?> statement
+# process a <?attr name="blah"?> statement
 sub _attr
 {
     my $attribute = $token_hash{name} or
@@ -234,7 +226,7 @@ sub _attr
 
 # $class->_else;
 # --------------
-#   process a <?else name="blah"?> statement
+# process a <?else name="blah"?> statement
 sub _else
 {
     $indent--;
@@ -246,7 +238,7 @@ sub _else
 
 # $class->_for;
 # -------------
-#   process a <?for name="some_list" as="element"?> statement
+# process a <?for name="some_list" as="element"?> statement
 sub _for
 {
     my $variable = $token_hash{name} or
@@ -297,8 +289,8 @@ sub _for
 
 # $class->_tokenize ($data_ref);
 # ------------------------------
-#   Returns the data to process as a list of tokens:
-#   ( 'some text', '<% a_tag %>', 'some more text', '<% end-a_tag %>' etc.
+# Returns the data to process as a list of tokens:
+# ( 'some text', '<% a_tag %>', 'some more text', '<% end-a_tag %>' etc.
 sub _tokenize
 {
     my $self = shift;
@@ -319,15 +311,3 @@ sub _tokenize
 
 
 1;
-
-
-__END__
-
-
-=head1 AUTHOR
-
-Jean-Michel Hiver <jhiver@mkdoc.com>
-
-This module is redistributed under the same license as Perl itself.
-
-=cut
