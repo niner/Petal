@@ -138,7 +138,7 @@ sub _var
     $variables->{$tmp} = 1;
     
     $variable =~ s/\'/\\\'/g;
-    push @code, ("    " x $indent . "push \@res, \$hash->{'$variable'};");
+    push @code, ("    " x $indent . "push \@res, \$hash->get ('$variable');");
 }
 
 
@@ -159,7 +159,7 @@ sub _if
     $variables->{$tmp} = 1;
     
     $variable =~ s/\'/\\\'/g;
-    push @code, ("    " x $indent . "if (\$hash->{'$variable'}) {");
+    push @code, ("    " x $indent . "if (\$hash->get ('$variable')) {");
     $indent++;
 }
 
@@ -218,8 +218,8 @@ sub _attr
     $variables->{$tmp} = 1;
     
     $variable =~ s/\'/\\\'/g;
-    push @code, ("    " x $indent . "if (defined \$hash->{'$variable'} and \$hash->{'$variable'} ne '') {");
-    push @code, ("    " x ++$indent . "push \@res, \"$attribute\" . '=\"' . \$hash->{'$variable'} . '\"'");
+    push @code, ("    " x $indent . "if (defined \$hash->get ('$variable') and \$hash->get ('$variable') ne '') {");
+    push @code, ("    " x ++$indent . "push \@res, \"$attribute\" . '=\"' . \$hash->get ('$variable') . '\"'");
     push @code, ("    " x --$indent . "}");
 }
 
@@ -262,22 +262,25 @@ sub _for
     $variable =~ s/\'/\\\'/g;
     unless (defined $my_array->{$indent})
     {
-	push @code, ("    " x $indent . "my \@array = \@{\$hash->{'$variable'}};");
+	push @code, ("    " x $indent . "my \@array = \@{\$hash->get ('$variable')};");
 	$my_array->{$indent} = 1;
     }
     else
     {
-	push @code, ("    " x $indent . "\@array = \@{\$hash->{'$variable'}};");
+	push @code, ("    " x $indent . "\@array = \@{\$hash->get ('$variable')};");
     }
     
     push @code, ("    " x $indent . "for (my \$i=0; \$i < \@array; \$i++) {");
     $indent++;
-    push @code, ("    " x $indent . "my \$hash = new Petal::Hash (\%{\$hash});");
+    push @code, ("    " x $indent . "my \$hash = \$hash->new();");
     push @code, ("    " x $indent . "my \$count= \$i + 1;");
     push @code, ("    " x $indent . "\$hash->{__count__}    = \$count;");
     push @code, ("    " x $indent . "\$hash->{__is_first__} = (\$count == 1);");
     push @code, ("    " x $indent . "\$hash->{__is_last__}  = (\$count == \@array);");
-    push @code, ("    " x $indent . "\$hash->{__is_inner__} = (not \$hash->{__is_first__} and not \$hash->{__is_last__});");
+    push @code, ("    " x $indent . "\$hash->{__is_inner__} = " .
+		                        "(not \$hash->{__is_first__} " . 
+		                        "and not \$hash->{__is_last__});");
+    
     push @code, ("    " x $indent . "\$hash->{__even__}     = (\$count % 2 == 0);");
     push @code, ("    " x $indent . "\$hash->{__odd__}      = not \$hash->{__even__};");
     push @code, ("    " x $indent . "\$hash->{'$as'} = \$array[\$i];");

@@ -126,7 +126,7 @@ $MODIFIERS->{'define:'} = $MODIFIERS->{'set:'};
 # true modifier
 $MODIFIERS->{'true:'} = sub {
     my $hash = shift;
-    my $variable = $hash->FETCH (@_);
+    my $variable = $hash->fetch (@_);
     return unless (defined $variable);
     
     (scalar @{$variable}) ? return 1 : return
@@ -160,37 +160,37 @@ $MODIFIERS->{'encode_html:'} = $MODIFIERS->{'encode:'};
 # be tied to a hash.
 sub new
 {
-    my $class = shift;
-    my %hash = ();
-    tie %hash, $class, @_;
-    $hash{__petal_hash_cache__} = {};
-    return \%hash;
+    my $thing = shift;
+    my $class = ref $thing || $thing;
+    
+    my $self  = bless { @_ }, $class;
+    $self->{__petal_hash_cache__}  = {};
+    $self->{__petal_hash_parent__} = (ref $thing) ? $thing : undef;
+    return $self;
 }
 
 
-# these are pretty straightforward, the only really interesting
-# method is the FETCH method.
-sub TIEHASH  { my $class = shift; return bless { @_ }, $class }
-sub STORE    { $_[0]->{$_[1]} = $_[2] }
-sub FIRSTKEY { my $a = scalar keys %{$_[0]}; each %{$_[0]} }
-sub NEXTKEY  { each %{$_[0]} }
-sub EXISTS   { exists $_[0]->{$_[1]} }
-sub DELETE   { delete $_[0]->{$_[1]} }
-sub CLEAR    { %{$_[0]} = () }
+# Gets a value...
+sub get
+{
+    my $self   = shift;
+    my $key    = shift;
+    my $fresh  = $key =~ s/^\s*fresh\s+//;
+    delete $self->{__petal_hash_cache__}->{$key} if ($fresh);
+    exists $self->{__petal_hash_cache__}->{$key} and return $self->{__petal_hash_cache__}->{$key};
+    
+    my $parent = $self->parent();
+    my $res    = $self->__FETCH ($key);
+    $res = $parent->get ($key) if (not defined $res and defined $parent);
+    $self->{__petal_hash_cache__}->{$key} = $res;
+    return $res;
+}
 
 
-# The FETCH method returns the result of the evaluation of a given Petal
-# statement. By default it encodes the 4 XML entities &amp; &lt; &gt; and
-# &quot; unless the 'structure' keyword is used.
-sub FETCH
+sub parent
 {
     my $self = shift;
-    my $key  = shift;
-    
-    my $fresh = $key =~ s/^\s*fresh\s+//;
-    delete $self->{__petal_hash_cache__}->{$key} if ($fresh);
-    $self->{__petal_hash_cache__}->{$key} ||= do { $self->__FETCH ($key) };
-    return $self->{__petal_hash_cache__}->{$key};
+    return $self->{__petal_hash_parent__};
 }
 
 
@@ -236,35 +236,31 @@ sub fetch
 {
     my $self = shift;
     my $key  = shift;
-    my $mod  = 'var:';
     
-    foreach my $modifier (keys %{$MODIFIERS})
-    {
-	if ($key =~ /^\Q$modifier\E/)
-	{
-	    $mod = $modifier;
-	    $key =~ s/^\Q$modifier\E//;
-	    last;
-	}
-    }
-    
+    my $mod  = $self->_fetch_mod ($key);
+    $key =~ s/^\Q$mod\E//;
     $key =~ s/^\s+//;
-    my $module = $MODIFIERS->{$mod};
-    if (defined $module and ref $module and ref $module eq 'CODE')
-    {
-	return $module->($self, $key);
-    }
-    else
-    {
-	confess "$mod is not a known modifier" unless (defined $module);
-	unless (defined $IMPORTED->{$module})
-	{
-	    eval "use $module";
-	    (defined $@ and $@) and confess "cannot import $module for modifier $mod";
-	    $IMPORTED->{$module} = 1;
-	}
-	$module->process ($self, $key);
-    }
+    
+    my $module = $MODIFIERS->{$mod} || confess "$mod is not a known modifier";
+    (defined $module and ref $module and ref $module eq 'CODE') and return $module->($self, $key);
+    
+    $IMPORTED->{$module} ||= do {
+	eval "use $module";
+	(defined $@ and $@) and confess "cannot import $module for modifier $mod";
+	1;
+    };
+    
+    $module->process ($self, $key);
+}
+
+
+sub _fetch_mod
+{
+    my $self  = shift;
+    my $key   = shift;
+    my ($mod) = $key =~ /^(\S+?\:).*/;
+    defined $mod || return 'var:';
+    return (defined $MODIFIERS->{$mod}) ? $mod : 'var:';
 }
 
 
