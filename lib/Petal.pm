@@ -351,7 +351,9 @@ sub process
 	$res = $coderef->($hash);
 	
 	$Petal::ENCODE_CHARSET and do {
-	    $res = Petal::Encode::p_encode ($Petal::ENCODE_CHARSET, $res);
+            # bug...
+	    # $res = Petal::Encode::p_encode ($Petal::ENCODE_CHARSET, $res);
+            # Petal::Encode::p_utf8_on ($res) if ($Petal::ENCODE_CHARSET eq 'UTF-8');
 	};
     };
     
