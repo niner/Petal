@@ -34,7 +34,6 @@ sub process
     
     my $data_ref = shift;
     $data_ref = (ref $data_ref) ? $data_ref : \$data_ref;
-    
     my $parser = new XML::Parser (
 	Style    => 'Stream',
 	Pkg      => ref $self,

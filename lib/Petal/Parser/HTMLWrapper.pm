@@ -36,7 +36,6 @@ sub process
     my $self = shift;
     local $Canonicalizer = shift;
     my $data_ref = shift;
-    
     local @MarkedData = ();
     local @NodeStack  = ();
     $data_ref = (ref $data_ref) ? $data_ref : \$data_ref;
@@ -45,6 +44,8 @@ sub process
     $tree->p_strict (0);
     $tree->no_space_compacting (1);
     $tree->ignore_unknown (0);
+    $tree->store_comments(1);
+    $tree->ignore_ignorable_whitespace(0);
     
     eval
     {
@@ -79,7 +80,7 @@ sub generate_events
 	
 	if ($tag eq '~comment')
 	{
-	    text ($tree->attr ('text'));
+	    generate_events_comment ($tree->attr ('text'));
 	}
 	else
 	{
@@ -129,6 +130,18 @@ sub generate_events_text
     $_ = $data;
     $Canonicalizer->Text();    
 }
+
+
+sub generate_events_comment
+{
+    my $data = shift;
+    $data =~ s/\&/&amp;/g;
+    $data =~ s/\</&lt;/g;
+    $_ = '<!--' . $data . '-->';
+    $Canonicalizer->Text();    
+}
+
+
 
 
 1;

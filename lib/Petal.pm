@@ -447,8 +447,8 @@ Which if 'list' was ('foo', 'bar', 'baz') would output:
 
 =head2 "Usual" syntax (like HTML::Template, Template::Toolkit, etc), i.e
 
-  <?petal:condition="list"?>
-    <?petal:repeat="element list"?>
+  <?petal:condition name="list"?>
+    <?petal:repeat name="element list"?>
       <li><?petal:var name="element"?></li>
     <?end?>
   <?end?>
@@ -731,7 +731,7 @@ Variables are scoped inside loops so you don't risk to erase an existing
 'user' variable which would be outside the loop. The template engine
 also provides the following variables for you inside the loop:
 
-  <?petal:repeat blah blah blah...?>
+  <?petal:repeat name="foo bar"?>
     $__count__    - iteration number, starting at 1
     $__is_first__ - is it the first iteration
     $__is_last__  - is it the last iteration

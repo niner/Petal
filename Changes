@@ -1,6 +1,9 @@
 Revision history for Petal.
 
 0.63
+	- Fixed petal:repeat documentation bug
+	- Changed Petal::Parser::HTMLWrapper to preserve ignorable whitespaces
+	- Fixed Petal stripping comments with Petal::Parser::HTMLWrapper
 	- Fixed Petal not invoking methods which are defined via AUTOLOAD
 	- Changed Petal::Canonicalizer::_split_expression to work with Perl 5.8.0
 	- Changed Petal::Canonicalizer::_split_expression to remove warnings
