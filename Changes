@@ -1,5 +1,8 @@
 Revision history for Petal.
 
+1.01
+	- Applied Fergal's attr.patch
+
 1.00 Tue Jul 15 20:35:19 BST 2003
 	- Applied Steve's 'error on undef' patch
 	- Happy Birthday Petal!

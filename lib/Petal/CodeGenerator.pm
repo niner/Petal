@@ -317,9 +317,14 @@ sub _attr
     $variables->{$tmp} = 1;
     
     $variable =~ s/\'/\\\'/g;
-    $class->add_code("if (defined ".$class->comp_expr($variable)." and ".$class->comp_expr($variable)." ne '') {");
+    $class->add_code('{');
     $class->indent_increment();
-    $class->add_code($class->_add_res("\"$attribute\" . '=\"' . ".$class->comp_expr($variable)." . '\"'"));
+    $class->add_code("my \$value = ".$class->comp_expr($variable).";");
+    $class->add_code("if (defined(\$value) and length(\$value)) {");
+    $class->indent_increment();
+    $class->add_code($class->_add_res(qq{"$attribute=\\"\$value\\""}));
+    $class->indent_decrement();
+    $class->add_code("}");
     $class->indent_decrement();
     $class->add_code("}");
 }
