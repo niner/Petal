@@ -7,7 +7,7 @@ friendly templates such as:
 
 <ul petal:condition="user/list">
   <li petal:repeat="user user/list"
-      petal:content="encode:user/login">
+      petal:content="user/login">
     Dummy UserName
   </li>
 </ul>
@@ -39,16 +39,28 @@ This module requires these other modules and libraries:
 
 THANKS TO
 
-  * William McKee
-      for his useful bug reports, suggestions and patches
+  * William McKee <william@knowmad.com>
+	(bug reports, suggestions, patches)
 
-  * Sean M. Burke
-      for his improvements on the HTML::TreeBuilder module
-      which Petal uses
+  * Sean M. Burke <sburke@cpan.org>
+	(improvements on HTML::TreeBuilder used by Petal)
 
-  * Kurt Stephens for his AUTOLOAD bug report & patch
-  * Lucas Saud    for his code padding patch
-  * Bruno Postle  for his coderef modifier suggestion
+  * Kurt Stephens <kstep@pepsdesign.com>
+	(AUTOLOAD bug report & patch)
+
+  * Lucas Saud <lucas.marinho@uol.com.br>
+	(code padding patch)
+
+  * Bruno Postle  <bruno@mkdoc.com>
+	(coderef modifier suggestion)
+
+  * Steve Purkis  <spurkis@mkdoc.com>
+	(bug reports, added tests)
+
+  * Chris Croome  <chris@mkdoc.com>
+	(bug reports)
+
+Hopefully I didn't forget anyone :-)
 
 
 MISCELLEANOUS

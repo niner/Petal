@@ -1,6 +1,6 @@
 Revision history for Petal.
 
-0.72
+0.72 Fri Sep 20 12:44:43 2002
 	- Fixed a variable interpolation bug ($align - $align_opposite)
 	- Fixed another loop scoping bug
 	- Fixed loop scoping bug
