@@ -1,0 +1,3 @@
+<p petal:replace="string: Hello, $user/name, $number + $number = ${math/add number number}">
+  Blaaaargh.
+</p>
