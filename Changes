@@ -1,5 +1,9 @@
 Revision history for Petal.
 
+2.03 Mon Mar 15 16:25:59 2004
+    - Don't ask me what happened with 2.02
+    - Added a test case for metal double include
+
 2.01 Wed Dec 10 15:21:35 2003
     - Deprecated $Petal::ENCODE
     - Petal now always returns in Perl's internal format 
