@@ -1,5 +1,8 @@
 Revision history for Petal.
 
+0.64
+	- Fixed _split_expression bug 
+
 0.63 Mon Sep  2 17:01:23 2002
 	- Fixed petal:repeat documentation bug
 	- Changed Petal::Parser::HTMLWrapper to preserve ignorable whitespaces
@@ -9,7 +12,6 @@ Revision history for Petal.
 	- Changed Petal::Canonicalizer::_split_expression to remove warnings
 
 0.62 Fri Aug 16 11:17:10 2002
-	- Added tests
 	- Fixed entity bug due to XML::Parser expanding entities
 	- Fixed method parameters bug
 	- Fixed another method parameters bug
@@ -18,12 +20,10 @@ Revision history for Petal.
 	- Fixed '"' being converted to '&quot;' by Petal::Parser::HTMLWrapper
  
 0.61 Mon Aug 12 11:50:50 2002
-	- Added test
 	- Fixed 'dummy content' closing tag bug
 	- Fixed <a petal:attr="href string:test.cgi?fn=$first_name"> bugfix bug!
 
 0.6 Sat Aug 10 14:59:53 2002
-	- Added tests
         - Fixed <a petal:attr="href string:test.cgi?fn=$first_name"> bug
 	- Fixed declarations being striped out
 	- Fixed <some:tag> being turned into <some> bug
@@ -35,7 +35,6 @@ Revision history for Petal.
         - Implemented $Petal::INPUT and $Petal::OUTPUT for XHTML
 
 0.5 Sat Aug  3 19:56:13 2002
-	- Added tests
 	- Modifiers are now 'modifier:' rather than ':modifier'
 	- Modifiers are now stackable (i.e. foo:bar:baz/buz)
         - Implemented TALES-like slash '/' as an alias for dot '.'
@@ -49,7 +48,6 @@ Revision history for Petal.
 	- Fixed documentation bugs
 	- Fixed multiple includes bug
 	- Fixed Petal::Parser::HTMLWrapper includes
-	- Added tests
 	- Added warning for Petal statements with missing '?'
 
 0.3 Fri Jul 19 11:20:30 2002

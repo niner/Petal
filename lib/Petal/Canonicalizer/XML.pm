@@ -57,6 +57,7 @@ sub process
     
     my $res = $header . (join '', @Result);
     $class->_processing_instructions_in (\$res, $pis);
+    
     return \$res;
 }
 
@@ -285,10 +286,10 @@ sub _split_expression
     my $expression = shift;
     my @tokens = map { (defined $_ and $_) ? $_ : () }
                  split /(\s|\r|\n)*\;(\s|\r|\n)*/ms, $expression;
-    
+
     return map { s/^(\s|\n|\r)+//sm;
 		 s/(\s|\n|\r)+$//sm;
-		 $_ } @tokens;
+		 ($_ eq '') ? () : $_ } @tokens;
 }
 
 
