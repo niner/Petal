@@ -1,10 +1,11 @@
 Revision history for Petal.
 
-0.7 
+0.61 Mon Aug 12 11:50:50 2002
 	- Added test
 	- Fixed 'dummy content' closing tag bug
+	- Fixed <a petal:attr="href string:test.cgi?fn=$first_name"> bugfix bug!
 
-0.6 Sat Aug 10 14:59:53 BST 2002
+0.6 Sat Aug 10 14:59:53 2002
 	- Added tests
         - Fixed <a petal:attr="href string:test.cgi?fn=$first_name"> bug
 	- Fixed declarations being striped out
