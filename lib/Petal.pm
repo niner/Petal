@@ -470,7 +470,7 @@ sub _handle_error
 	my $dump = eval { $self->_code_with_line_numbers() };
 	($dump) ? print ERROR $dump : print ERROR "(no dump available)";
 	
-	die "[PETAL ERROR] $error. Debug info written in $debug.";
+	die "[PETAL ERROR] $error. Debug info written in $debug";
     };
     
     ! $Petal::DEBUG_DUMP and do {
