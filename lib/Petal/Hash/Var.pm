@@ -147,14 +147,6 @@ sub process
 	}
     }
     
-    if (defined $current and ref $current eq 'HASH')
-    {
-	my %current = ();
-	tie %current, 'Petal::Hash';
-	%current = %{$current};
-	$current = \%current;
-    }
-    
     return '' unless (defined $current);
     return $current;
 }
