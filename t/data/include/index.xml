@@ -406,7 +406,7 @@
   </p>
       </div>
   
-   <?petal:include file="included.xml" disk_cache="0"?> 
+   <?include file="included.xml" disk_cache="0"?> 
   
   
   

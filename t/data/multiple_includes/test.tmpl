@@ -10,7 +10,7 @@
 <HEAD>
 <TITLE>Petal Stress Test Template</TITLE>
 </HEAD>
-<?petal:include file="includes/header.tmpl" taint="1"?>
+<?include file="includes/header.tmpl" taint="1"?>
 
 <h3>The tags:</h3>
 <ul>
@@ -26,26 +26,26 @@
 
 <p>1. A tag within an html tag property doesn't work, in some cases. Works if there is no include tag above it. Does not work if there is an include tag above it.
 <br />
-<a href="mailto:<?petal:var name="email"?>">Email</a>
+<a href="mailto:<?var name="email"?>">Email</a>
 </p>
 
 
 <p>2. Two tags in a row will only show the first, or nothing at all. I'm not sure why this format isn't working at all in this test template. It does work in another of my templates. Perhaps it is due to the error in the above tag. Commenting out the above tag doesn't seem to make any difference, though. Do tags inside of comments get executed?
 <br />
-<?petal:var name="first_name"?> <br />
-<?petal:var name="first_name"?> <?petal:var name="last_name"?>
+<?var name="first_name"?> <br />
+<?var name="first_name"?> <?var name="last_name"?>
 </p>
 
 <p>3. Includes don't always work. Try moving one of the tags to the top and see the results. Rather curious... If you move the footer to the top, you'll see that it gets shown twice if you have 2 footer includes statements following it; if you remove the last one just above the /body tag, you'll see the one after header isn't working, but further ones do. There is apparently something in the header.tmpl document which is causing Petal to not perform the next includes. In fact, you can keep adding footer includes and get more and more results as expected.
 <br />
-<?petal:include file="includes/header.tmpl" taint="1"?>
+<?include file="includes/header.tmpl" taint="1"?>
 <p>This include won't get displayed</p>
-<?petal:include file="includes/footer.tmpl" taint="1"?>
+<?include file="includes/footer.tmpl" taint="1"?>
 
 
 <h3>End Tests</h3>
 
-<?petal:include file="includes/footer.tmpl" taint="1"?>
+<?include file="includes/footer.tmpl" taint="1"?>
 
 </body>
 </HTML>

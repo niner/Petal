@@ -25,10 +25,12 @@ $Petal::MEMORY_CACHE = 0;
 $Petal::DISK_CACHE   = 0;
 
 my $petal = new Petal ('index.xml');
+
 my $res = $petal->process (
     title => '__TAG__',
     settest => 'blah'
 );
+
 
 # test that we have __TAG__ twice
 my @capture = ($res =~ /(__TAG__)/g);

@@ -21,5 +21,5 @@ $Petal::INPUT = 'HTML';
 
 my $data_ref = $template->_file_data_ref;
 $data_ref  = $template->_canonicalize;
-my @count = $$data_ref =~ /(petal\:include)/gsm;
+my @count = $$data_ref =~ /(include)/gsm;
 (scalar @count > 1) ? print "ok 3\n" : print "not ok 3\n";
