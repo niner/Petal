@@ -147,8 +147,8 @@ our $MEMORY_CACHE = 1;
 
 =pod
 
-$MAX_INCLUDES - Maximum number of recursive includes before Petal stops including
-to prevent accidental infinite recursions.
+$MAX_INCLUDES - Maximum number of recursive includes before Petal stops processing.
+This is to prevent from accidental infinite recursions.
 
 =cut
 our $MAX_INCLUDES = 30;
@@ -182,6 +182,58 @@ our $XI_NS_URI = 'http://www.w3.org/2001/XInclude';
   $Petal::OUTPUT = 'XHTML';  
 
 =cut
+
+
+=head1 FUNCTIONS (For debugging or if you're curious)
+
+=head2 perl -MPetal -e canonical template.xml
+
+Displays the canonical template for template.xml.
+You can set $INPUT using by setting the PETAL_INPUT environment variable.
+You can set $OUTPUT using by setting the PETAL_OUTPUT environment variable.
+
+=cut
+sub main::canonical
+{
+    my $file = shift (@ARGV);
+    local $Petal::DISK_CACHE = 0;
+    local $Petal::MEMORY_CACHE = 0;
+    local $Petal::INPUT  = $ENV{PETAL_INPUT}  || 'XML';
+    local $Petal::OUTPUT = $ENV{PETAL_OUTPUT} || 'XHTML';
+    print ${Petal->new ($file)->_canonicalize()};
+}
+
+
+=head2 perl -MPetal -e code template.xml
+
+Displays the perl code for template.xml.
+You can set $INPUT using by setting the PETAL_INPUT environment variable.
+You can set $OUTPUT using by setting the PETAL_OUTPUT environment variable.
+
+=cut
+sub main::code
+{
+    my $file = shift (@ARGV);
+    local $Petal::DISK_CACHE = 0;
+    local $Petal::MEMORY_CACHE = 0;
+    print Petal->new ($file)->_code_disk_cached;
+}
+
+
+=head2 perl -MPetal -e lcode template.xml
+
+Displays the perl code for template.xml, with line numbers.
+You can set $INPUT using by setting the PETAL_INPUT environment variable.
+You can set $OUTPUT using by setting the PETAL_OUTPUT environment variable.
+
+=cut
+sub main::lcode
+{
+    my $file = shift (@ARGV);
+    local $Petal::DISK_CACHE = 0;
+    local $Petal::MEMORY_CACHE = 0;
+    print Petal->new ($file)->_code_with_line_numbers;
+}
 
 
 =head1 METHODS
@@ -275,7 +327,7 @@ sub _code_with_line_numbers
       my $line_num = sprintf("%" . length(scalar(@lines)) . "d", $count);
 
       # put line number and line back together
-      "${line_num} ${cur_line}";
+      "${line_num}. ${cur_line}";
     } @lines;
 
     return join("\n", @lines);
@@ -534,6 +586,16 @@ Also note that contrarily to the XInclude specification Petal DOES
 allow recursive includes up to $Petal::MAX_INCLUDES. This behavior
 is very useful when designing templates to display data which is
 recursive by nature such as sitemaps, fibonacci suites, etc.
+
+You can use ONLY the following Petal directives with Xinclude tags:
+
+  * on-error
+  * define
+  * condition
+  * repeat
+
+replace, content, omit-tag and attributes are NOT supported in
+conjunction with XIncludes.
 
 
 =head1 Variable expressions and modifiers
