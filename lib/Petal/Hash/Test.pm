@@ -80,7 +80,7 @@ __END__
 
 =head1 AUTHOR
 
-Jean-Michel Hiver <jhiver@mkdoc.com>
+Jean-Michel Hiver
 
 This module is redistributed under the same license as Perl itself.
 

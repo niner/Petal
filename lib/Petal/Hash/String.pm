@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------
 # Petal::Hash::String - Interpolates variables with other strings
 # ------------------------------------------------------------------
-# Author: Jean-Michel Hiver <jhiver@mkdoc.com>
+# Author: Jean-Michel Hiver
 # This module is redistributed under the same license as Perl
 # itself.
 # ------------------------------------------------------------------

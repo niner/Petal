@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------
 # Petal::Hash::Var - Evaluates an expression and returns the result.
 # ------------------------------------------------------------------
-# Author: Jean-Michel Hiver <jhiver@mkdoc.com>
+# Author: Jean-Michel Hiver
 # This module is redistributed under the same license as Perl
 # itself.
 # ------------------------------------------------------------------
