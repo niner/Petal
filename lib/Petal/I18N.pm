@@ -29,14 +29,13 @@ sub _process
 
     my $tag  = $tree->{_tag};
     my $attr = { map { /^_/ ? () : ( $_ => $tree->{$_} ) } keys %{$tree} };
-    return if ($tag eq '~comment');
+    return if ($tag eq '~comment' or $tag eq '~pi' or $tag eq '~declaration');
     
     # replace attributes with their respective translations 
     $tree->{"i18n:attributes"} && do {
         my $attributes = $tree->{"i18n:attributes"};
-        $attributes = s/\s*;\s*$//;
-        $attributes = s/^\s*//;
-
+        $attributes =~ s/\s*;\s*$//;
+        $attributes =~ s/^\s*//;
         my @attributes = split /\s+\;\s+/, $attributes;
         foreach my $attribute (@attributes)
         {
@@ -126,7 +125,7 @@ sub _process
 
     # I know, I know, the I18N namespace processing is a bit broken...
     # It should suffice for now.
-    delete $tree->{"xmlsn:i18n"};
+    delete $tree->{"xmlns:i18n"};
     delete $tree->{"i18n:domain"};
     delete $tree->{"i18n:attributes"};
     delete $tree->{"i18n:translate"};
@@ -200,3 +199,116 @@ sub _extract_content_string
 
 
 __END__
+
+
+=head1 NAME
+
+Petal::I18N - Attempt at implementing ZPT I18N for Petal 
+
+
+=head1 SYNOPSIS
+
+in your Perl code:
+
+  use Petal;
+  use Petal::TranslationService::h4x0r;
+
+  # we want to internationalize to the h4x0rz 31337 l4nGu4g3z. w00t!
+  my $translation_service = Petal::TranslationService::h4x0r->new();
+  my $template = new Petal (
+      file => 'silly_example.xhtml',
+      translation_service => $ts,
+  );
+
+  print $template->process ();
+
+
+in silly_example.xhtml
+
+  <html><body>
+    <!-- this is a mad example of romanized japanese, which we
+         are going to turn into h4x0rz r0m4n|z3d J4paN33z -->
+
+    <div i18n:translate="">
+      Konichiwa, <span i18n:name="name">Buruno</span>-san,
+      Kyoo wa o-genki desu ka?
+    </div>
+  </body></html>
+
+
+... And you get something like:
+
+  <html><body>
+    <!-- this is a mad example of romanized japanese, which we
+         are going to turn into h4x0rz r0m4n|z3d J4paN33z -->
+
+    <div>K0N1cH1W4, <span>Buruno</span>-s4N, Ky00 w4 o-geNkI DesU kA?</div>
+  </body></html>
+
+
+=head1 HOW IT WORKS
+
+You simply instanciate any kind of object and pass it when you construct the
+Petal object, as described in the synopsis. 
+
+As long as this object has an instance method called maketext ($stuff), it'll
+work.
+
+At the moment there are two TranslationService objects shipped with the library:
+
+=over 4
+
+=item Petal::TranslationService::h4x0r (rather useless - but kinda fun)
+
+=item Petal::TranslationService::MOFile (works with .mo files produced by gettext)
+
+=back
+
+So if you want to use a .mo file to translate your template, you just do:
+
+   my $ts = Petal::TranslationService::MOFile->new ("/path/to/file.mo");
+
+   my $t  = Petal->new ( file => '/path/to/template.xml',
+                         translation_service => $ts );
+
+   print $t->process (%args);
+
+
+=head1 MORE INFORMATION
+
+You can find the I18N specification at this address.
+
+  L<http://dev.zope.org/Wikis/DevSite/Projects/ComponentArchitecture/ZPTInternationalizationSupport>
+
+At the moment, L<Petal> supports the following constructs:
+
+
+=over 4
+
+=item xmlns:i18n="http://xml.zope.org/namespaces/i18n" - strips it
+
+=item i18n:translate
+
+=item i18n:domain
+
+=item i18n:name
+
+=item i18n:attribute
+
+=back
+
+It does *NOT* (well, not yet) support i18n:source, i18n:target or i18n:data.
+Also note that namespace support is not implemented properly: you cannot change
+the prefix, so declaring
+
+  xmlns:internationalization="http://xml.zope.org/namespaces/i18n"
+
+will not work.
+
+
+=head1 I18N HOWTO
+
+... coming soon :-)
+
+=cut
+

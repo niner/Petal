@@ -18,7 +18,7 @@ else
    ok ($trans->isa ('Petal::TranslationService::h4x0r'));
 
    my $string = 'Adam, Bruno, Chris';
-   my $res = $trans->get_from_string ($string);
+   my $res = $trans->maketext ($string);
    ok ($res ne $string);
 }
 

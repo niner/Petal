@@ -1,5 +1,11 @@
 Revision history for Petal.
 
+2.08
+    - Added experimental ZPT I18N support
+    - Updated documentation
+    - Added a bunch of tests
+    - Added a patch to get Petal to resolve SCALAR entities
+
 2.07 Thu Jun 24 13:13:57 2004
     - Added metal:define-slot
     - Added metal:fill-slot

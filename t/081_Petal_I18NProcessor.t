@@ -18,14 +18,24 @@ else
 
     $Petal::TranslationService = Petal::TranslationService::h4x0r->new();
     my $xml = <<EOF;
-<div i18n:translate="test">
-  Konichiwa, <span i18n:name="name">Buruno-san</span>,
-  Kyoo wa o-genki desu ka?
-</div>
+  <html><body>
+
+    <!-- this is a mad example of romanized japanese, which we
+         are going to turn into h4x0rz r0m4n|z3d J4paN33z -->
+
+    <div i18n:translate="">
+      Konichiwa, <span i18n:name="name">Buruno</span>-san,
+      Kyoo wa o-genki desu ka?
+    </div>
+
+  </body></html>
 EOF
 
     $xml =~ s/\s*$//;
-    print Petal::I18N->process ($xml);
+    
+    my $res = Petal::I18N->process ($xml);
+    ok ($res =~ /Buruno/);
+    ok ($res !~ /Konichiwa/);
 }
 
 

@@ -772,14 +772,7 @@ object, array referebce or hash reference. Let's see what we can do...
 
 =head2 Version 1: WYSIWYG friendly prototype.
 
-The problem with the above page is that when you edit it with a WYSIWYG editor,
-or simply open it in your browser, you will see:
-
-    This is the variable 'my_var' : ${my_var/hello_world}.
-
-Ideally you don't want your graphic designers to worry about
-variable names... and that's where TAL kicks in. Using TAL
-you can do:
+Using TAL you can do:
 
     This is the variable 'my_var' :
     <span tal:replace="my_var/hello_world">Hola, Mundo!</span>
@@ -1204,20 +1197,6 @@ statements will be executed in the following order:
         content
 
 
-=head2 aliases
-
-On top of all that, for people who are lazy at typing the following
-aliases are provided (although I would recommend sticking to the
-defaults):
-
-  * tal:define     - tal:def, tal:set
-  * tal:condition  - tal:if
-  * tal:repeat     - tal:for, tal:loop, tal:foreach
-  * tal:attributes - tal:att, tal:attr, tal:atts
-  * tal:content    - tal:inner
-  * tal:replace    - tal:outer
-
-
 TRAP:
 
 Don't forget that the default prefix is C<petal:> NOT C<tal:>, until
@@ -1226,68 +1205,10 @@ you set the petal namespace in your HTML or XML document as follows:
     <html xmlns:tal="http://purl.org/petal/1.0/">
 
 
-=head1 INCLUDES
+=head1 METAL MACROS
 
-Let's say that your base directory is C</templates>,
-and you're editing C</templates/hello/index.html>.
-
-From there you want to include C</templates/includes/header.html>
-
-
-=head2 general syntax
-
-You can use a subset of the XInclude syntax as follows:
-
-  <body xmlns:xi="http://www.w3.org/2001/XInclude">
-    <xi:include href="/includes/header.html" />
-  </body>
-
-
-For backwards compatibility reasons, you can omit the first slash, i.e.
-
-  <xi:include href="includes/header.html" />
-
-
-=head2 relative paths
-
-If you'd rather use a path which is relative to the template itself rather
-than the base directory, you can do it but the path MUST start with a dot,
-i.e.
-
-  <xi:include href="../includes/header.html" />
-
-  <xi:include href="./subdirectory/foo.xml" />
-
-etc.
-
-
-=head2 limitations
-
-The C<href> parameter does not support URIs, no other tag than C<xi:include> is
-supported, and no other directive than the C<href> parameter is supported at
-the moment.
-
-Also note that contrarily to the XInclude specification Petal DOES allow
-recursive includes up to C<$Petal::MAX_INCLUDES>. This behavior is very useful
-when templating structures which fit well recursive processing such as trees,
-nested lists, etc.
-
-You can ONLY use the following Petal directives with Xinclude tags:
-
-  * on-error
-  * define
-  * condition
-  * repeat
-
-C<replace>, C<content>, C<omit-tag> and C<attributes> are NOT supported in
-conjunction with XIncludes.
-
-
-=head1 MORE INCLUDES: METAL
-
-Petal now supports a subset of the METAL specification, which is a very WYSIWYG
-compatible way of doing includes. The current implementation supports only two
-metal statements: define-macro and use-macro.
+Petal supports an implementation of the METAL specification, which is a very
+WYSIWYG compatible way of doing template includes.
 
 
 =head2 define-macro
@@ -1321,6 +1242,54 @@ For example:
 
       <p metal:use-macro="foo.xml#footer">
         Page Footer.
+      </p>
+    </body>
+  </html>
+
+
+=head2 define-slot
+
+In any given macro you can define slots, which are bits of macros that can be
+overriden by something else using the fill-macro directive. To re-use the
+example above, imagine that we want to be able to optionally override the
+(pouet pouet) bit with something else:
+
+
+  File foo.xml
+  ============
+
+  <html>
+    <body>
+      <p metal:define-macro="footer">
+        (c) Me (r)(tm) <span metal:define-slot="pouet">(pouet pouet)</span>
+      </p>
+    </body>
+  </html>
+
+
+=head2 fill-slot
+
+Your including file can override any slot using the fill-slot instruction, i.e.
+
+  File bar.xml
+  ============
+
+  <html>
+    <body>
+      ... plenty of content ...
+
+      <p metal:use-macro="foo.xml#footer">
+        Page Footer. <span metal:fill-slot="pouet" petal:omit-tag="">(bar baz)</span>
+      </p>
+    </body>
+  </html>
+
+This would result in the macro 'foo.xml#footer' to produce:
+
+  <html>
+    <body>
+      <p>
+        (c) Me (r)(tm) (bar baz)
       </p>
     </body>
   </html>
@@ -1531,142 +1500,6 @@ expressions which invoke methods with parameters, i.e.
   string:The current CGI 'action' param is: ${cgi/param --action}
 
 
-=head1 UGLY SYNTAX
-
-For certain things which are not doable using TAL you can use what
-I call the UGLY SYNTAX. The UGLY SYNTAX is UGLY, but it can be handy
-in some cases.
-
-For example consider that you have a list of strings:
-
-    $my_var = [ 'Foo', 'Bar', 'Baz' ];
-    $template->process (my_var => $my_var, buz => $buz);
-
-
-And you want to display:
-
-  <title>Hello : Foo : Bar : Baz</title>
-
-Which is not doable with TAL without making the XHTML invalid.
-With the UGLY SYNTAX you can do:
-
-    <title>Hello<?for name="string my_var"?> : <?var name="string"?><?end?></title>
-
-Of course you can freely mix the UGLY SYNTAX with other Petal
-syntaxes. So:
-
-    <title><?for name="string my_var"?> $string <?end?></title>
-
-Mind you, if you've managed to read the doc this far I must confess
-that writing:
-
-    <h1>$string</h1>
-
-instead of:
-
-    <h1 tal:replace="string">Dummy</h1>
-
-is UGLY too. I would recommend to stick with TAL wherever you can.
-But let's not disgress too much.
-
-
-=head2 variables
-
-Abstract
-
-  <?var name="EXPRESSION"?>
-
-Example
-
-  <title><?var name="document/title"?></title>
-
-Why?
-
-Because if you don't have things which are replaced by real values in your
-template, it's probably a static page, not a template... :) 
-
-
-=head2 if / else constructs
-
-Usual stuff:
-
-  <?if name="user/is_birthay"?>
-    Happy Birthday, $user/real_name!
-  <?else?>
-    What?! It's not your birthday?
-    A very merry unbirthday to you! 
-  <?end?>
-
-You can use C<condition> instead of C<if>, and indeed you can use modifiers:
-
-  <?condition name="false:user/is_birthay"?>
-    What?! It's not your birthday?
-    A very merry unbirthday to you! 
-  <?else?>
-    Happy Birthday, $user/real_name!
-  <?end?>
-
-Not much else to say!
-
-
-=head2 loops
-
-Use either C<for>, C<foreach>, C<loop> or C<repeat>. They're all the same
-thing, which one you use is a matter of taste. Again no surprise:
-
-  <h1>Listing of user logins</h1>
-  <ul>
-    <?repeat name="user system/list_users"?>
-      <li><?var name="user/login"?> :
-          <?var name="user/real_name"?></li>
-    <?end?>
-  </ul>
-  
-
-Variables are scoped inside loops so you don't risk to erase an existing
-C<user> variable which would be outside the loop. The template engine also
-provides the following variables for you inside the loop:
-
-  <?repeat name="foo bar"?>
-    <?var name="repeat/index"?>  - iteration number, starting at 0
-    <?var name="repeat/number"?> - iteration number, starting at 1
-    <?var name="repeat/start"?>  - is it the first iteration?
-    <?var name="repeat/end"?>    - is it the last iteration?
-    <?var name="repeat/inner"?>  - is it not the first and not the last iteration?
-    <?var name="repeat/even"?>   - is the count even?
-    <?var name="repeat/odd"?>    - is the count odd?
-  <?end?>
-
-Again these variables are scoped, you can safely nest loops, ifs etc...  as
-much as you like and everything should be fine.
-
-
-=head2 includes
-
-The XInclude syntax should be preferred over this...
-
-  <?include file="include.xml"?>
-
-It will include the file 'include.xml', using the current C<@Petal::BASE_DIR>
-directory list.
-
-If you want use XML::Parser to include files, you should make sure that
-the included files are valid XML themselves... FYI XML::Parser chokes on
-this:
-
-    <p>foo</p>
-    <p>bar</p>
-
-But this works:
-
-    <div>
-      <p>foo</p>
-      <p>bar</p>
-    </div>
-
-(Having only one top element is part of the XML spec).
-
-
 =head1 ADVANCED PETAL
 
 
@@ -1809,6 +1642,7 @@ The cycle of a Petal template is the following:
     6. Petal turns the perl code into a subroutine
     7. Petal::Cache::Memory caches the subroutine in memory
     8. Petal executes the subroutine
+    9. (optional) Petal internationalizes the resulting output.
 
 If you are under a persistent environement a la mod_perl, subsequent calls to
 the same template will be reduced to step 8 until the source template changes.
@@ -1860,17 +1694,6 @@ mailing list or at L<mailto://jhiver@mkdoc.com>.
 =head1 EXPORTS
 
 None.
-
-
-=head1 KNOWN BUGS
-
-The XML::Parser wrapper only cannot expand entities C<&lt;>, C<&gt;>, C<&amp;>
-and C<&quot;>. Besides, I can't get it to NOT expand entities in 'Stream' mode.
-
-HTML::TreeBuilder expands all entities, hence &nbsp;s are lost / converted to
-whitespaces.
-
-XML::Parser is deprecated and should be replaced by SAX handlers at some point.
 
 
 =head1 AUTHOR
