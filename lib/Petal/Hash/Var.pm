@@ -30,7 +30,7 @@ use Carp;
 our $STRING_RE_DOUBLE = qq |(?<!\\\\)\\".*?(?<!\\\\)\\"|;
 our $STRING_RE_SINGLE = qq |(?<!\\\\)\\'.*?(?<!\\\\)\\'|;
 our $STRING_RE        = "(?:$STRING_RE_SINGLE|$STRING_RE_DOUBLE)";
-our $VARIABLE_RE      = "(?:--)?[A-Za-z\_][A-Za-z0-9\_\\.:\/]+";
+our $VARIABLE_RE      = "(?:--)?[A-Za-z\_][^ \t]*";
 our $TOKEN_RE         = "(?:$STRING_RE|$VARIABLE_RE)";
 
 
