@@ -139,7 +139,7 @@ behavior is part of the TAL specification:
 
          http://www.zope.org/Wikis/DevSite/Projects/ZPT/TAL
 
-Thanks to Warren Smith for this tip and Fergal Daly for his knowledge of the TAL specification.
+Thanks to Fergal Daly for his knowledge of the TAL specification.
 
 
 =head2 Generating even/odd rows (submitted by Warren Smith)
@@ -153,11 +153,13 @@ to do things like alter color, font-size, etc, is relatively easy.
 Example:
 
   <table>
-    <tr tal:attr="class decode: repeat/even 1 'even' 'odd'">...</tr>
+    <tr tal:repeat="emp employees" tal:attr="class decode: repeat/even 1 'even' 'odd'">
+      <td tal:content="emp/name">Employee Name</td>
+      ...
+    </tr>
   </table>
 
-
-Thanks to Warren Smith for this tip. See L<Petal::Utils|Petal::Utils> for more information.
+See L<Petal::Utils|Petal::Utils> for more information.
 
 
 
