@@ -1,14 +1,20 @@
+# ------------------------------------------------------------------
+# Petal::Functions - Helper functions for the Petal.pm wrapper
+# ------------------------------------------------------------------
+# Author: Jean-Michel Hiver
+# Description: This class parses a template in 'canonical syntax'
+# (referred as the 'UGLY SYNTAX' in the manual) and generates Perl
+# code that can be turned into a subroutine using eval().
+# ------------------------------------------------------------------
 package Petal::Functions;
 use strict;
 use warnings;
 
 
-##
 # find_filepath ($filename, @paths);
 # ----------------------------------
 # Finds the filepath for $filename in @paths
 # and returns it.
-##
 sub find_filepath
 {
     my $filename = shift;
@@ -20,7 +26,6 @@ sub find_filepath
 }
 
 
-##
 # find_filename ($language, @paths);
 # ----------------------------------
 # Finds the filename for $language in @paths.
@@ -30,7 +35,6 @@ sub find_filepath
 # fr-CA.xml
 # fr.html
 # en.html
-##
 sub find_filename
 {
     my $lang  = shift;
@@ -51,7 +55,6 @@ sub find_filename
 }
 
 
-##
 # parent_language ($lang);
 # ------------------------
 # Returns the parent language for $lang, i.e.
@@ -59,7 +62,6 @@ sub find_filename
 #
 # $DEFAULT is set to 'en' by default but that can be changed, e.g.
 #   local $Petal::LANGUAGE = 'fr' for example
-##
 sub parent_language
 {
     my $lang = shift;
@@ -73,7 +75,6 @@ sub parent_language
 }
 
 
-##
 # exists_filename ($language, $path);
 # -----------------------------------
 # looks for a file that matches $langage.<extension> in $path
@@ -83,7 +84,6 @@ sub parent_language
 #
 #   # $filename will be either 'en-US.html, en-US.xml, ... or 'undef'.
 #   my $filename = exists_filename ('en-US', './scratch');
-##
 sub exists_filename
 {
     my $language = shift;

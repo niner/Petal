@@ -1,13 +1,9 @@
-=head1 NAME
-
-Petal::Parser::XMLWrapper
-
-=head1 DESCRIPTION
-
-A Wrapper class for XML::Parser that is meant to be used
-with XML::Template::Pal::Canonicalizer.
-
-=cut
+# ------------------------------------------------------------------
+# Petal::Parser::HTMLWrapper - Fires Petal::Canonicalizer events
+# ------------------------------------------------------------------
+# A Wrapper class for XML::Parser that is meant to be used
+# with XML::Template::Pal::Canonicalizer.
+# ------------------------------------------------------------------
 package Petal::Parser::XMLWrapper;
 use strict;
 use warnings;

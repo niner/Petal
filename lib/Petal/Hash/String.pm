@@ -1,25 +1,10 @@
-=head1 NAME
-
-Petal::Hash::String - Interpolates variables with other strings in Petal attributes
-
-=head1 SYNOPSIS
-
-  my $value = $hash->{'string: This is a test ${foo/bar}'}
-
-=head1 AUTHOR
-
-Jean-Michel Hiver <jhiver@mkdoc.com>
-
-This module is redistributed under the same license as Perl itself.
-
-
-=head1 SEE ALSO
-
-The template hash module:
-
-  Petal::Hash
-
-=cut
+# ------------------------------------------------------------------
+# Petal::Hash::String - Interpolates variables with other strings
+# ------------------------------------------------------------------
+# Author: Jean-Michel Hiver <jhiver@mkdoc.com>
+# This module is redistributed under the same license as Perl
+# itself.
+# ------------------------------------------------------------------
 package Petal::Hash::String;
 use strict;
 use warnings;

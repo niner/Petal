@@ -1,39 +1,27 @@
-=head1 NAME
-
-Petal::XML_Encode_Decode - Minimalistic module to encode / decode XML text
-
-
-=head1 SYNOPSIS
-
-  my $foo = "Foo & Bar";
-  my $encoded_foo = Petal::XML_Encode_Decode::encode ($foo); # "Foo &amp; Bar"
-  print $foo eq Petal::XML_Encode_Decode::decode ($foo); # should print 1
-
-=head1 DESCRIPTION
-
-I had to do that operation in different places for different reasons,
-thus although it's not much code it's been moved it into a namespace
-of its own.
-
-=head1 AUTHOR
-
-Jean-Michel Hiver <jhiver@mkdoc.com>
-
-This module is redistributed under the same license as Perl itself.
-
-=cut
+# ------------------------------------------------------------------
+# Petal::XML_Encode_Decode - Minimalistic module to encode XML text
+# ------------------------------------------------------------------
+# Thanks to Fergal Daly <fergal@esatclear.ie> for the patch!
+# ------------------------------------------------------------------
 package Petal::XML_Encode_Decode;
 use strict;
 use warnings;
+
+my %xml_encode = (
+	'&' => 'amp',
+	'<' => 'lt',
+	'>' => 'gt',
+	'"' => 'quot',
+);
+my $xml_encode_pat = join("|", keys %xml_encode);
+my %xml_decode     = reverse(%xml_encode);
+my $xml_decode_pat = join("|", keys %xml_decode);
 
 
 sub encode
 {
     my $data = shift;
-    $data =~ s/\&/&amp;/g;
-    $data =~ s/\</&lt;/g;
-    $data =~ s/\>/&gt;/g;
-    $data =~ s/\"/&quot;/g;
+    $data =~ s/($xml_encode_pat)/&$xml_encode{$1};/go;
     return $data;
 }
 
@@ -41,10 +29,7 @@ sub encode
 sub encode_backslash_semicolon
 {
     my $data = shift;
-    $data =~ s/\&/&amp\\;/g;
-    $data =~ s/\</&lt\\;/g;
-    $data =~ s/\>/&gt\\;/g;
-    $data =~ s/\"/&quot\\;/g;
+    $data =~ s/($xml_encode_pat)/&$xml_encode{$1}\\;/go;
     return $data;
 }
 
@@ -52,10 +37,7 @@ sub encode_backslash_semicolon
 sub decode
 {
     my $data = shift;
-    $data =~ s/\&quot;/\"/g;
-    $data =~ s/\&gt;/\>/g;
-    $data =~ s/\&lt;/\</g;
-    $data =~ s/\&amp;/\&/g;
+    $data =~ s/&($xml_decode_pat);/$xml_decode{$1}/go;
     return $data;
 }
 
@@ -63,10 +45,7 @@ sub decode
 sub decode_backslash_semicolon
 {
     my $data = shift;
-    $data =~ s/\&quot\\;/\"/g;
-    $data =~ s/\&gt\\;/\>/g;
-    $data =~ s/\&lt\\;/\</g;
-    $data =~ s/\&amp\\;/\&/g;
+    $data =~ s/&($xml_decode_pat)\\;/$xml_decode{$1}/go;
     return $data;
 }
 

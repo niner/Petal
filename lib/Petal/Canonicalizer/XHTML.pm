@@ -1,24 +1,22 @@
-=head1 NAME
-
-Petal::Canonicalizer::XHTML - Builds an XHTML canonical Petal file
-
-=head1 DESCRIPTION
-
-This modules mainly implements the XML::Parser 'Stream' interface.
-It receives XML events and builds Petal canonical data, i.e.
-
-  <foo petal:if="bar">Hello</foo>
-
-Might be canonicalized to something like
-
-  <?petal:if name="bar"?>
-    <foo>Hello</foo>
-  <?petal:end?>
-
-On top of that, Petal::Canonicalizer::XHTML will self close certain
-XHTML specific tags, like <br /> or <input ... />
-
-=cut
+# ------------------------------------------------------------------
+# Petal::Canonicalizer::XHTML - Builds an XHTML canonical Petal file
+# ------------------------------------------------------------------
+# Author: Jean-Michel Hiver
+# Description: This modules mainly implements the XML::Parser
+# 'Stream' interface. It receives XML events and builds Petal
+# canonical data, i.e.
+#
+#   <foo petal:if="bar">Hello</foo>
+#
+# Might be canonicalized to something like
+#
+#   <?petal:if name="bar"?>
+#     <foo>Hello</foo>
+#   <?petal:end?>
+#
+# On top of that, Petal::Canonicalizer::XHTML will self close certain
+# XHTML specific tags, like <br /> or <input ... />
+# ------------------------------------------------------------------
 package Petal::Canonicalizer::XHTML;
 use strict;
 use warnings;
@@ -47,21 +45,17 @@ use base qw /Petal::Canonicalizer::XML/;
 # [1] http://www.w3.org/TR/html401/index/elements.html
 
 
-=head2 StartTag
-
-Called for every start tag with a second parameter of the element type.
-It will check for special PETAL attributes like petal:if, petal:loop, etc...
-and rewrite the start tag into @Petal::Canonicalizer::XML::Result accordingly.
-
-For example
-
-  <foo petal:if="blah">
-
-Is rewritten
-
-  <?petal:if name="blah"?><foo>...
-
-=cut
+# $class->StartTag();
+# -------------------
+# Called for every start tag with a second parameter of the element type.
+# It will check for special PETAL attributes like petal:if, petal:loop, etc...
+# and rewrite the start tag into @Petal::Canonicalizer::XML::Result accordingly.
+#
+# For example
+#   <foo petal:if="blah">
+#
+# Is rewritten
+#   <?petal:if name="blah"?><foo>...
 sub StartTag
 {
     my $class = shift;
@@ -186,21 +180,19 @@ sub StartTag
 }
 
 
-=head2 EndTag
-
-Called for every end tag with a second parameter of the element type.
-It will check in the @Petal::Canonicalizer::XML::NodeStack to see if this end-tag also needs to close
-some 'condition' or 'repeat' statements, i.e.
-
-  </li>
-
-Could be rewritten
-
-  </li><?petal:end?>
-
-If the starting LI used a loop, i.e. <li petal:loop="element list">
-
-=cut
+# $class->EndTag();
+# -----------------
+# Called for every end tag with a second parameter of the element type.
+# It will check in the @Petal::Canonicalizer::XML::NodeStack to see if this end-tag also needs to close
+# some 'condition' or 'repeat' statements, i.e.
+#
+#   </li>
+#
+# Could be rewritten
+#
+#   </li><?petal:end?>
+#
+# If the starting LI used a loop, i.e. <li petal:loop="element list">
 sub EndTag
 {
     my $class = shift;
@@ -239,7 +231,7 @@ sub EndTag
     my $repeat = $node->{repeat} || '0';
     my $condition = $node->{condition} || '0';
     push @Petal::Canonicalizer::XML::Result, map { '<?end?>' } 1 .. ($repeat+$condition);
-
+    
     if (exists $node->{'on-error'})
     {
 	my $expression = $node->{'on-error'};

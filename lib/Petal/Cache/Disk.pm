@@ -1,23 +1,10 @@
-=head1 NAME
-
-Petal::Cache::Disk - Caches generated code on disk.
-
-=head1 SYNOPSIS
-
-  use Petal::Cache::Disk;
-  my $data = Petal::Cache::Disk->get ('foo.html');
-  unless (defined $data)
-  {
-    $data = complicated_long_compute_thing();
-    Petal::Cache::Disk->set ($data);
-  }
-
-=head1 DESCRIPTION
-
-A simple cache module to avoid re-generating the Perl code from the
-template file every time
-
-=cut
+# ------------------------------------------------------------------
+# Petal::Cache::Disk - Caches generated code on disk.
+# ------------------------------------------------------------------
+# Author: Jean-Michel Hiver
+# Description: A simple cache module to avoid re-generating the Perl
+# code from the template file every time
+# ------------------------------------------------------------------
 package Petal::Cache::Disk;
 use strict;
 use warnings;
@@ -34,34 +21,21 @@ sub sillyness
 }
 
 
-=head1 GLOBALS
-
-=head2 $TMP_DIR
-
-Temp directory in which to store the cached file. If left to undef,
-File::Spec->tmpdir will be used instead.
-
-=head2 $PREFIX
-
-Name that should prefix the cached files. By default, set to 'petal_cache_',
-i.e. 'foo.html' might be stored as petal_cache_4e38e18f1c6bedaaf174f95310a938c2
-
-=cut
+# local $Petal::Cache::Disk::TMP_DIR = <some_dir>
+# defaults to File::Spec->tmpdir;
 our $TMP_DIR = File::Spec->tmpdir;
-our $PREFIX  = 'petal_cache';
 
 
-=head1 METHODS
+# local $Petal::Cache::Disk::PREFIX = <some_prefix>
+# defaults to 'petal_cache_'
+our $PREFIX = 'petal_cache';
 
-All the methods are static methods.
 
-=head2 $class->get ($file);
-
-Returns the cached data if its last modification time is more
-recent than the last modification time of the template
-Returns the code for template file $file, undef otherwise
-
-=cut
+# $class->get ($file);
+# --------------------
+# Returns the cached data if its last modification time is more
+# recent than the last modification time of the template
+# Returns the code for template file $file, undef otherwise
 sub get
 {
     my $class = shift;
@@ -72,11 +46,9 @@ sub get
 }
 
 
-=head2 $class->set ($file, $data);
-
-Sets the cached data for $file.
-
-=cut
+# $class->set ($file, $data);
+# ---------------------------
+# Sets the cached data for $file.
 sub set
 {
     my $class = shift;
@@ -91,11 +63,9 @@ sub set
 }
 
 
-=head2 $class->is_ok ($file);
-
-Returns TRUE if the cache is still fresh, FALSE otherwise.
-
-=cut
+# $class->is_ok ($file);
+# ----------------------
+# Returns TRUE if the cache is still fresh, FALSE otherwise.
 sub is_ok
 {
     my $class = shift;
@@ -112,13 +82,11 @@ sub is_ok
 }
 
 
-=head2 $class->compute_key ($file);
-
-Computes a cache 'key' for $file, which should be unique.
-(Well, currently an MD5 checksum is used, which is not
-*exactly* unique but which should be good enough)
-
-=cut
+# $class->compute_key ($file);
+# ----------------------------
+# Computes a cache 'key' for $file, which should be unique.
+# (Well, currently an MD5 checksum is used, which is not
+# *exactly* unique but which should be good enough)
 sub compute_key
 {
     my $class = shift;
@@ -130,12 +98,10 @@ sub compute_key
 }
 
 
-=head2 $class->cached_mtime ($file);
-
-Returns the last modification date of the cached data
-for $file
-
-=cut
+# $class->cached_mtime ($file);
+# -----------------------------
+# Returns the last modification date of the cached data
+# for $file
 sub cached_mtime
 {
     my $class = shift;
@@ -149,11 +115,9 @@ sub cached_mtime
 }
 
 
-=head2 $class->current_mtime ($file);
-
-Returns the last modification date for $file
-
-=cut
+# $class->current_mtime ($file);
+# ------------------------------
+# Returns the last modification date for $file
 sub current_mtime
 {
     my $class = shift;
@@ -163,11 +127,9 @@ sub current_mtime
 }
 
 
-=head2 $class->cached ($key);
-
-Returns the cached data for $key
-
-=cut
+# $class->cached ($key);
+# ----------------------
+# Returns the cached data for $key
 sub cached
 {
     my $class = shift;
@@ -186,11 +148,9 @@ sub cached
 }
 
 
-=head2 $class->tmp;
-
-Returns the temp directory in which the cached data is kept
-
-=cut
+# $class->tmp;
+# ------------
+# Returns the temp directory in which the cached data is kept.
 sub tmp
 {
     my $class = shift;
@@ -204,15 +164,3 @@ sub tmp
 
 
 1;
-
-
-__END__
-
-
-=head1 AUTHOR
-
-Jean-Michel Hiver <jhiver@mkdoc.com>
-
-This module is redistributed under the same license as Perl itself.
-
-=cut

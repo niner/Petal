@@ -1,14 +1,10 @@
-=head1 NAME
-
-Petal::Parser::HTMLWrapper - Fires Petal::Canonicalizer events from HTML
-
-=head1 DESCRIPTION
-
-A Wrapper class for HTML::Parser that is meant to be used for
-Petal::Canonicalizer. This module should happily parse the million
-gadzillon HTML pages out there which are not valid XML...
-
-=cut
+# ------------------------------------------------------------------
+# Petal::Parser::HTMLWrapper - Fires Petal::Canonicalizer events
+# ------------------------------------------------------------------
+# A Wrapper class for HTML::Parser that is meant to be used for
+# Petal::Canonicalizer. This module should happily parse the million
+# gadzillon HTML pages out there which are not valid XML...
+# ------------------------------------------------------------------
 package Petal::Parser::HTMLWrapper;
 use strict;
 use warnings;
@@ -71,8 +67,8 @@ sub process
 }
 
 
-# generate_events
-#
+# generate_events();
+# ------------------
 # Once the HTML::TreeBuilder object is built and elementified, it is
 # passed to that subroutine which will traverse it and will trigger
 # proper subroutines which will generate the XML events which are used

@@ -1,21 +1,19 @@
-=head1 NAME
-
-Petal::Canonicalizer::XML - Builds an XML canonical Petal file
-
-=head1 DESCRIPTION
-
-This modules mainly implements the XML::Parser 'Stream' interface.
-It receives XML events and builds Petal canonical data, i.e.
-
-  <foo petal:if="bar">Hello</foo>
-
-Might be canonicalized to something like
-
-  <?petal:if name="bar"?>
-    <foo>Hello</foo>
-  <?petal:end?>
-
-=cut
+# ------------------------------------------------------------------
+# Petal::Canonicalizer::XML - Builds an XML canonical Petal file
+# ------------------------------------------------------------------
+# Author: Jean-Michel Hiver
+# Description: This modules mainly implements the XML::Parser
+# 'Stream' interface. It receives XML events and builds Petal
+# canonical data, i.e.
+#
+#   <foo petal:if="bar">Hello</foo>
+#
+# Might be canonicalized to something like
+#
+#   <?petal:if name="bar"?>
+#     <foo>Hello</foo>
+#   <?petal:end?>
+# ------------------------------------------------------------------
 package Petal::Canonicalizer::XML;
 use Petal::Hash::String;
 use Petal::XML_Encode_Decode;
@@ -25,14 +23,12 @@ use warnings;
 use vars qw /@Result @NodeStack/;
 
 
-=head2 $class->process ($parser, $data_ref);
-
-returns undef if $parser object (i.e. a Petal::Parser::XML object)
-could not parse the data which $data_ref pointed to.
-
-returns a reference to the canonicalized string otherwise.
-
-=cut
+# $class->process ($parser, $data_ref);
+# -------------------------------------
+# returns undef if $parser object (i.e. a Petal::Parser::XML object)
+# could not parse the data which $data_ref pointed to.
+#
+# returns a reference to the canonicalized string otherwise.
 sub process
 {
     my $class = shift;
@@ -123,21 +119,19 @@ sub _compute_unique_string
 }
 
 
-=head2 StartTag
-
-Called for every start tag with a second parameter of the element type.
-It will check for special PETAL attributes like petal:if, petal:loop, etc...
-and rewrite the start tag into @Result accordingly.
-
-For example
-
-  <foo petal:if="blah">
-
-Is rewritten
-
-  <?petal:if name="blah"?><foo>...
-
-=cut
+# $class->StartTag();
+# -------------------
+# Called for every start tag with a second parameter of the element type.
+# It will check for special PETAL attributes like petal:if, petal:loop, etc...
+# and rewrite the start tag into @Result accordingly.
+#
+# For example
+#
+#   <foo petal:if="blah">
+#
+# Is rewritten
+#
+#   <?petal:if name="blah"?><foo>...
 sub StartTag
 {
     my $class = shift;
@@ -233,21 +227,19 @@ sub StartTag
 }
 
 
-=head2 EndTag
-
-Called for every end tag with a second parameter of the element type.
-It will check in the @NodeStack to see if this end-tag also needs to close
-some 'condition' or 'repeat' statements, i.e.
-
-  </li>
-
-Could be rewritten
-
-  </li><?petal:end?>
-
-If the starting LI used a loop, i.e. <li petal:loop="element list">
-
-=cut
+# $class->EndTag();
+# -----------------
+# Called for every end tag with a second parameter of the element type.
+# It will check in the @NodeStack to see if this end-tag also needs to close
+# some 'condition' or 'repeat' statements, i.e.
+#
+#   </li>
+#
+# Could be rewritten
+#
+#   </li><?petal:end?>
+# 
+# If the starting LI used a loop, i.e. <li petal:loop="element list">
 sub EndTag
 {
     my $class = shift;
@@ -286,12 +278,10 @@ sub EndTag
 }
 
 
-=head2 Text
-
-Called just before start or end tags.
-Turns all variables such as $foo:bar into <?petal var name=":foo bar"?>
-
-=cut
+# $class->Text();
+# ---------------
+# Called just before start or end tags.
+# Turns all variables such as $foo:bar into <?petal var name=":foo bar"?>
 sub Text
 {
     my $class = shift;
@@ -315,10 +305,10 @@ sub Text
 }
 
 
-# _is_inside_content_or_replace;
-# ------------------------------
-#   Returns TRUE if @NodeStack contains a node which has a
-#   'content' or a 'replace' attribute set.
+# _is_inside_content_or_replace();
+# --------------------------------
+# Returns TRUE if @NodeStack contains a node which has a
+# 'content' or a 'replace' attribute set.
 sub _is_inside_content_or_replace
 {
     my $class  = shift;
@@ -337,10 +327,10 @@ sub _is_inside_content_or_replace
 
 # _split_expression ($expr);
 # --------------------------
-#   Splits multiple semicolon separated expressions, which
-#   are mainly used for the petal:attributes attribute, i.e.
-#   would turn "href document.uri; lang document.lang; xml:lang document.lang"
-#   into ("href document.uri", "lang document.lang", "xml:lang document.lang")
+# Splits multiple semicolon separated expressions, which
+# are mainly used for the petal:attributes attribute, i.e.
+# would turn "href document.uri; lang document.lang; xml:lang document.lang"
+# into ("href document.uri", "lang document.lang", "xml:lang document.lang")
 sub _split_expression
 {
     my $class = shift;
@@ -357,8 +347,8 @@ sub _split_expression
 
 # _condition;
 # -----------
-#   Rewrites <tag petal:if="[expression]"> statements into
-#   <?petal:if name="[expression]"?><tag>
+# Rewrites <tag petal:if="[expression]"> statements into
+# <?petal:if name="[expression]"?><tag>
 sub _on_error
 {
     my $class = shift;
@@ -378,8 +368,8 @@ sub _on_error
 
 # _define;
 # --------
-#   Rewrites <tag petal:define="[name] [expression]"> statements into
-#   canonical <?petal:var name=":set [name] [expression]"?>
+# Rewrites <tag petal:define="[name] [expression]"> statements into
+# canonical <?petal:var name=":set [name] [expression]"?>
 sub _define
 {
     my $class = shift;
@@ -400,8 +390,8 @@ sub _define
 
 # _condition;
 # -----------
-#   Rewrites <tag petal:if="[expression]"> statements into
-#   <?petal:if name="[expression]"?><tag>
+# Rewrites <tag petal:if="[expression]"> statements into
+# <?petal:if name="[expression]"?><tag>
 sub _condition
 {
     my $class = shift;
@@ -423,8 +413,8 @@ sub _condition
 
 # _repeat;
 # --------
-#   Rewrites <tag petal:loop="[name] [expression]"> statements into
-#   <?petal:loop name="[name] [expression]"?><tag>
+# Rewrites <tag petal:loop="[name] [expression]"> statements into
+# <?petal:loop name="[name] [expression]"?><tag>
 sub _repeat
 {
     my $class = shift;
@@ -453,8 +443,8 @@ sub _repeat
 
 # _replace;
 # ---------
-#   Rewrites <tag petal:outer="[expression]"> as <?petal:var name="[expression]"?>
-#   All the descendent nodes of 'tag' will be skipped
+# Rewrites <tag petal:outer="[expression]"> as <?petal:var name="[expression]"?>
+# All the descendent nodes of 'tag' will be skipped
 sub _replace
 {
     my $class = shift;
@@ -568,15 +558,6 @@ sub _is_xinclude
     my $xi = quotemeta ($Petal::XI_NS);
     return $tag =~ /^$xi:/
 }
-
-
-=head1 AUTHOR
-
-Jean-Michel Hiver <jhiver@mkdoc.com>
-
-This module is redistributed under the same license as Perl itself. 
-
-=cut
 
 
 1;

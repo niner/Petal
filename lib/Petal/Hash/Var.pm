@@ -1,30 +1,15 @@
-=head1 NAME
-
-Petal::Hash::Var - THE standard hash modifier, evaluates an expression
-and returns the result.
-
-=head1 SYNOPSIS
-
-  $hash->{my_number} = 2;
-  my $value = $hash->{'object.method string $my_number'}
-
-=head1 AUTHOR
-
-Jean-Michel Hiver <jhiver@mkdoc.com>
-
-This module is redistributed under the same license as Perl itself.
-
-=head1 SEE ALSO
-
-The template hash module:
-
-  Petal::Hash
-
-=cut
+# ------------------------------------------------------------------
+# Petal::Hash::Var - Evaluates an expression and returns the result.
+# ------------------------------------------------------------------
+# Author: Jean-Michel Hiver <jhiver@mkdoc.com>
+# This module is redistributed under the same license as Perl
+# itself.
+# ------------------------------------------------------------------
 package Petal::Hash::Var;
 use strict;
 use warnings;
 use Carp;
+
 
 our $STRING_RE_DOUBLE = qq |(?<!\\\\)\\".*?(?<!\\\\)\\"|;
 our $STRING_RE_SINGLE = qq |(?<!\\\\)\\'.*?(?<!\\\\)\\'|;
