@@ -1,6 +1,6 @@
 =head1 NAME
 
-Petal::Hash::VAR - THE standard hash modifier, evaluates an expression
+Petal::Hash::Var - THE standard hash modifier, evaluates an expression
 and returns the result.
 
 =head1 SYNOPSIS
@@ -21,7 +21,7 @@ The template hash module:
   Petal::Hash
 
 =cut
-package Petal::Hash::VAR;
+package Petal::Hash::Var;
 use strict;
 use warnings;
 use Carp;
@@ -32,7 +32,6 @@ our $STRING_RE_SINGLE = qq |(?<!\\\\)\\'.*?(?<!\\\\)\\'|;
 our $STRING_RE        = "(?:$STRING_RE_SINGLE|$STRING_RE_DOUBLE)";
 our $VARIABLE_RE      = "[A-Za-z\_][A-Za-z0-9\_\\.:\/]+";
 our $TOKEN_RE         = "(?:$STRING_RE|$VARIABLE_RE)";
-
 
 
 sub process
@@ -53,7 +52,7 @@ sub process
 	if ($arg =~ /^$VARIABLE_RE$/)
 	{
 	    $arg =~ s/\\(.)/$1/gsm;
-	    $args[$i] = $hash->FETCH ($arg);
+	    $args[$i] = $hash->fetch ($arg);
 	}
 	else
 	{

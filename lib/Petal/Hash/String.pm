@@ -43,7 +43,7 @@ sub process
 	s/^\$//;
 	s/^\{//;
 	s/\}$//;
-	my $to   = $hash->FETCH ($_);
+	my $to   = $hash->fetch ($_);
 	$argument =~ s/$from/$to/;
     }
     
