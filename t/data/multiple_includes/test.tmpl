@@ -6,7 +6,7 @@
 #  Description: Template to do terrible things to test Petal template language.
 -->
 
-<HTML>
+<HTML petal:set="align last_name; align_opposite first_name">
 <HEAD>
 <TITLE>Petal Stress Test Template</TITLE>
 </HEAD>
@@ -20,6 +20,9 @@
 </ul>
 
 <h3>The Tests</h3>
+
+<p>0. Inline variable with underscore: $last_name</p>
+<p>$align - $align_opposite - Hello World</p>
 
 <p>1. A tag within an html tag property doesn't work, in some cases. Works if there is no include tag above it. Does not work if there is an include tag above it.
 <br />

@@ -21,7 +21,10 @@ $Petal::INPUT = 'HTML';
 my $hash = {
 	first_name => "William",
 	last_name => "McKee",
+	last => "Boo",
 	email => 'william@knowmad.com',
 };
 
 ($template->process ($hash) =~ /william\@knowmad.com/sm) ? print "ok 2\n" : print "not ok 2\n";
+($template->process ($hash) =~ /Boo/) ? print "not ok 3\n" : print "ok 3\n";
+($template->process ($hash) =~ /McKee_opposite/) ? print "not ok 4\n" : print "ok 4\n";

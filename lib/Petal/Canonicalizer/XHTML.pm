@@ -90,7 +90,7 @@ sub StartTag
 	    my $token_re = $Petal::Hash::String::TOKEN_RE;
 	    my @vars = $text =~ /$token_re/gsm;
 	    my %vars = map { $_ => 1 } @vars;
-	    @vars = keys %vars;
+	    @vars = sort { length ($b) <=> length ($a) } keys %vars;
 	    foreach my $var (@vars)
 	    {
 		my $command = $var;
