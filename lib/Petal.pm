@@ -5,7 +5,8 @@ Petal - Perl Template Attribute Language
 =head1 SYNOPSIS
 
   use Petal;
-  my $template = new Petal ( base_dir => '.', file => 'test.html' );
+  @Petal::BASE_DIR = qw |. ./templates /var/www/templates|;
+  my $template = new Petal ( 'test.xml' );
   print $template->process (
     some_hash   => $hashref,
     some_array  => $arrayref,
@@ -18,20 +19,12 @@ Join the Petal mailing list:
 
 =head1 SUMMARY
 
-Hopefully, Petal is a bit more than "yet another template engine".
+Petal is a XML based templating engine that is able to process any
+kind of XML. HTML parsing and XHTML is also supported.
 
-First of all, Petal uses XML::Parser to process XML templates and makes
-it easy to produce well-formed XML from these template pages. If your
-template is not valid XML, then Petal Petal will issue a warning and
-attempt to parse the file using HTML::TreeBuilder and generate the XML
-events using the HTML::TreeBuilder parsed tree.
-
-So stricly speaking, your templates won't *need* to be valid XML, but it
-would be good practice if they were.
-
-Besides, Petal borrows a lot from Zope Page Templates TAL specification
-in order to make template files very dreamweaver / frontpage / etc.
-friendly.
+Because Petal borrows a lot of good ideas from the Zope Page Templates
+TAL specification, it is very well suited for the creation of truly WYSIWYG
+XHTML editable templates.
 
 The idea is to enforce even further the separation of logic and
 presentation. With Petal, graphic designers who use their favorite
@@ -136,7 +129,6 @@ $MEMORY_CACHE - If set to FALSE, Petal will not use the Petal::Disk::Memory modu
 our $MEMORY_CACHE = 1;
 
 
-# $VERSION is internal, thanks
 our $VERSION = '0.51';
 
 
@@ -151,8 +143,10 @@ our $VERSION = '0.51';
   $Petal::DISK_CACHE = 1;
   $Petal::MEMORY_CACHE = 1;
 
-  # let's use something horrible
-  $Petal::PARSER = 1;
+  # we are parsing a valid XHTML file, and we want to output
+  # XHTML as well...
+  $Petal::INPUT = 'XML';
+  $Petal::OUTPUT = 'XHTML';  
 
 =cut
 
@@ -382,6 +376,45 @@ sub _canonicalize
 
 
 __END__
+
+=head1 Overview
+
+Currently, Petal supports three different syntaxes:
+
+* A 'Canonical' Syntax
+
+  This is my variable: <?petal:var name="my_variable"?>
+
+* A 'TAL-like' Syntax
+
+  This is my variable: <span petal:replace="my_variable">Dummy Variable</span>
+
+* An 'Inline' Syntax
+
+  This is my variable: $my_variable
+
+You can use all three syntaxes in the same template file. In order to ease
+maintenance, Petal internally re-writes your templates into the canonical
+syntax.
+
+The cycle of a Petal template is the following:
+
+  1. Read the source XML template
+  2. $INPUT (XML or HTML) throws XML events from the source file
+  3. $OUTPUT (XML or HTML) uses these XML events to canonicalize the template
+  4. Petal::CodeGenerator turns the canonical template into Perl code
+  5. Petal::Cache::Disk caches the Perl code on disk
+  6. Petal turns the perl code into a subroutine
+  7. Petal::Cache::Memory caches the subroutine in memory
+  8. Petal executes the subroutine
+
+If you are under a persistent environement a la mod_perl, subsequent calls
+to the same template will be reduced to step 8 until the source template
+changes.
+
+Otherwise, subsequent calls will resume at step 6, until the source template
+changes.
+
 
 =head1 Petal Syntax Summary
 
@@ -665,15 +698,15 @@ Usual stuff:
     Happy Birthday, $xml:user/real_name!
   <?petal:else?>
     What?! It's not your birthday?
-    Maybe tomorrow...
+    A very merry unbirthday to you! 
   <?petal:end?>
 
 You can use petal:condition instead of petal:if, and indeed you can use
 modifiers:
 
-  <?petal:condition name=":false user/is_birthay"?>
+  <?petal:condition name="false: user/is_birthay"?>
     What?! It's not your birthday?
-    Maybe tomorrow...
+    A very merry unbirthday to you! 
   <?petal:else?>
     Happy Birthday, $xml:user/real_name!
   <?petal:end?>
@@ -717,22 +750,16 @@ it's a bug :-)
 
 Petal fully support includes using the following syntax:
 
-<?petal:include file="include.xml"?>
+  <?petal:include file="include.xml"?>
 
 And it will include the file 'include.xml', using the current object
 base_dir attribute. Petal includes occur at RUN TIME. That means that
-there is NO SUPPORT to prevent infinite includes, which is not so much
-of a deal since it happens at run time...
+there is NO SUPPORT to prevent infinite includes, which is usually not
+so much of a deal since it happens at run time...
 
 This should let you build templates which have a recursive behavior
-which can be useful to apply templates to any tree-shaped structure.
-
-Because the include happens at run time, you need to specify any Petal
-options which you might want to use in the template, i.e.
-
-<?petal:include file="include.xml" disk_cache="0" taint="1" ?>
-
-You cannot specify base_dir, which is inherited from the parent template.
+which can be useful to apply templates to any tree-shaped structure (i.e.
+sitemaps, threads, etc).
 
 If you want use XML::Parser to include files, you should make sure that
 the included files are valid XML themselves... FYI XML::Parser chokes on this:
@@ -758,9 +785,11 @@ None.
 =head1 BUGS
 
 Probably plenty at the time of this writing.
-Mail them to me and I'll squash 'em all! Begon jaune a l'attaque!
+Mail them to me and I'll squash 'em all!
+Begon jaune a l'attaque!
 
-Cache seems to fail sometimes on (Apache + Windows + mod_perl) platforms
+Problems have been reported with the petal cache on a
+(Apache + Windows + mod_perl) platform.
 
 
 =head1 AUTHOR
@@ -770,10 +799,16 @@ Copyright 2002 - Jean-Michel Hiver <jhiver@mkdoc.com>
 This module free software and is distributed under the
 same license as Perl itself.
 
-BIG thanks to William McKee <william@knowmad.com> for his useful
-suggestions, patches, and bug reports.
+Many thanks to:
 
-Thanks to Lucas Saud <lucas.marinho@uol.com.br> for the
+William McKee <william@knowmad.com> for his useful suggestions,
+patches, and bug reports.
+
+Sean M. Burke <sburke@cpan.org> for his improvements on the
+HTML::TreeBuilder module which tremendously helped with HTML
+parsing.
+
+Lucas Saud <lucas.marinho@uol.com.br> for the
 Petal::Hash::Encode_HTML he contributed.
 
 
@@ -782,17 +817,6 @@ Petal::Hash::Encode_HTML he contributed.
 Join the Petal mailing list:
 
   http://lists.webarch.co.uk/mailman/listinfo/petal
-
-If you want to dig Petal a bit further:
-
-  perldoc Petal::Hash
-  perldoc Petal::Hash::Var
-  perldoc Petal::Parser::XMLWrapper
-  perldoc Petal::Parser::HTMLWrapper
-  perldoc Petal::Canonicalizer
-  perldoc Petal::CodeGenerator
-  perldoc Petal::Cache::Disk
-  perldoc Petal::Cache::Memory
 
 Have a peek at the TAL / TALES / METAL specs:
 
