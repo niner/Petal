@@ -26,7 +26,7 @@ use warnings;
 use Carp;
 
 
-our $VARIABLE_RE_SIMPLE   = qq |\\\$[A-Za-z][A-Za-z0-9_\\.:\/]+|;
+our $VARIABLE_RE_SIMPLE   = qq |\\\$[A-Za-z_][A-Za-z0-9_\\.:\/]+|;
 our $VARIABLE_RE_BRACKETS = qq |\\\$(?<!\\\\)\\{.*?(?<!\\\\)\\}|;
 our $TOKEN_RE             = "(?:$VARIABLE_RE_SIMPLE|$VARIABLE_RE_BRACKETS)";
 
@@ -36,12 +36,13 @@ sub process
     my $self = shift;
     my $hash = shift;
     my $argument = shift;
-
     my @interpolate = $argument =~ /($TOKEN_RE)/gsm;
     for (@interpolate)
     {
 	my $from = quotemeta ($_);
 	s/^\$//;
+	s/^\{//;
+	s/\}$//;
 	my $to   = $hash->FETCH ($_);
 	$argument =~ s/$from/$to/;
     }

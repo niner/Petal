@@ -126,8 +126,6 @@ sub generate_events_text
     my $data = shift;
     $data =~ s/\&/&amp;/g;
     $data =~ s/\</&lt;/g;
-    $data =~ s/\>/&gt;/g;
-    $data =~ s/\"/&quot;/g;
     $_ = $data;
     $Canonicalizer->Text();    
 }
