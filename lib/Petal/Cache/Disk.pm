@@ -115,9 +115,8 @@ sub compute_key
 {
     my $class = shift;
     my $file = shift;
-    # $file = File::Spec->rel2abs ($file);
     
-    my $key = md5_hex ($file);
+    my $key = md5_hex ($file . ";INPUT=" . $Petal::INPUT . ";OUTPUT=" . $Petal::OUTUT);
     $key = $PREFIX . "_" . $Petal::VERSION . "_" . $key if (defined $PREFIX);
     return $key;
 }
