@@ -1,5 +1,8 @@
 Revision history for Petal.
 
+1.10_04 Tue Sep 30 11:30:36 BST 2003
+	- Fixed infinite recursion on non-existent modifiers
+ 
 1.10_03
 	- Fixed File::Spec use of uninitialized values
 	- Fixed somehow broken Petal::_process_absolutize_pathes() 

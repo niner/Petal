@@ -168,9 +168,9 @@ sub _fetch_mod
 {
     my $self  = shift;
     my $key   = shift;
-    my ($mod) = $key =~ /^(\S+?\:).*/;
+    my ($mod) = $key =~ /^([A-Za-z0-9_-]+?\:).*/;
     defined $mod || return 'var:';
-    return (defined $MODIFIERS->{$mod}) ? $mod : 'var:';
+    return $mod;
 }
 
 
