@@ -221,6 +221,7 @@ you do as follows:
 
   $Petal::Hash::MODIFIERS->{'uppercase:'} = 'MyPetalModifier::UpperCase';
 
+
 =head1 Expression keywords
 
 =head2 XML encoding / structure keyword
@@ -254,7 +255,7 @@ You can use 'fresh' with 'structure' if you need to:
 
 However the reverse does not work:
 
-  <!--? BAD -->
+  <!--? BAD ?-->
   structure fresh string:$foo/bar, ${baz/buz/blah}
 
 
