@@ -1,5 +1,4 @@
 package Petal::Hash;
-use MKDoc::XML::Encode;
 use strict;
 use warnings;
 use Carp;
@@ -139,7 +138,9 @@ sub __FETCH
 	my $res = $self->fetch ($key);
 	if (defined $res and not ref $res)
 	{
-	    $res = MKDoc::XML::Encode->process ($res);
+	    $res =~ s/\&/\&amp;/g;
+	    $res =~ s/\</\&lt;/g;
+	    $res =~ s/\"/\&quot;/g;
 	}
 	return $res;
     }
