@@ -19,4 +19,5 @@ $Petal::OUTPUT = 'XML';
 my $cgi = CGI->new();
 $cgi->param ('mbox', 'foo');
 my $template = new Petal ('method_param.xml');
-print $template->process ( cgi => $cgi);
+my $string = $template->process ( cgi => $cgi);
+($string =~ /foo/) ? print "ok 2\n" : print "not ok 2\n";

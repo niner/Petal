@@ -50,15 +50,15 @@ sub process
     for (my $i=0; $i < @args; $i++)
     {
 	my $arg = $args[$i];
-	if ($arg =~ /$VARIABLE_RE/)
+	if ($arg =~ /^$VARIABLE_RE$/)
 	{
 	    $arg =~ s/\\(.)/$1/gsm;
 	    $args[$i] = $hash->FETCH ($arg);
 	}
 	else
 	{
-	    $arg =~ s/^\"//;
-	    $arg =~ s/\"$//;
+	    $arg =~ s/^(\"|\')//;
+	    $arg =~ s/(\"|\')$//;
 	    $arg =~ s/\\(.)/$1/gsm;
 	    $args[$i] = $arg;
 	}

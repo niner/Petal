@@ -1,5 +1,9 @@
 Revision history for Petal.
 
+0.7
+	- Added test
+	- Fixed method parameters bug
+ 
 0.61 Mon Aug 12 11:50:50 2002
 	- Added test
 	- Fixed 'dummy content' closing tag bug
