@@ -45,6 +45,9 @@ sub process
     $indent++;
     push @code, "    " x $indent . "my \$hash = shift;";
     push @code, "    " x $indent . "my \@res = ();";
+
+    # WLM's changes - predefine @array var
+    push @code, "    " x $indent . "my \@array;";
     
     foreach $token (@{$tokens})
     {
@@ -156,7 +159,7 @@ sub _else
     push @code, ("    " x $indent . "}");
     push @code, ("    " x $indent . "else {");
     $indent++;
-};
+}
 
 
 # $class->_for;
@@ -181,7 +184,8 @@ sub _for
     $tmp =~ s/\..*//;
     $variables->{$tmp} = 1;
     
-    push @code, ("    " x $indent . "my \@array = \@{\$hash->{'$variable'}};");
+    #push @code, ("    " x $indent . "my \@array = \@{\$hash->{'$variable'}};");
+    push @code, ("    " x $indent . "\@array = \@{\$hash->{'$variable'}};");
     push @code, ("    " x $indent . "for (my \$i=0; \$i < \@array; \$i++) {");
     $indent++;
     push @code, ("    " x $indent . "my \$hash = new Petal::Hash (\%{\$hash});");
