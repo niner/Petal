@@ -5,16 +5,23 @@ package Petal::I18N;
 use MKDoc::XML::TreeBuilder;
 use MKDoc::XML::TreePrinter;
 use Petal::Hash::String;
-use MKDoc::XML::Decode;
-use strict;
 use warnings;
-use Carp;
+use strict;
+
+our $Namespace = "http://xml.zope.org/namespaces/i18n";
+our $Prefix    = 'i18n';
+our $Domain    = 'default';
 
 
 sub process
 {
     my $class = shift;
     my $data  = shift;
+
+    local $Namespace = $Namespace;
+    local $Prefix    = $Prefix;
+    local $Domain    = $Domain;
+
     my @nodes = MKDoc::XML::TreeBuilder->process_data ($data);
     for (@nodes) { $class->_process ($_) }
     return MKDoc::XML::TreePrinter->process (@nodes);
@@ -27,13 +34,32 @@ sub _process
     my $tree  = shift;
     return unless (ref $tree);
 
+    local $Prefix = $Prefix;
+    local $Domain = $Domain;
+
+    # process the I18N namespace
+    foreach my $key (keys %{$tree})
+    {
+        my $value = $tree->{$key};
+        if ($value eq $Namespace)
+        {
+            next unless ($key =~ /^xmlns\:/);
+            delete $tree->{$key};
+            $Prefix = $key;
+            $Prefix =~ s/^xmlns\://;
+        }
+    }
+
+    # set the current i18n:domain
+    $Domain = delete $tree->{"$Prefix:domain"} || $Domain;
+
     my $tag  = $tree->{_tag};
     my $attr = { map { /^_/ ? () : ( $_ => $tree->{$_} ) } keys %{$tree} };
     return if ($tag eq '~comment' or $tag eq '~pi' or $tag eq '~declaration');
-    
+
     # replace attributes with their respective translations 
-    $tree->{"i18n:attributes"} && do {
-        my $attributes = $tree->{"i18n:attributes"};
+    $tree->{"$Prefix:attributes"} && do {
+        my $attributes = $tree->{"$Prefix:attributes"};
         $attributes =~ s/\s*;\s*$//;
         $attributes =~ s/^\s*//;
         my @attributes = split /\s+\;\s+/, $attributes;
@@ -56,7 +82,7 @@ sub _process
                 $attribute_name = $attribute;
                 $translate_id = _canonicalize ( $tree->{$attribute_name} );
             }
-           
+
             # the default value if maketext() fails should be the current
             # value of the attribute
             my $default_value = $tree->{$attribute_name};
@@ -74,14 +100,14 @@ sub _process
     };
 
     # replace content with its translation
-    exists $tree->{"i18n:translate"} && do {
+    exists $tree->{"$Prefix:translate"} && do {
         my ($translate_id);
 
-        # if we have i18n:translate="something",
+        # if we have $Domain:translate="something",
         # then the translate_id is 'something'
-        if (defined $tree->{"i18n:translate"} and $tree->{"i18n:translate"} ne '')
+        if (defined $tree->{"$Prefix:translate"} and $tree->{"$Prefix:translate"} ne '')
         {
-            $translate_id = $tree->{"i18n:translate"};
+            $translate_id = $tree->{"$Prefix:translate"};
         }
 
         # otherwise, the translate_id has to be computed
@@ -125,11 +151,9 @@ sub _process
 
     # I know, I know, the I18N namespace processing is a bit broken...
     # It should suffice for now.
-    delete $tree->{"xmlns:i18n"};
-    delete $tree->{"i18n:domain"};
-    delete $tree->{"i18n:attributes"};
-    delete $tree->{"i18n:translate"};
-    delete $tree->{"i18n:name"};
+    delete $tree->{"$Prefix:attributes"};
+    delete $tree->{"$Prefix:translate"};
+    delete $tree->{"$Prefix:name"};
 
     # Do the same i18n thing with child nodes, recursively.
     # for some reason it always makes me think of roller coasters.
@@ -165,7 +189,7 @@ sub _extract_named_nodes
     foreach my $node (@nodes)
     {
         $count++;
-        my $name = $node->{"i18n:name"} || $count;
+        my $name = $node->{"$Prefix:name"} || $count;
         $nodes{$name} = $node;
     }
     
@@ -187,7 +211,7 @@ sub _extract_content_string
         };
         
         $count++;
-        my $name = $node->{"i18n:name"} || $count;
+        my $name = $node->{"$Prefix:name"} || $count;
         push @res, '${' . $name . '}';
     }
     
@@ -285,7 +309,7 @@ At the moment, L<Petal> supports the following constructs:
 
 =over 4
 
-=item xmlns:i18n="http://xml.zope.org/namespaces/i18n" - strips it
+=item xmlns:i18n="http://xml.zope.org/namespaces/i18n"
 
 =item i18n:translate
 
@@ -298,12 +322,6 @@ At the moment, L<Petal> supports the following constructs:
 =back
 
 It does *NOT* (well, not yet) support i18n:source, i18n:target or i18n:data.
-Also note that namespace support is not implemented properly: you cannot change
-the prefix, so declaring
-
-  xmlns:internationalization="http://xml.zope.org/namespaces/i18n"
-
-will not work.
 
 
 =head1 I18N HOWTO

@@ -13,9 +13,9 @@ if ($@) {
 }
 else {
     eval "use Petal::TranslationService::MOFile";
+    eval "use Petal::TranslationService::Gettext";
     $@ and die $@;
 
-    my $lh = Locale::Maketext::Gettext->get_handle();
     my %lexicon = read_mo ('./t/data/gettext/mo/fr.mo');
     ok ( $lexicon{'you-are-user'} );
     ok ( $lexicon{'hello-this-is-a-test'} );
@@ -40,8 +40,49 @@ else {
                      disk_cache => 0,
                      memory_cache => 0,
                      translation_service => $ts );
+    
     $res = $t->process ( user_name => 'becky');
     like ($res, qr/Bonjour, ceci est un test/);
+
+    my $ts_en = Petal::TranslationService::Gettext->new (
+        locale_dir  => './t/data/locale',
+        target_lang => 'en',
+    ); 
+
+    my $ts_es = Petal::TranslationService::Gettext->new (
+        locale_dir  => './t/data/locale',
+        target_lang => 'es',
+    ); 
+
+    my $ts_fr = Petal::TranslationService::Gettext->new (
+        locale_dir  => './t/data/locale',
+        target_lang => 'fr',
+    );
+
+    $t = new Petal ( file => './t/data/i18n-test.html',
+                     disk_cache => 0,
+                     memory_cache => 0 );
+
+    $res = $t->process();
+    like ($res, qr/i18n/);
+    like ($res, qr/Hello, World/);
+
+    $t->{translation_service} = $ts_en;
+    $res = $t->process();
+    unlike ($res, qr/i18n/);
+    like ($res, qr/Hello, World/);
+
+
+    $t->{translation_service} = $ts_fr;
+    $res = $t->process();
+    unlike ($res, qr/i18n/);
+    like ($res, qr/Bonjour, le monde/);
+
+    $t->{translation_service} = $ts_es;
+    $res = $t->process();
+    unlike ($res, qr/i18n/);
+    like ($res, qr/Hola, Mundo/);
+
 }
 
 

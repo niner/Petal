@@ -1,5 +1,8 @@
 package Petal::TranslationService::MOFile;
 use Locale::Maketext::Gettext;
+use strict;
+use warnings;
+
 
 sub new
 {
