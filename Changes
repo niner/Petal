@@ -1,7 +1,9 @@
 Revision history for Petal.
 
 0.64
-	- Fixed _split_expression bug 
+	- Fixed _split_expression critical bug 
+	- Added test
+	- Sorry for the broken 0.63 release :-(
 
 0.63 Mon Sep  2 17:01:23 2002
 	- Fixed petal:repeat documentation bug

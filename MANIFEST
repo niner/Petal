@@ -39,6 +39,7 @@ t/017_Entities.t
 t/018_String_Count.t
 t/019_Autoload.t
 t/020_Comments.t
+t/021_Split_Expression.t
 t/data/autoload.xml
 t/data/comments.xml
 t/data/decl.xml
@@ -60,6 +61,7 @@ t/data/nested_modifiers/test2.xml
 t/data/prefix.xml
 t/data/quoted_params.xml
 t/data/set_modifier/index.xml
+t/data/split_expression.xml
 t/data/string.xml
 t/data/string_count.html
 t/data/style_andamp.html
