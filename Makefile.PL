@@ -5,7 +5,7 @@ WriteMakefile(
     'NAME'		=> 'Petal',
     'VERSION_FROM'	=> 'lib/Petal.pm', # finds $VERSION
     'PREREQ_PM'		=> {
-        'HTML::TreeBuilder' => '3.11',
+        'HTML::TreeBuilder' => '3.12',
         'XML::Parser'       => '2.31',
     },
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005

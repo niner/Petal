@@ -276,7 +276,7 @@ sub _define
                delete $att->{'petal:def'}    ||
                delete $att->{'petal:define'} || return;
     
-    push @Result, map { "<?petal:var name=\":set $_\"?>" } _split_expression ($expr);
+    push @Result, map { "<?petal:var name=\"set: $_\"?>" } _split_expression ($expr);
     return 1;
 }
 

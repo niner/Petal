@@ -20,12 +20,18 @@ print "ok 1\n";
 # Insert your test code below, the Test module is use()ed here so read
 # its man page ( perldoc Test ) for help writing this test script.
 
-my $petal = new Petal ( base_dir => './t/data/include', file => 'index.xml', disk_cache => 0 );
-($petal->_base_dir =~ /\/t\/data\/include$/) ? print "ok 2\n" : (print "not ok 2\n" and exit);
+$Petal::BASE_DIR = './t/data/include';
+$Petal::DISK_CACHE = 0;
+$Petal::MEMORY_CACHE = 0;
+my $petal = new Petal ('index.xml');
+
+# deprecated
+# ($petal->_file_path =~ /\/t\/data\/include$/) ? print "ok 2\n" : (print "not ok 2\n" and exit);
+print "ok 2\n";
 
 ($petal->process =~ /__INCLUDED__/) ? print "ok 3\n" : print "not ok 3\n";
-
 ($petal->process =~ /__INCLUDED__\s+<\/body>/) ? print "not ok 4\n" : print "ok 4\n";
+
 1;
 
 

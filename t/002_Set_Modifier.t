@@ -20,13 +20,11 @@ print "ok 1\n";
 # Insert your test code below, the Test module is use()ed here so read
 # its man page ( perldoc Test ) for help writing this test script.
 
-my $petal = new Petal (
-    base_dir => './t/data/set_modifier',
-    file => 'index.xml',
-    no_memory_cache => 1,
-    no_disk_cache => 1
-   );
+$Petal::BASE_DIR = './t/data/set_modifier';
+$Petal::MEMORY_CACHE = 0;
+$Petal::DISK_CACHE   = 0;
 
+my $petal = new Petal ('index.xml');
 my $res = $petal->process (
     title => '__TAG__',
     settest => 'blah'

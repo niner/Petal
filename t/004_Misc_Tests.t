@@ -8,13 +8,13 @@ use vars qw /$loaded/;
 $loaded = 1;
 print "ok 1\n";
 
+$Petal::BASE_DIR = './t/data/multiple_includes/';
+$Petal::DISK_CACHE = 0;
+$Petal::MEMORY_CACHE = 0;
+$Petal::TAINT = 1;
+
 my $template_file = 'test.tmpl';
-my $template = new Petal ( base_dir => './t/data/multiple_includes/',
-	file => $template_file,
-	disk_cache => 0,
-	memory_cache => 0,
-	taint => 1,
-);
+my $template = new Petal ($template_file);
 
 $Petal::PARSER = 'HTML';
 

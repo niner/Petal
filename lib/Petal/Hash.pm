@@ -114,6 +114,7 @@ our $IMPORTED  = {
 
 
 our $MODIFIERS = {
+    "@"            => \'encode:',
     "uc:"          => 'Petal::Hash::UpperCase',
     "var:"         => 'Petal::Hash::VAR',
     "xml:"         => 'Petal::Hash::Encode_XML',

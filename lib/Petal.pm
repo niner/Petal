@@ -64,76 +64,96 @@ use vars qw /@tokens @nodeStack/;
 
 =head1 GLOBAL VARIABLES
 
-$Petal::PARSER - Currently acceptable values are
+=head2 Description
+
+$PARSER - Currently acceptable values are
 
   'XML'  - Petal will use XML::Parser to parse the template
   'HTML' - Petal will use HTML::TreeBuilder to parse the template
   'ANY'  - Petal will try with XML::Parser first, then with
-           HTML::TreeBuilder
+           HTML::TreeBuilder if XML::Parser fails to parse the source
+           template file.
 
-This variable defaults to 'ANY'
-
-$Petal::TAINT - Default value for the 'taint' option which can
-be passed to the constructor (see below). Defaults to FALSE.
-
-$Petal::BASE_DIR - Default value for the 'base_dir' option which can be
-passed to the constructor (see below). Defaults to undef.
-
-$Petal::DISK_CACHE - Default value for the 'disk_cache' option which can
-be passed to the constructor (see below). Defaults to TRUE.
-
-$Petal::MEMORY_CACHE - Default value for the 'memory_cache' option which
-can be passed to the constructor (see below). Defaults to TRUE.
-
-$Petal::VERSION - Module version.
+This variable defaults to 'XML'.
 
 =cut
-our $TAINT         = 0;
-our $BASE_DIR      = '/';
-our $DISK_CACHE    = 1;
-our $MEMORY_CACHE  = 1;
-our $PARSER        = 'ANY';
-
+our $PARSER = 'XML';
 our $PARSERS = {
     'XML'  => 'Petal::Parser::XMLWrapper',
     'HTML' => 'Petal::Parser::HTMLWrapper',
     'ANY'  => [ 'Petal::Parser::XMLWrapper', 'Petal::Parser::HTMLWrapper' ],
 };
 
-our $VERSION = '0.4';
+
+=pod
+
+$TAINT - If set to TRUE, makes perl taint mode happy. Defaults to FALSE.
+
+=cut
+our $TAINT = undef;
+
+
+=pod
+
+@BASE_DIR - Base directories from which the templates should be retrieved.
+Petal will try to fetch the template file starting from the beginning of the
+list until it finds one base directory which has the requested file.
+
+@BASE_DIR defaults to ('.', '/').
+
+=cut
+our @BASE_DIR = ('.', '/');
+our $BASE_DIR = undef; # for backwards compatibility...
+
+=pod
+
+$DISK_CACHE  - If set to FALSE, Petal will not use the Petal::Disk::Cache module. Defaults to TRUE.
+
+=cut
+our $DISK_CACHE = 1;
+
+
+=pod
+
+$MEMORY_CACHE - If set to FALSE, Petal will not use the Petal::Disk::Memory module. Defaults to TRUE.
+
+=cut
+our $MEMORY_CACHE = 1;
+
+
+# $VERSION is internal, thanks
+our $VERSION = '0.5';
+
+
+=head2 Example
+
+  # at the beginning of your program:
+
+  # try to look up for file in '.', then in '..', then...
+  @Petal::BASE_DIR = ('.', '..', '~/default/templates');
+
+  # vroom!
+  $Petal::DISK_CACHE = 1;
+  $Petal::MEMORY_CACHE = 1;
+
+  # let's use something horrible
+  $Petal::PARSER = 1;
+
+=cut
+
 
 =head1 METHODS
 
-=head2 $class->new ( file => $file, %options );
+=head2 $class->new ( file => $file );
 
-Instanciates a new Petal object. %options can include:
-
-* base_dir - Base directory to find templates. Defaults to
-  $Petal::BASE_DIR or '/' if $Petal::BASE_DIR is not defined.
-
-* disk_cache - Disables the use of the Petal::Cache::Disk module.
-  Defaults to $Petal::DISK_CACHE.
-
-* memory_cache - Disables the use of the Petal::Cache::Memory module.
-  Defaults to $Petal::MEMORY_CACHE.
-
-* taint - If set to TRUE, makes Perl 'Taint Mode' happy. Defaults
-  to $TAINT.
-
-Example:
-
-  my $template = new Petal (
-      file       => 'foo.html',
-      base_dir   => '.',
-      disk_cache => 0,
-      taint => 1,
-  );
+Instanciates a new Petal object.
 
 =cut
 sub new
 {
     my $class = shift;
     $class = ref $class || $class;
+    unshift (@_, 'file') if (@_ == 1);
     return bless { @_ }, $class;
 }
 
@@ -195,23 +215,6 @@ sub _file
 }
 
 
-# $self->_base_dir;
-# -----------------
-#   setter / getter for the 'base_dir' attribute
-sub _base_dir
-{
-    my $self = shift;
-    $self->{base_dir} = shift if (@_);
-    
-    my $base_dir = $self->{base_dir} || $BASE_DIR || '/';
-    $base_dir = File::Spec->canonpath ($base_dir);
-    $base_dir = File::Spec->rel2abs ($base_dir) unless ($base_dir =~ /^\//);
-    
-    $base_dir =~ s/\/$//;
-    return $base_dir;
-}
-
-
 # $self->_file_path;
 # ------------------
 #   computes the file of the absolute path where the template
@@ -219,7 +222,27 @@ sub _base_dir
 sub _file_path
 {
     my $self = shift;
-    return $self->_base_dir . '/' . $self->_file;
+    my $file = $self->_file;
+    
+    if (defined $BASE_DIR)
+    {
+	my $base_dir = File::Spec->canonpath ($BASE_DIR);
+	$base_dir = File::Spec->rel2abs ($base_dir) unless ($base_dir =~ /^\//);
+	$base_dir =~ s/\/$//;
+	my $file_path = $base_dir . '/' . $file;
+	return $file_path if (-e $file_path and -r $file_path);
+    }
+    
+    foreach my $dir (@BASE_DIR)
+    {
+	my $base_dir = File::Spec->canonpath ($dir);
+	$base_dir = File::Spec->rel2abs ($base_dir) unless ($base_dir =~ /^\//);
+	$base_dir =~ s/\/$//;
+	my $file_path = $base_dir . '/' . $file;
+	return $file_path if (-e $file_path and -r $file_path);
+    }
+    
+    confess ("Cannot find $file in @BASE_DIR. (typo? permission problem?)");
 }
 
 
@@ -259,37 +282,15 @@ sub _code_disk_cached
 {
     my $self = shift;
     my $file = $self->_file_path;
-    my $code = ($self->_disk_cache) ? Petal::Cache::Disk->get ($file) : undef;
+    my $code = (defined $DISK_CACHE and $DISK_CACHE) ? Petal::Cache::Disk->get ($file) : undef;
     unless (defined $code)
     {
 	my $data_ref = $self->_file_data_ref;
 	$data_ref  = $self->_canonicalize;
 	$code = Petal::CodeGenerator->process ($data_ref, $self);
-	Petal::Cache::Disk->set ($file, $code) if ($self->_disk_cache);
+	Petal::Cache::Disk->set ($file, $code) if (defined $DISK_CACHE and $DISK_CACHE);
     }
     return $code;
-}
-
-
-# $self->_disk_cache;
-# -------------------
-#   Returns TRUE if this object uses the disk cache, FALSE otherwise
-sub _disk_cache
-{
-    my $self = shift;
-    return $self->{disk_cache} if (defined $self->{disk_cache});
-    return $DISK_CACHE;
-}
-
-
-# $self->_taint;
-# -------------------
-#   Returns TRUE if this object uses the disk cache, FALSE otherwise
-sub _taint
-{
-    my $self = shift;
-    return $self->{taint} if (defined $self->{taint});
-    return $TAINT;
 }
 
 
@@ -301,13 +302,13 @@ sub _code_memory_cached
 {
     my $self = shift;
     my $file = $self->_file_path;
-    my $code = ($self->_memory_cache) ? Petal::Cache::Memory->get ($file) : undef;
+    my $code = (defined $MEMORY_CACHE and $MEMORY_CACHE) ? Petal::Cache::Memory->get ($file) : undef;
     unless (defined $code)
     {
 	my $code_perl = $self->_code_disk_cached;
         my $VAR1 = undef;
 	
-	if ($self->_taint)
+	if ($TAINT)
 	{
 	    # important line, don't remove
 	    ($code_perl) = $code_perl =~ m/^(.+)$/s;
@@ -323,7 +324,7 @@ sub _code_memory_cached
 	    $code = $VAR1;
 	}
 	
-        Petal::Cache::Memory->set ($file, $code) if ($self->_memory_cache);
+        Petal::Cache::Memory->set ($file, $code) if (defined $MEMORY_CACHE and $MEMORY_CACHE);
     }
     return $code;
 }
@@ -347,7 +348,7 @@ sub _memory_cache
 sub _canonicalize
 {
     my $self = shift;
-    my $parser_type = $self->_parser_type;
+    my $parser_type = $PARSER;
     my $parser_module_name = shift || $PARSERS->{$parser_type};
     if (ref $parser_module_name)
     {
@@ -366,16 +367,6 @@ sub _canonicalize
 	my $data_ref = $self->_file_data_ref;
 	return Petal::Canonicalizer->process ($parser, $data_ref);
     }
-}
-
-
-# $self->parser_type;
-# -------------------
-#   Returns the parser type that this object utilizes
-sub _parser_type
-{
-    my $self = shift;
-    return $PARSER;
 }
 
 
@@ -435,11 +426,11 @@ datatypes: scalars, lists, hash, arrays and object.
 
 Is *EXACTLY* the same as writing
 
-  <?petal:var name=":var user.login"?>
+  <?petal:var name="var:user.login"?>
 
 Which internally is turned into
 
-  push @out, $hash->{':var user.login'};
+  push @out, $hash->{'var:user.login'};
 
 $hash is an highly magical hash which is tied to the Petal::Hash class,
 and uses the ':var' information to pass the expression 'user.login' to
