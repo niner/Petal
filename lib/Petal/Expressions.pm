@@ -221,6 +221,42 @@ you do as follows:
 
   $Petal::Hash::MODIFIERS->{'uppercase:'} = 'MyPetalModifier::UpperCase';
 
+=head1 Expression keywords
+
+=head2 XML encoding / structure keyword
+
+By default Petal will encode &, <, > and " to &amp; &lt;, &gt and &quot;
+respectively. However sometimes you might want to display an expression which
+is already encoded, in which case you can use the 'structure' keyword.
+
+  structure my/encoded/variable
+
+=head2 Petal::Hash caching and fresh keyword 
+
+Petal caches the expressions which it resolves, i.e. if you write the
+expression:
+
+  string:$foo/bar, ${baz/buz/blah}
+
+Petal::Hash will compute it once, and then for subsequent accesses to that
+expression returns always the same value. This is almost never a problem, even
+for loops because a new Petal::Hash object is used for each iteration in order
+to support proper scoping.
+
+However, in some rare cases you might not want to have that behavior, in which
+case you need to prefix your expression with the 'fresh' keyword, i.e. 
+
+  fresh string:$foo/bar, ${baz/buz/blah}
+
+You can use 'fresh' with 'structure' if you need to:
+
+  fresh structure string:$foo/bar, ${baz/buz/blah}
+
+However the reverse does not work:
+
+  <!--? BAD -->
+  structure fresh string:$foo/bar, ${baz/buz/blah}
+
 
 =head1 AUTHOR
 
