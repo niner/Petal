@@ -3,7 +3,7 @@ use warnings;
 use lib ('lib');
 use Test;
 
-BEGIN {print "1..5\n";}
+BEGIN {print "1..17\n";}
 END {print "not ok 1\n" unless $loaded;}
 use Petal;
 $loaded = 1;
@@ -67,6 +67,74 @@ my $string;
     $loaded++;
     $string = ${$template->_canonicalize()};
     ($string !~ /\"\"/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+}
+
+
+{
+    $Petal::INPUT = "XML";
+    $Petal::OUTPUT = "XML";
+    $template = new Petal ('inline_vars.xml');
+    $string = ${$template->_canonicalize()};
+    
+    $loaded++;
+    ($string =~ /\&quot\;/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    
+    $loaded++;
+    ($string =~ /\<\?/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    
+    $loaded++;
+    ($string =~ /\?\>/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+}
+
+
+{
+    $Petal::INPUT = "XML";
+    $Petal::OUTPUT = "XHTML";
+    $template = new Petal ('inline_vars.xml');
+    $string = ${$template->_canonicalize()};
+
+    $loaded++;
+    ($string =~ /\&quot\;/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    
+    $loaded++;
+    ($string =~ /\<\?/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    
+    $loaded++;
+    ($string =~ /\?\>/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+}
+
+
+{
+    $Petal::INPUT = "XHTML";
+    $Petal::OUTPUT = "XML";
+    $template = new Petal ('inline_vars.xml');
+    $string = ${$template->_canonicalize()};
+
+    $loaded++;
+    ($string =~ /\&quot\;/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    
+    $loaded++;
+    ($string =~ /\<\?/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    
+    $loaded++;
+    ($string =~ /\?\>/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+}
+
+
+{
+    $Petal::INPUT = "XHTML";
+    $Petal::OUTPUT = "XHTML";
+    $template = new Petal ('inline_vars.xml');
+    $string = ${$template->_canonicalize()};
+
+    $loaded++;
+    ($string =~ /\&quot\;/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    
+    $loaded++;
+    ($string =~ /\<\?/) ? print "ok $loaded\n" : print "not ok $loaded\n";
+    
+    $loaded++;
+    ($string =~ /\?\>/) ? print "ok $loaded\n" : print "not ok $loaded\n";
 }
 
 

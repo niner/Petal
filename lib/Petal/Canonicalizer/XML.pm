@@ -197,11 +197,19 @@ sub StartTag
 	    }
 	    else
 	    {
-		$value =~ s/\&/&amp;/g;
-		$value =~ s/\</&lt;/g;
-		$value =~ s/\>/&gt;/g;
-		$value =~ s/\"/&quot;/g;
-		push @att_str, $key . '=' . "\"$value\"";
+		my $tokens = Petal::CodeGenerator->_tokenize (\$value);
+		my @res = map {
+		    ($_ =~ /$Petal::CodeGenerator::PI_RE/) ?
+		        $_ :
+			do {
+			    $_ =~ s/\&/&amp;/g;
+			    $_ =~ s/\</&lt;/g;
+			    $_ =~ s/\>/&gt;/g;
+			    $_ =~ s/\"/&quot;/g;
+			    $_;
+			};
+		} @{$tokens};
+		push @att_str, $key . '="' . (join '', @res) . '"';
 	    }
 	}
 	

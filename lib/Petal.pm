@@ -131,7 +131,7 @@ our $BASE_DIR = undef; # for backwards compatibility...
 
 =pod
 
-$DISK_CACHE  - If set to FALSE, Petal will not use the Petal::Disk::Cache module. Defaults to TRUE.
+$DISK_CACHE  - If set to FALSE, Petal will not use the Petal::Cache::Disk module. Defaults to TRUE.
 
 =cut
 our $DISK_CACHE = 1;
@@ -139,7 +139,7 @@ our $DISK_CACHE = 1;
 
 =pod
 
-$MEMORY_CACHE - If set to FALSE, Petal will not use the Petal::Disk::Memory module. Defaults to TRUE.
+$MEMORY_CACHE - If set to FALSE, Petal will not use the Petal::Cache::Memory module. Defaults to TRUE.
 
 =cut
 our $MEMORY_CACHE = 1;
@@ -154,7 +154,17 @@ This is to prevent from accidental infinite recursions.
 our $MAX_INCLUDES = 30;
 our $CURRENT_INCLUDES = 0;
 
-our $VERSION = '0.84';
+our $VERSION = '0.85';
+
+
+=pod
+
+$CodeGenerator - The CodeGenerator class backend to use. Change this only if you
+know what you're doing.
+
+=cut
+
+our $CodeGenerator = 'Petal::CodeGenerator';
 
 
 # this is for XML namespace support. Can't touch this :-)
@@ -434,17 +444,6 @@ sub _file_data_ref
 
     # kill template comments
     $data =~ s/\<!--\?.*?\-->//gsm;
-    
-    ## TOCHECK
-    # if there are any <?petal:xxx ... > instead of
-    # <?petal:xxx ... ?>, issuing a warning would be _good_
-    my @decl =  $data =~ /(\<\?petal\:.*?>)/gsm;
-    for (@decl)
-    {
-	next if /\?\>$/;
-	croak "Bad petal statement: $_ (missing question mark)";
-    }
-    
     return \$data;
 }
 
@@ -462,7 +461,7 @@ sub _code_disk_cached
     {
 	my $data_ref = $self->_file_data_ref;
 	$data_ref  = $self->_canonicalize;
-	$code = Petal::CodeGenerator->process ($data_ref, $self);
+	$code = $CodeGenerator->process ($data_ref, $self);
 	Petal::Cache::Disk->set ($file, $code) if (defined $DISK_CACHE and $DISK_CACHE);
     }
     return $code;

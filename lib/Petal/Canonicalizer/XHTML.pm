@@ -86,7 +86,7 @@ sub StartTag
     unless ($class->_is_inside_content_or_replace())
     {
 	# for every attribute which is not a petal: attribute,
-	# we need to convert $variable into <?petal:var name="variable"?>
+	# we need to convert $variable into <?var name="variable"?>
 	foreach my $key (keys %{$att})
 	{
 	    next if ($key =~ /^$petal:/);
@@ -121,11 +121,19 @@ sub StartTag
 	    }
 	    else
 	    {
-		$value =~ s/\&/&amp;/g;
-		$value =~ s/\</&lt;/g;
-		$value =~ s/\>/&gt;/g;
-		$value =~ s/\"/&quot;/g;
-		push @att_str, $key . '=' . "\"$value\"";
+		my $tokens = Petal::CodeGenerator->_tokenize (\$value);
+		my @res = map {
+		    ($_ =~ /$Petal::CodeGenerator::PI_RE/) ?
+		        $_ :
+			do {
+			    $_ =~ s/\&/&amp;/g;
+			    $_ =~ s/\</&lt;/g;
+			    $_ =~ s/\>/&gt;/g;
+			    $_ =~ s/\"/&quot;/g;
+			    $_;
+			};
+		} @{$tokens};
+		push @att_str, $key . '="' . (join '', @res) . '"';
 	    }
 	}
 	my $att_str = join " ", @att_str;
