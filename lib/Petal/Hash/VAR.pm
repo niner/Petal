@@ -46,7 +46,7 @@ sub process
     my $path   = shift (@tokens) or confess "bad syntax for $class: $argument (\$path)";
     my @path = split /\/|\./, $path;    
     my @args = @tokens;
-    
+
     # replace variable names by their value
     for (my $i=0; $i < @args; $i++)
     {
@@ -65,15 +65,15 @@ sub process
 	}
     }
     
+    
     my $current = $hash;
     while (@path)
     {
 	my $next = shift (@path);
-	
 	if (ref $current eq 'HASH' or ref $current eq 'Petal::Hash')
 	{
 	    confess "Cannot access $argument"
-	        if (scalar @args);
+	        if (scalar @args and not scalar @path);
 	    
 	    $current = $current->{$next};
 	}
@@ -85,7 +85,7 @@ sub process
 	        unless ($next =~ /^\d+$/);
 	    
 	    confess "Cannot access array with parameters ($argument)"
-	        if (scalar @args);
+	        if (scalar @args and not scalar @path);
 	    
 	    $current = $current->[$next];
 	}
@@ -108,7 +108,7 @@ sub process
 		    $current = $current->$next (@args);
 		}
 		else
-		{
+		{		    
 		    confess "Cannot invoke $next on $argument with @path (not a method)"
 			if (@path == 0 and scalar @args > 0);
 		    
@@ -134,7 +134,7 @@ sub process
 	# let's croak and return
 	else
 	{
-	    my $warnstr = "Cannot find value for $path: $next cannot be retrieved\n";
+	    my $warnstr = "Cannot find value for $argument: $next cannot be retrieved\n";
 	    $warnstr .= "(current value was ";
 	    $warnstr .= (defined $current) ? "'$current'" : 'undef';
 	    $warnstr .= ")";

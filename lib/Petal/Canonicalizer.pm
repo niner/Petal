@@ -164,7 +164,7 @@ sub StartTag
 	{
 	    next if ($key =~ /^petal:/);
 	    my $text = $att->{$key};
-	    my @vars = $text =~ /((?<!\\)\$(?:\w|\.|\:)+)/g;
+	    my @vars = $text =~ /((?<!\\)\$(?:\w|\.|\:|\/)+)/g;
 	    my %vars = map { $_ => 1 } @vars;
 	    @vars = keys %vars;
 	    foreach my $var (@vars)
@@ -220,7 +220,7 @@ sub Text
 {
     return if (_is_inside_content_or_replace());
     my $text = $_;
-    my @vars = $text =~ /((?<!\\)\$(?:\w|\.|\:)+)/g;
+    my @vars = $text =~ /((?<!\\)\$(?:\w|\.|\:|\/)+)/g;
     my %vars = map { $_ => 1 } @vars;
     @vars = keys %vars;
     foreach my $var (@vars)
