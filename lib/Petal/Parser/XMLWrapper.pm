@@ -36,8 +36,8 @@ sub process
     $data_ref = (ref $data_ref) ? $data_ref : \$data_ref;
     
     my $parser = new XML::Parser (
-	Style => 'Stream',
-	Pkg   => ref $self,
+	Style    => 'Stream',
+	Pkg      => ref $self,
        );
     
     $parser->parse ($$data_ref);
@@ -46,7 +46,14 @@ sub process
 
 sub StartTag      { $Canonicalizer->StartTag() }
 sub EndTag        { $Canonicalizer->EndTag()   }
-sub Text          { $Canonicalizer->Text()     }
+sub Text
+{
+    s/\&/\&amp;/g;
+    s/\</\&lt\;/g;
+    s/\>/\&gt\;/g;
+    s/\"/\&quot\;/g;
+    $Canonicalizer->Text();
+}
 
 
 1;

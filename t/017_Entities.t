@@ -2,7 +2,7 @@ package main;
 use lib ('lib');
 use Test;
 
-BEGIN {print "1..3\n";}
+BEGIN {print "1..2\n";}
 END {print "not ok 1\n" unless $loaded;}
 use Petal;
 $loaded = 1;
@@ -17,4 +17,5 @@ $Petal::OUTPUT = 'XML';
 
 my $template = new Petal ('entities.xml');
 my $string = $template->process;
+($string =~ /\&lt\;/) ? print "ok 2\n" : print "not ok 2\n";
 print $string;
