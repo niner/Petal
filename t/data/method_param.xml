@@ -5,4 +5,5 @@
   ${cgi/param --b 'foo'}
   ${cgi/param --ta 'foo'}
   ${cgi/self_url}
+  ${foo/bar/baz --t -hello}
 </xml>

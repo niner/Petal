@@ -95,7 +95,8 @@ sub process
 	    {
 		if ($current->can ($next) or $current->can ('AUTOLOAD'))
 		{
-		    $current = $current->$next (@args);
+		    if (scalar @path) { $current = $current->$next ()      }
+		    else              { $current = $current->$next (@args) }
 		}
 		else
 		{		    
