@@ -204,6 +204,7 @@ sub _tokenize
 {
     my $self = shift;
     my $data_ref = shift;
+    
     my @tags  = $$data_ref =~ /(<\?petal:.*?\?>)/gs;
     my @split = split /<\?petal:.*?\?>/s, $$data_ref;
     
@@ -213,7 +214,7 @@ sub _tokenize
         push @{$tokens}, shift (@split);
         push @{$tokens}, shift (@tags) if (@tags);
     }
-    
+    push @{$tokens}, (@tags);
     return $tokens;
 }
 

@@ -14,7 +14,6 @@ Jean-Michel Hiver <jhiver@mkdoc.com>
 
 This module is redistributed under the same license as Perl itself.
 
-
 =head1 SEE ALSO
 
 The template hash module:

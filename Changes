@@ -4,10 +4,11 @@ Revision history for Petal.
 	- Added tests
 	- Modifiers are now 'modifier:' rather than ':modifier'
 	- Modifiers are now stackable (i.e. foo:bar:baz/buz)
-        - Implemented TALES '/' (alias for '.')
+        - Implemented TALES-like slash '/' as an alias for dot '.'
 	- Rewrote Petal::Parser::HTMLWrapper using newest HTML::TreeBuilder
 	- Fixed more include bugs
 	- Amended documentation
+	- Implemented string: modifier
 
 0.4 Thu Jul 25 12:08:03 2002
 	- Added Petal::Hash::Encode_HTML contributed mod

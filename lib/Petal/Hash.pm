@@ -102,19 +102,21 @@ use Petal::Hash::FALSE;
 use Petal::Hash::Encode_XML;
 use Petal::Hash::Encode_HTML;
 use Petal::Hash::UpperCase;
+use Petal::Hash::String;
+
 
 our $IMPORTED  = {
-    'Petal::Hash::VAR' => 1,
-    'Petal::Hash::Encode_XML' => 1,
-    'Petal::Hash::TRUE' => 1,
-    'Petal::Hash::FALSE' => 1,
-    'Petal::Hash::SET' => 1,
+    'Petal::Hash::VAR'         => 1,
+    'Petal::Hash::Encode_XML'  => 1,
+    'Petal::Hash::TRUE'        => 1,
+    'Petal::Hash::FALSE'       => 1,
+    'Petal::Hash::SET'         => 1,
     'Petal::Hash::Encode_HTML' => 1,
+    'Petal::Hash::String'      => 1,
 };
 
 
 our $MODIFIERS = {
-    "@"            => \'encode:',
     "uc:"          => 'Petal::Hash::UpperCase',
     "var:"         => 'Petal::Hash::VAR',
     "xml:"         => 'Petal::Hash::Encode_XML',
@@ -126,6 +128,7 @@ our $MODIFIERS = {
     "define:"      => \'define:',
     "html:"        => 'Petal::Hash::Encode_HTML',
     "encode_html:" => \'html:',
+    "string:"      => 'Petal::Hash::String',
 };
 
 

@@ -1,4 +1,4 @@
-Petal version 0.3
+Petal version 0.5
 =================
 
 Petal stands for "Perl Template Attribute Language". It is inspired from the
@@ -34,10 +34,10 @@ This module requires these other modules and libraries:
   HTML::TreeBuilder
   XML::Parser
 
+
 COPYRIGHT AND LICENCE
 
 This module free software and is distributed under the
 same license as Perl itself.
 
 Copyright (C) 2002 Jean-Michel Hiver <jhiver@mkdoc.com> 
-
