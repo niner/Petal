@@ -1,5 +1,9 @@
 Revision history for Petal.
 
+0.73
+	- Implemented TIED hash caching
+	- Implemented 'fresh' keyword for clearing cache when necessary
+
 0.72 Fri Sep 20 12:44:43 2002
 	- Fixed a variable interpolation bug ($align - $align_opposite)
 	- Fixed another loop scoping bug

@@ -165,7 +165,7 @@ sub new
     my %hash = ();
     tie %hash, $class;
     %hash = @_;
-    
+    $hash{__petal_hash_cache__} = {};
     return \%hash;
 }
 
@@ -188,7 +188,19 @@ sub FETCH
 {
     my $self = shift;
     my $key  = shift;
-    my $no_encode = $key =~ s/^\s*structure\s*//;
+    
+    my $fresh = $key =~ s/^\s*fresh\s+//;
+    delete $self->{__petal_hash_cache__}->{$key} if ($fresh);
+    $self->{__petal_hash_cache__}->{$key} ||= do { $self->__FETCH ($key) };
+    return $self->{__petal_hash_cache__}->{$key};
+}
+
+
+sub __FETCH
+{
+    my $self = shift;
+    my $key  = shift;
+    my $no_encode = $key =~ s/^\s*structure\s+//;
     if (defined $no_encode and $no_encode)
     {
 	return $self->fetch ($key);
