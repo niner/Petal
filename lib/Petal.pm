@@ -382,15 +382,15 @@ as follows:
 
 =head2 Template comments
 
-  <!--? This will not be in the output -->
+  <!--? This will not be in the output ?-->
 
 
 =head2 "Simple" syntax (Variable Interpolation)
 
   $my_variable
-  $my_object.my_method
-  $my_array.2
-  $my_hash.some_key
+  $my_object/my_method
+  $my_array/2
+  $my_hash/some_key
 
 
 =head2 "TAL-like" syntax, i.e.
@@ -422,24 +422,24 @@ datatypes: scalars, lists, hash, arrays and object.
 
 =head2 How it works
 
-  <?petal:var name="user.login"?>
+  <?petal:var name="user/login"?>
 
 Is *EXACTLY* the same as writing
 
-  <?petal:var name="var:user.login"?>
+  <?petal:var name="var:user/login"?>
 
 Which internally is turned into
 
-  push @out, $hash->{'var:user.login'};
+  push @out, $hash->{'var:user/login'};
 
 $hash is an highly magical hash which is tied to the Petal::Hash class,
-and uses the ':var' information to pass the expression 'user.login' to
+and uses the ':var' information to pass the expression 'user/login' to
 the Petal::Hash::VAR module.
 
 The Petal::Hash::VAR module has access to $hash, and has the
-responsibility to resolve the user.login expression. So if
+responsibility to resolve the user/login expression. So if
 $hash->{'user'} is an object and 'login' is a method on this object,
-'user.login' will do the 'Right Thing' and return
+'user/login' will do the 'Right Thing' and return
 $hash->{user}->login();
 
 
@@ -448,14 +448,14 @@ $hash->{user}->login();
 Using a uniform, simple syntax you can access:
 
   * scalars: <?petal var="my_scalar"?>
-  * hashes: <?petal var="my_hash.key"?>
-  * arrays: <?petal var="my_array.12"?>
-  * objects methods: <?petal var="my_object.my_method" ?>
+  * hashes: <?petal var="my_hash/key"?>
+  * arrays: <?petal var="my_array/12"?>
+  * objects methods: <?petal var="my_object/my_method" ?>
 
 Note that you can also pass arguments to object methods.  Let's say that
 you have an object 'math', you could do:
 
-  2+2 = <?petal:var name="math.add 2 2"?>
+  2+2 = <?petal:var name="math/add '2' '2'"?>
 
 Even more powerful, let's say that you have:
 
@@ -463,7 +463,7 @@ Even more powerful, let's say that you have:
 
 You could write the following:
 
-  $number+$number = <?petal:var name="math.add $number $number"?>
+  $number+$number = <?petal:var name="math/add number number"?>
 
 Which would output:
 
@@ -475,29 +475,30 @@ Petal::Hash and Petal::Hash::VAR modules.
 
 =head2 Expression modifiers
 
-We have seen that :var maps to Petal::Hash::VAR, which evaluates
+We have seen that var: maps to Petal::Hash::VAR, which evaluates
 expressions.
 
 There are other modifiers, which map to the following modules:
 
-  :xml    => Petal::Hash::Encode_XML
-  :encode => (alias for :xml)
-  :true   => Petal::Hash::TRUE
-  :false  => Petal::Hash::FALSE
-  :not    => (alias for :false)
-  :set    => Petal::Hash::SET
+  xml:         => Petal::Hash::Encode_XML
+  encode:      => (alias for :xml)
+  encode_html: => Petal::Hash::Encode_HTML
+  true:        => Petal::Hash::TRUE
+  false:       => Petal::Hash::FALSE
+  not:         => (alias for :false)
+  set:         => Petal::Hash::SET
 
 You can write your own modifiers easily by just subclassing
 Petal::Hash::VAR.  Look at the Petal::Hash POD for more information on
 how to do this.
 
 
-=head3 :xml / :encode
+=head3 xml: / encode:
 
 These will let you output a variable, but encodes the XML entities.  Let
 us say that:
 
-  $user.name
+  $user/name
 
 Produces:
 
@@ -505,39 +506,39 @@ Produces:
 
 Which is invalid XML. You could write:
 
-  $encode:user.name
+  $encode:user/name
 
 Or
 
-  <?petal:var name=":encode user.name"?>
+  <?petal:var name="encode: user/name"?>
 
 Or
 
-  <span petal:replace=":encode user.name">User Name Here</span>
+  <span petal:replace="encode: user/name">User Name Here</span>
 
 
-=head3 :true
+=head3 true:
 
 Mainly to be used with expressions such as
 
-  <?petal:if name=":true user.has_access"?>
+  <?petal:if name="true: user/has_access"?>
 
 
-=head3 :false
+=head3 false:
 
 I'm pretty sure you can work it out by yourself:-)
 
 
-=head3 :set
+=head3 set:
 
 This one is the wierdest modifier. It will return __NOTHING__ no matter
 what, but will set the result into the hash. For instance:
 
-  <?petal:var name="foo.bar"?>
+  <?petal:var name="foo/bar"?>
 
 Could be rewritten:
 
-  <?petal:var name=":set newVariableNameForBar foo.bar"?>
+  <?petal:var name="set: newVariableNameForBar foo/bar"?>
   <?petal:var name="newVariableNameForBar"?>
 
 This is mainly intended so that if you have a.very.very.long.expression,
@@ -560,27 +561,27 @@ points:
 
 =head2 define
 
-  <!-- sets document.title to 'title' -->
-  <span petal:define="title document.title">
+  <!-- sets document/title to 'title' -->
+  <span petal:define="title document/title">
 
 
 =head2 condition (ifs)
 
-  <span petal:condition="user.is_authenticated">
+  <span petal:condition="user/is_authenticated">
     Yo, authenticated!
   </span>
 
 
 =head2 repeat (loops)
 
-  <li petal:repeat="user system.user_list">$xml:user.real_name</li>
+  <li petal:repeat="user system/user_list">$xml:user/real_name</li>
 
 
 =head2 attributes
 
   <a href="http://www.gianthard.com"
      lang="en-gb"
-     petal:attributes="href document.href_relative; lang document.lang">
+     petal:attributes="href document/href_relative; lang document/lang">
 
 
 =head2 interpolation
@@ -597,11 +598,11 @@ whole span tag.
 
 You can do things like:
 
-  <p petal:define="children document.children"
+  <p petal:define="children document/children"
      petal:condition="children"
      petal:repeat="child children"
-     petal:attributes="lang child.lang; xml:lang child.lang"
-     petal:content="child.data">Some Dummy Content</p>
+     petal:attributes="lang child/lang; xml:lang child/lang"
+     petal:content="child/data">Some Dummy Content</p>
 
 Given the fact that XML attributes are not ordered, withing the same tag
 statements will be executed in the following order: define, condition,
@@ -626,34 +627,34 @@ defaults):
 
 It's the simplest way to insert values in the template:
 
-  Hello, $user.login
-  Your real name is $xml:user.real_name!
+  Hello, $user/login
+  Your real name is $xml:user/real_name!
 
 If $user is a hash reference, then the engine will fetch the value
 matching the 'login' key. If it's an object, it will try to see if there
 is a $user->login method, otherwise it will try to fetch $user->{login}. 
 
-The xml:user.real_name tells the template engine to XML encode the
+The xml:user/real_name tells the template engine to XML encode the
 fetched value, i.e. 'John Smith & Son' will be converted to 'John Smith
 &amp; Son'.
 
-Alternatively, you could have used $encode:user.real_name to get the
+Alternatively, you could have used $encode:user/real_name to get the
 same behavior. This is it, you cannot do anything more complex than
-variable interpolation with that syntax, so that's half a syntax ;-)
+variable interpolation with that syntax.
 
 
 =head1 XML Declaration Syntax
 
 =head2 Variables and Modifiers
 
-  <?petal:var name="document.title"?>
+  <?petal:var name="document/title"?>
 
 =head3 If / Else constructs
 
 Usual stuff:
 
-  <?petal:if name="user.is_birthay"?>
-    Happy Birthday, $xml:user.real_name!
+  <?petal:if name="user/is_birthay"?>
+    Happy Birthday, $xml:user/real_name!
   <?petal:else?>
     What?! It's not your birthday?
     Maybe tomorrow...
@@ -662,11 +663,11 @@ Usual stuff:
 You can use petal:condition instead of petal:if, and indeed you can use
 modifiers:
 
-  <?petal:condition name=":false user.is_birthay"?>
+  <?petal:condition name=":false user/is_birthay"?>
     What?! It's not your birthday?
     Maybe tomorrow...
   <?petal:else?>
-    Happy Birthday, $xml:user.real_name!
+    Happy Birthday, $xml:user/real_name!
   <?petal:end?>
 
 Not much else to say!
@@ -680,8 +681,8 @@ surprise:
 
   <h1>Listing of user logins</h1>
   <ul>
-    <?petal:repeat name="system.list_users" as="user"?>
-      <li>$user.login : $user.real_name</li>
+    <?petal:repeat name="system/list_users" as="user"?>
+      <li>$user/login : $user/real_name</li>
     <?petal:end?>
   </ul>
   
@@ -748,19 +749,21 @@ None.
 
 =head1 BUGS
 
-Probably plenty at the time of this writing. Mail them to me and I'll
-squash 'em all! Begon jaune a l'attaque!
+Probably plenty at the time of this writing.
+Mail them to me and I'll squash 'em all! Begon jaune a l'attaque!
+
+Cache seems to fail sometimes on (Apache + Windows + mod_perl) platforms
 
 
 =head1 AUTHOR
 
-Jean-Michel Hiver <jhiver@mkdoc.com>
+Copyright 2002 - Jean-Michel Hiver <jhiver@mkdoc.com> 
 
 This module free software and is distributed under the
 same license as Perl itself.
 
-Thanks to William McKee <william@knowmad.com> for his useful suggestions,
-patches, and bug reports.
+BIG thanks to William McKee <william@knowmad.com> for his useful
+suggestions, patches, and bug reports.
 
 Thanks to Lucas Saud <lucas.marinho@uol.com.br> for the
 Petal::Hash::Encode_HTML he contributed.
@@ -769,15 +772,26 @@ Petal::Hash::Encode_HTML he contributed.
 =head1 SEE ALSO
 
 Join the Petal mailing list:
+
   http://lists.webarch.co.uk/mailman/listinfo/petal
 
-  L<Petal::Hash>
-  L<Petal::Hash::Var>
-  L<Petal::Parser::XMLWrapper>
-  L<Petal::Parser::HTMLWrapper>
-  L<Petal::Canonicalizer>
-  L<Petal::CodeGenerator>
-  L<Petal::Cache::Disk>
-  L<Petal::Cache::Memory>
+If you want to dig Petal a bit further:
+
+  perldoc Petal::Hash
+  perldoc Petal::Hash::Var
+  perldoc Petal::Parser::XMLWrapper
+  perldoc Petal::Parser::HTMLWrapper
+  perldoc Petal::Canonicalizer
+  perldoc Petal::CodeGenerator
+  perldoc Petal::Cache::Disk
+  perldoc Petal::Cache::Memory
+
+Have a peek at the TAL / TALES / METAL specs:
+
+  http://www.zope.org/Wikis/DevSite/Projects/ZPT/TAL
+  http://www.zope.org/Wikis/DevSite/Projects/ZPT/TALES
+  http://www.zope.org/Wikis/DevSite/Projects/ZPT/METAL
+
+Any extra questions? jhiver@mkdoc.com
 
 =cut
