@@ -15,6 +15,7 @@ use Petal;
 
 $|=1;
 
+$Petal::DEBUG_DUMP   = 0;
 $Petal::BASE_DIR     = './t/data/';
 $Petal::DISK_CACHE   = 0;
 $Petal::MEMORY_CACHE = 0;

@@ -196,11 +196,17 @@ sub _include
     my $lang  = $petal_object->language();
     if (defined $lang and $lang)
     {
-        $class->add_code($class->_add_res("Petal->new (file => '$path', lang => '$lang')->process (\$hash->new());"));
+	my @l = ();
+	push @l, $class->_add_res ("eval { Petal->new (file => '$path', lang => '$lang')->process (\$hash->new()) };");
+	push @l, $class->_add_res ("\$\@ if (defined \$\@ and \$\@);");
+	for (@l) { $class->add_code ($_) }
     }
     else
     {
-        $class->add_code($class->_add_res("Petal->new ('$path')->process (\$hash->new());"));
+	my @l = ();
+        push @l, $class->_add_res ("eval { Petal->new ('$path')->process (\$hash->new()) };");
+	push @l, $class->_add_res ("\$\@ if (defined \$\@ and \$\@);");
+	for (@l) { $class->add_code ($_) }
     }
 }
 

@@ -1,5 +1,7 @@
 Revision history for Petal.
 
+	- Changed the include mechanism to make faulty include non fatal
+	- Lengthy debug info is now written in tmp directory
 	- Patched with Fergal Daly's require.patch
 	- Refactored very slightly CodeGenerator.pm
 

@@ -18,11 +18,21 @@ use strict;
 use warnings;
 use Carp;
 use Safe;
+use Data::Dumper;
 
 
 # these are used as local variables when the XML::Parser
 # is crunching templates...
 use vars qw /@tokens @nodeStack/;
+
+
+# Encode / Decode info...
+our $DECODE_CHARSET = undef;
+our $ENCODE_CHARSET = undef;
+
+
+# Prints as much info as possible when this is enabled.
+our $DEBUG_DUMP = 1;
 
 
 # Warn about uninitialised values in the template?
@@ -297,7 +307,7 @@ sub process
     my $res = undef;
     eval { $res = $coderef->($hash) };
     $self->_handle_error ($@) if (defined $@ and $@);
-
+    
     return $res;
 }
 
@@ -306,8 +316,43 @@ sub _handle_error
 {
     my $self = shift;
     my $error = shift;
-    confess $error . "\n===\n\n" . $self->_code_with_line_numbers;
+    
+    $Petal::DEBUG_DUMP and do {
+	my $tmpdir  = File::Spec->tmpdir();
+	my $tmpfile = $$ . '.' . time() . '.' . ( join '', map { chr (ord ('a') + int (rand (26))) } 1..10 );
+	my $debug   = "$tmpdir/petal_debug.$tmpfile";
+	
+	open ERROR, ">$debug" || die "Cannot write-open \">$debug\"";
+	
+	print ERROR "Error: $error\n";
+	ref $error and do {
+	    print ERROR "=============\n";
+	};
+	print "\n";
+	
+	print ERROR "Template perl code dump:\n";
+	print ERROR "========================\n";
+	my $dump = $self->_code_with_line_numbers();
+	($dump) ? print ERROR $dump : print ERROR "(no dump available)";
+	
+	print ERROR "Petal object dump:\n";
+	print ERROR "==================\n";
+	print ERROR Dumper ($self);
+	print ERROR "\n\n";
+	
+	print ERROR "Stack trace:\n";
+	print ERROR "============\n";
+	print ERROR Carp::longmess();
+	print ERROR "\n\n";
+	
+	die "[PETAL ERROR] $error. Debug info written in $debug.";
+    };
+    
+    not $Petal::DEBUG_DUMP and do {
+	die "[PETAL ERROR] $error. No debug info written.";
+    };
 }
+
 
 # $self->code_with_line_numbers;
 # ------------------------------
@@ -380,13 +425,23 @@ sub _file_path
 #   reference to that variable
 sub _file_data_ref
 {
-    my $self = shift;
+    my $self      = shift;
     my $file_path = $self->_file_path;
-    open FP, "<$file_path" or
-        confess "Cannot read-open $file_path";
-    my $data = join '', <FP>;
-    close FP;
-
+    my $data      = undef;
+    
+    if ($Petal::DECODE_CHARSET)
+    {
+	open FP, "<:$Petal::DECODE_CHARSET", $file_path || die 'Cannot read-open $file_path';
+	$data = join '', <FP>;
+	close FP;
+    }
+    else
+    {
+	open FP, "<$file_path" || die 'Cannot read-open $file_path';
+	$data = join '', <FP>;
+	close FP;
+    }
+    
     # kill template comments
     $data =~ s/\<!--\?.*?\-->//gsm;
     return \$data;
