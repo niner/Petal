@@ -39,7 +39,7 @@ use vars qw /@tokens @nodeStack/;
 
 
 # HTML errors?
-our $HTML_ERRORS = 1;
+our $HTML_ERRORS = undef;
 
 
 # Encode / Decode info...

@@ -122,6 +122,25 @@ sub get
 }
 
 
+sub get_encoded
+{
+    my $self = shift;
+    my $key  = shift;
+    my $res  = $self->get ($key);
+    return unless (defined $res);
+
+    my $no_encode = $key =~ s/^\s*structure\s+//;
+    unless ($no_encode and $no_encode)
+    {
+        $res =~ s/\&/\&amp;/g;
+        $res =~ s/\</\&lt;/g;
+        $res =~ s/\"/\&quot;/g;
+    }
+
+    return $res;
+}
+
+
 sub delete_cached
 {
     my $self  = shift;
@@ -145,14 +164,7 @@ sub __FETCH
     else
     {
 	$key =~ s/^\s*text\s*//;
-	my $res = $self->fetch ($key);
-	if (defined $res and not ref $res)
-	{
-	    $res =~ s/\&/\&amp;/g;
-	    $res =~ s/\</\&lt;/g;
-	    $res =~ s/\"/\&quot;/g;
-	}
-	return $res;
+	return $self->fetch ($key);
     }
 }
 

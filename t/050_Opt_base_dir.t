@@ -39,10 +39,10 @@ my $output = eval {
 };
 
 ok($@, "Template not found (as expected)");
+
 like($@, qr{
   Cannot\sfind\snamespaces\.xml\sin
 }x, "Error message is correct");
-
 
 # Confirm $Petal::BASE_DIR used as default if defined
 

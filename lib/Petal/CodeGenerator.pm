@@ -104,6 +104,14 @@ sub comp_expr
 }
 
 
+sub comp_expr_encoded
+{
+    my $self = shift;
+    my $expr = shift;
+    return "\$hash->get_encoded ('$expr')";
+}
+
+
 # $class->code_header();
 # ----------------------
 # This generates the beginning of the anonymous subroutine.
@@ -254,7 +262,7 @@ sub _var
     $variable =~ s/\'/\\\'/g;
     $class->add_code ( $class->_add_res (('do {')) );
     $class->indent_increment();
-    $class->add_code ('my $res = ' . $class->comp_expr ($variable) . ';');
+    $class->add_code ('my $res = ' . $class->comp_expr_encoded ($variable) . ';');
     $class->add_code ('(defined $res) ? $res : "";');
     $class->indent_decrement();
     $class->add_code ('};');
@@ -343,7 +351,7 @@ sub _attr
     $variable =~ s/\'/\\\'/g;
     $class->add_code('{');
     $class->indent_increment();
-    $class->add_code ("my \$value = " . $class->comp_expr($variable) . ";");
+    $class->add_code ("my \$value = " . $class->comp_expr_encoded($variable) . ";");
     $class->add_code ("if (defined(\$value)) {");
     # $class->add_code ("if (defined(\$value) and length(\$value)) {");
     $class->indent_increment();
