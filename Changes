@@ -1,13 +1,14 @@
 Revision history for Petal.
 
-0.51 Fri Aug  9 17:21:39 2002
-(not released on CPAN, test 009 fails because of HTML::TreeBuilder?)
-	- Fixed petal:attributes="style nothing" does not delete 'style'
+0.6
+	- Added tests
+	- Fixed declarations being striped out
+	- Fixed <some:tag> being turned into <some> bug
+	- Fixed petal:attributes="style nothing" does not delete 'style' *K*
         - Implemented $Petal::INPUT and $Petal::OUTPUT for XHTML
 	- Fixed Petal::CodeGenerator bug
 	- Applied William's patch to reduce amount of issued warnings
 	- Fixed a bug that prevents __is_last__ to be accessed
-	- Added tests
 
 0.5 Sat Aug  3 19:56:13 2002
 	- Added tests

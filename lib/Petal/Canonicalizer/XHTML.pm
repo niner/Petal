@@ -69,7 +69,7 @@ sub StartTag
     return if ($class->_is_inside_content_or_replace());
     
     my $tag = $_;
-    ($tag) = $tag =~ /^<\s*(\w*)/;
+    ($tag) = $tag =~ /^<\s*((?:\w|:)*)/;
     my $att = { %_ };
     
     $class->_define ($tag, $att);
@@ -161,7 +161,7 @@ If the starting LI used a loop, i.e. <li petal:loop="element list">
 sub EndTag
 {
     my $class = shift;
-    my ($tag) = $_ =~ /^<\/\s*(\w*)/;
+    my ($tag) = $_ =~ /^<\/\s*((?:\w|:)*)/;
     my $node = pop (@Petal::Canonicalizer::XML::NodeStack);
     
     if ( (not (defined $node->{replace} and $node->{replace})) and

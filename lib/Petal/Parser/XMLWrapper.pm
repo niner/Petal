@@ -18,6 +18,7 @@ use XML::Parser;
 
 use vars qw /$Canonicalizer/;
 
+
 sub new
 {
     my $class = shift;

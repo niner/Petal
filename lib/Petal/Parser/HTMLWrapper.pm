@@ -41,7 +41,6 @@ sub process
     local @NodeStack  = ();
     $data_ref = (ref $data_ref) ? $data_ref : \$data_ref;
     
-    + Petal::Canonicalizer::StartDocument();
     my $tree = HTML::TreeBuilder->new;
     $tree->p_strict (0);
     $tree->no_space_compacting (1);

@@ -38,15 +38,20 @@ sub process
     my $data_ref = shift;
     $data_ref = (ref $data_ref) ? $data_ref : \$data_ref;
     
+    # grab the <!...> tags which the parser is going to strip
+    # in order to reinclude them afterwards
+    my @decls = $$data_ref =~ /(<!.*?>)/gsm;
+    
     # take the existing processing instructions out and replace
     # them with temporary xml-friendly handlers
     my $pis = $class->_processing_instructions_out ($data_ref);
+    
     local @Result = ();
     local @NodeStack = ();
     
     $parser->process ($class, $data_ref);
     
-    my $res = join '', @Result;
+    my $res = (join "\n", @decls) . "\n" . (join '', @Result);
     $class->_processing_instructions_in (\$res, $pis);
     return \$res;
 }
@@ -133,7 +138,7 @@ sub StartTag
     return if ($class->_is_inside_content_or_replace());
     
     my $tag = $_;
-    ($tag) = $tag =~ /^<\s*(\w*)/;
+    ($tag) = $tag =~ /^<\s*((?:\w|:)*)/;
     my $att = { %_ };
     
     $class->_define ($tag, $att);
@@ -207,7 +212,7 @@ If the starting LI used a loop, i.e. <li petal:loop="element list">
 sub EndTag
 {
     my $class = shift;
-    my ($tag) = $_ =~ /^<\/\s*(\w*)/;
+    my ($tag) = $_ =~ /^<\/\s*((?:\w|:)*)/;
     my $node = pop (@NodeStack);
     
     push @Result, "</$tag>" unless (defined $node->{replace} and $node->{replace});

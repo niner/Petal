@@ -45,7 +45,6 @@ pages.
 =cut
 package Petal;
 use Petal::Hash;
-use Petal::Canonicalizer;
 use Petal::CodeGenerator;
 use Petal::Cache::Disk;
 use Petal::Cache::Memory;
