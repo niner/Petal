@@ -105,7 +105,7 @@ sub process
 		
 		$current = $current->$next (@args);
 	    }
-
+	    
 	    else
 	    {
 		if ($current->can ($next) or $current->can ('AUTOLOAD'))
