@@ -28,41 +28,51 @@ use warnings;
 use Carp;
 
 
+our $STRING_RE_DOUBLE = qq |(?<!\\\\)\\".*?(?<!\\\\)\\"|;
+our $STRING_RE_SINGLE = qq |(?<!\\\\)\\'.*?(?<!\\\\)\\'|;
+our $STRING_RE        = "(?:$STRING_RE_SINGLE|$STRING_RE_DOUBLE)";
+our $VARIABLE_RE      = "[A-Za-z][A-Za-z0-9_\\.:]+";
+our $TOKEN_RE         = "(?:$STRING_RE|$VARIABLE_RE)";
+
+
+
 sub process
 {
     my $class = shift;
-    my $self = shift;
+    my $hash  = shift;
     my $argument = shift;
     
-    my @split = split /\s+/, $argument;
-    my $path = shift (@split) or confess "bad syntax for $class: $argument (\$path)";
-    my $args = join ' ', @split;
-    
-    my @path = split /\./, $path;
-    @path = ($path) unless (@path);
-    my @args = ();
-    @args = split /\s+/, $args
-	if (defined $args and $args);
+    my @tokens = $argument =~ /($TOKEN_RE)/gsm;
+    my $path   = shift (@tokens) or confess "bad syntax for $class: $argument (\$path)";
+    my @path = split /\/|\./, $path;    
+    my @args = @tokens;
     
     # replace variable names by their value
     for (my $i=0; $i < @args; $i++)
     {
 	my $arg = $args[$i];
-	if ($arg =~ /^\$/)
+	if ($arg =~ /$VARIABLE_RE/)
 	{
-	    $arg =~ s/^\$//;
-	    $args[$i] = $class->process ($self, $arg);
+	    $arg =~ s/\\(.)/$1/gsm;
+	    $args[$i] = $hash->FETCH ($arg);
+	}
+	else
+	{
+	    $arg =~ s/^\"//;
+	    $arg =~ s/\"$//;
+	    $arg =~ s/\\(.)/$1/gsm;
+	    $args[$i] = $arg;
 	}
     }
     
-    my $current = $self;
+    my $current = $hash;
     while (@path)
     {
 	my $next = shift (@path);
 	
 	if (ref $current eq 'HASH' or ref $current eq 'Petal::Hash')
 	{
-	    confess "Cannot access hash with parameters"
+	    confess "Cannot access $argument"
 	        if (scalar @args);
 	    
 	    $current = $current->{$next};
@@ -71,10 +81,10 @@ sub process
 	# it might be an array, then the key has to be numerical...
 	elsif (ref $current eq 'ARRAY')
 	{
-	    confess "Cannot access array with non decimal key"
+	    confess "Cannot access array with non decimal key ($argument)"
 	        unless ($next =~ /^\d+$/);
 	    
-	    confess "Cannot access array with parameters"
+	    confess "Cannot access array with parameters ($argument)"
 	        if (scalar @args);
 	    
 	    $current = $current->[$next];
@@ -108,13 +118,13 @@ sub process
 		    }
 		    elsif ($current =~ /=ARRAY\(/)
 		    {
-			confess "Cannot access array with non decimal key"
+			confess "Cannot access array with non decimal key ($argument)"
 			    unless ($next =~ /^\d+$/);
 			$current = $current->[$next];
 		    }
 		    else
 		    {
-			confess "Cannot invoke $next on current object";		
+			confess "Cannot invoke $next on current object ($argument)";		
 		    }
 		}
 	    }

@@ -28,7 +28,7 @@ The template hash module:
 package Petal::Hash::Encode_HTML;
 use strict;
 use warnings;
-use base qw /Petal::Hash::VAR/;
+
 
 ##
 # $class->process ($self, $argument);
@@ -39,7 +39,8 @@ use base qw /Petal::Hash::VAR/;
 sub process
 {
     my $class = shift;
-    return text2html ($class->SUPER::process (@_));
+    my $hash  = shift;
+    return text2html ($hash->FETCH (@_));
 }
 
 

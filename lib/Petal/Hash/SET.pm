@@ -27,20 +27,19 @@ package Petal::Hash::SET;
 use strict;
 use warnings;
 use Carp;
-use base qw /Petal::Hash::VAR/;
 
 
 sub process
 {
     my $class = shift;
-    my $self = shift;
+    my $hash  = shift;
     my $argument = shift;
     
     my @split = split /\s+/, $argument;
     my $set   = shift (@split) or confess "bad syntax for $class: $argument (\$set)";
     
-    my $value = $self->SUPER::process ($self, join ' ', @split);
-    $self->{$set} = $value;
+    my $value = $hash->FETCH (join ' ', @split);
+    $hash->{$set} = $value;
     return '';
 }
 

@@ -24,13 +24,13 @@ The template hash module:
 package Petal::Hash::TRUE;
 use strict;
 use warnings;
-use base qw /Petal::Hash::VAR/;
 
 
 sub process
 {
     my $class = shift;
-    my $variable = $class->SUPER::process (@_);
+    my $hash  = shift;
+    my $variable = $hash->FETCH (@_);
     return unless (defined $variable);
     
     (scalar @{$variable}) ? return 1 : return

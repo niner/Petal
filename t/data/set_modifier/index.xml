@@ -1,6 +1,6 @@
 <html>
 <body>
-    <?petal:var name=":set settest title"?>
+    <?petal:var name="set: settest title"?>
 
     * title : $title
     * settest : $settest

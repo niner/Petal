@@ -1,5 +1,9 @@
 Revision history for Petal.
 
+0.5
+	- Added tests
+	- Amended the way modifiers work
+
 0.4 Thu Jul 25 12:08:03 2002
 	- Added Petal::Hash::Encode_HTML contributed mod
 	- Fixed documentation bugs

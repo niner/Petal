@@ -101,7 +101,7 @@ use Petal::Hash::TRUE;
 use Petal::Hash::FALSE;
 use Petal::Hash::Encode_XML;
 use Petal::Hash::Encode_HTML;
-
+use Petal::Hash::UpperCase;
 
 our $IMPORTED  = {
     'Petal::Hash::VAR' => 1,
@@ -114,16 +114,17 @@ our $IMPORTED  = {
 
 
 our $MODIFIERS = {
-    var         => 'Petal::Hash::VAR',
-    xml         => 'Petal::Hash::Encode_XML',
-    encode      => \'xml',
-    true        => 'Petal::Hash::TRUE',
-    false       => 'Petal::Hash::FALSE',
-    set         => 'Petal::Hash::SET',
-    def         => \'set',
-    define      => \'define',
-    html        => 'Petal::Hash::Encode_HTML',
-    encode_html => \'html',
+    "uc:"          => 'Petal::Hash::UpperCase',
+    "var:"         => 'Petal::Hash::VAR',
+    "xml:"         => 'Petal::Hash::Encode_XML',
+    "encode:"      => \'xml:',
+    "true:"        => 'Petal::Hash::TRUE',
+    "false:"       => 'Petal::Hash::FALSE',
+    "set:"         => 'Petal::Hash::SET',
+    "def:"         => \'set:',
+    "define:"      => \'define:',
+    "html:"        => 'Petal::Hash::Encode_HTML',
+    "encode_html:" => \'html:',
 };
 
 
@@ -151,25 +152,32 @@ sub FETCH
 {
     my $self = shift;
     my $key  = shift;
+    my $mod  = 'var:';
     
-    # if the key doesn't start with a command, then
-    # implicitly it'a a :var command
-    $key = ":var $key" unless ($key =~ /^\:/);
+    foreach my $modifier (keys %{$MODIFIERS})
+    {
+	if ($key =~ /^\Q$modifier\E/)
+	{    
+	    $mod = $modifier;
+	    $key =~ s/^\Q$modifier\E//;
+	    last;
+	}
+    }
     
-    my ($command, $argument) = $key =~ /^\:(\S*)\s*(.*?)\s*$/;
-    
-    my $module = $MODIFIERS->{$command};
+    my $module = $MODIFIERS->{$mod};
     while (ref $module) { $module = $MODIFIERS->{$$module} }
     
-    confess "$command is not a known modifier" unless (defined $module);
+    confess "$mod is not a known modifier" unless (defined $module);
     unless (defined $IMPORTED->{$module})
     {
 	eval "use $module";
 	(defined $@ and $@) and
-	    confess "cannot import $module for modifier $command";
+	    confess "cannot import $module for modifier $mod";
+	$IMPORTED->{$module} = 1;
     }
     
-    $module->process ($self, $argument);
+    $key =~ s/^\s+//;
+    $module->process ($self, $key);
 }
 
 

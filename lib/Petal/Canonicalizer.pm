@@ -170,15 +170,7 @@ sub StartTag
 	    foreach my $var (@vars)
 	    {
 		my $command = $var;
-		if ($command =~ /\:/)
-		{
-		    $command =~ s/\:/ /;
-		    $command =~ s/^\$/:/;
-		}
-		else
-		    {
-			$command =~ s/^\$//;
-		    }
+		$command =~ s/^\$//;
 		$command = "<?petal:var name=\"$command\"?>";
 		$text =~ s/\Q$var\E/$command/g;
 	    }
@@ -234,15 +226,7 @@ sub Text
     foreach my $var (@vars)
     {
 	my $command = $var;
-	if ($command =~ /\:/)
-	{
-	    $command =~ s/\:/ /;
-	    $command =~ s/^\$/:/;
-	}
-	else
-	{
-	    $command =~ s/^\$//;
-	}
+	$command =~ s/^\$//;
 	$command = "<?petal:var name=\"$command\"?>";
 	$text =~ s/\Q$var\E/$command/g;
     }
