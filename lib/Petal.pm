@@ -569,7 +569,7 @@ points:
 
 =head2 repeat (loops)
 
-  <li petal:repeat="user system.user_list">$xml:user.real_name</li>
+  <li petal:repeat="user system.user_list">$xml:user.real_name</span>
 
 
 =head2 attributes
