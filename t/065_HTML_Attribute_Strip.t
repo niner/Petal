@@ -12,10 +12,7 @@ my $file             = 'attribute_strip.html';
 {
     my $t = new Petal ( file => $file );
     my $s = $t->process();
-    print ${$t->_canonicalize()};
-    # print $s;
-    exit;
-    ok ($s !~ /include/);
+    ok ($s !~ /test/);
 }
 
 
@@ -23,6 +20,6 @@ $Petal::OUTPUT = 'XHTML';
 {
     my $t = new Petal ( file => $file );
     my $s = $t->process();
-    ok ($s !~ /include/);
+    ok ($s !~ /test/);
 }
 
