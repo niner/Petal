@@ -373,7 +373,7 @@ sub _define
     my $class = shift;
     return if ($class->_is_inside_content_or_replace());
     
-    my $petal = quotemeta ($Petal::NS);
+    my $petal = $Petal::NS;
     my $tag   = shift;
     my $att   = shift;
     my $expr  = delete $att->{"$petal:set"}    ||
@@ -395,7 +395,7 @@ sub _condition
     my $class = shift;
     return if ($class->_is_inside_content_or_replace());
 
-    my $petal = quotemeta ($Petal::NS);
+    my $petal = $Petal::NS;
     my $tag   = shift;
     my $att   = shift;
     my $expr  = delete $att->{"$petal:if"}        ||
@@ -418,7 +418,7 @@ sub _repeat
     my $class = shift;
     return if ($class->_is_inside_content_or_replace());
 
-    my $petal = quotemeta ($Petal::NS);
+    my $petal = $Petal::NS;
     my $tag = shift;
     my $att = shift;
     my $expr = delete $att->{"$petal:for"}     ||
@@ -448,7 +448,7 @@ sub _replace
     my $class = shift;
     return if ($class->_is_inside_content_or_replace());
     
-    my $petal = quotemeta ($Petal::NS);    
+    my $petal = $Petal::NS;
     my $tag = shift;
     my $att = shift;
     my $expr = delete $att->{"$petal:replace"} ||
@@ -474,7 +474,7 @@ sub _attributes
     my $class = shift;
     return if ($class->_is_inside_content_or_replace());
     
-    my $petal = quotemeta ($Petal::NS);    
+    my $petal = $Petal::NS;   
     my $tag = shift;
     my $att = shift;
     my $expr = delete $att->{"$petal:att"}        ||
@@ -503,7 +503,7 @@ sub _content
     my $class = shift;
     return if ($class->_is_inside_content_or_replace());
     
-    my $petal = quotemeta ($Petal::NS);    
+    my $petal = $Petal::NS;   
     my $tag = shift;
     my $att = shift;
     my $expr = delete $att->{"$petal:content"}  ||
