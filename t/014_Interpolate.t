@@ -18,4 +18,8 @@ $Petal::OUTPUT = 'XML';
 my $template = new Petal ('interpolate.xml');
 
 my $string = $template->process ( first_name => 'Aurelia', last_name => 'Fernandez' );
-print $string . "\n";
+($string =~ /\<\?/) ? print "not ok 2\n" : print "ok 2\n";
+
+$Petal::INPUT = 'HTML';
+$string = $template->process ( first_name => 'Aurelia', last_name => 'Fernandez' );
+($string =~ /\<\?/) ? print "not ok 3\n" : print "ok 3\n";

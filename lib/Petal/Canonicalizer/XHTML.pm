@@ -81,8 +81,6 @@ sub StartTag
     # should return TRUE and this code should not be executed
     unless ($class->_is_inside_content_or_replace())
     {
-	$class->_attributes ($tag, $att);
-	
 	# for every attribute which is not a petal: attribute,
 	# we need to convert $variable into <?petal:var name="variable"?>
 	foreach my $key (keys %{$att})
@@ -101,7 +99,9 @@ sub StartTag
 	    }
 	    $att->{$key} = $text;
 	}
-
+	
+	$class->_attributes ($tag, $att);
+	
 	my @att_str = ();
 	foreach my $key (keys %{$att})
 	{
