@@ -26,6 +26,10 @@ use Safe;
 use vars qw /@tokens @nodeStack/;
 
 
+# Warn about uninitialised values in the template?
+our $WARN_UNINIT = 0;
+
+
 # What do we use to parse input?
 our $INPUT  = 'XML';
 our $INPUTS = {
@@ -67,7 +71,7 @@ our $CURRENT_INCLUDES = 0;
 
 
 # this is for CPAN
-our $VERSION = '0.93';
+our $VERSION = '0.94';
 
 
 # The CodeGenerator class backend to use.

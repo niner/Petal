@@ -20,6 +20,7 @@ my $xml_decode_pat = join("|", keys %xml_decode);
 
 sub encode
 {
+    no warnings 'uninitialized';
     my $data = shift;
     $data =~ s/($xml_encode_pat)/&$xml_encode{$1};/go;
     return $data;

@@ -45,6 +45,19 @@ sub _get_res
 	return q{$res};
 }
 
+sub add_code
+{
+	my $class = shift;
+
+	push(@code, "    " x $indent . shift);
+}
+
+sub comp_expr
+{
+	my $self = shift;
+	my $expr = shift;
+	return "\$hash->get ('$expr')";
+}
 
 # $class->process ($data_ref, $petal_object);
 # -------------------------------------------
@@ -66,10 +79,11 @@ sub process
     local $token = undef;
     local $my_array = {};
     
-    push @code, "    " x $indent . "\$VAR1 = sub {";
+    $class->add_code("\$VAR1 = sub {");
     $indent++;
-    push @code, "    " x $indent . "my \$hash = shift;";
-    push @code, "    " x $indent . "my ".$class->_init_res.";";
+    $class->add_code("my \$hash = shift;");
+    $class->add_code("my ".$class->_init_res.";");
+    $class->add_code('local $^W = 0;') unless $Petal::WARN_UNINIT;
     
     foreach $token (@{$tokens})
     {
@@ -106,7 +120,7 @@ sub process
 		    delete $my_array->{$indent};
                     $indent--;
 		    
-                    push @code, ("    " x $indent . "}");
+                    $class->add_code("}");
                     last CASE;
                 };
 	    }
@@ -119,13 +133,13 @@ sub process
             $string =~ s/\n/\\n/gsm;
             $string =~ s/\n//gsm;
             $string =~ s/\"/\\\"/gsm;
-            push @code, ("    " x $indent . $class->_add_res( '"' . $string . '";'));
+            $class->add_code($class->_add_res( '"' . $string . '";'));
         }
     }
     
-    push @code, "    " x $indent . "return ". $class->_final_res() .";";
+    $class->add_code("return ". $class->_final_res() .";");
     $indent--;
-    push @code, "    " x $indent . "};";
+    $class->add_code("};");
     
     return join "\n", @code;
 }
@@ -142,11 +156,11 @@ sub _include
     my $lang  = $petal_object->language();
     if (defined $lang and $lang)
     {
-        push @code, ("    " x $indent . $class->_add_res("Petal->new (file => '$path', lang => '$lang')->process (\$hash->new());"));
+        $class->add_code($class->_add_res("Petal->new (file => '$path', lang => '$lang')->process (\$hash->new());"));
     }
     else
     {
-        push @code, ("    " x $indent . $class->_add_res("Petal->new ('$path')->process (\$hash->new());"));
+        $class->add_code($class->_add_res("Petal->new ('$path')->process (\$hash->new());"));
     }
 }
 
@@ -169,7 +183,7 @@ sub _var
     $variables->{$tmp} = 1;
     
     $variable =~ s/\'/\\\'/g;
-    push @code, ("    " x $indent . $class->_add_res("\$hash->get ('$variable');"));
+    $class->add_code($class->_add_res($class->comp_expr($variable).";"));
 }
 
 
@@ -191,7 +205,7 @@ sub _if
     $variables->{$tmp} = 1;
     
     $variable =~ s/\'/\\\'/g;
-    push @code, ("    " x $indent . "if (\$hash->get ('$variable')) {");
+    $class->add_code("if (".$class->comp_expr($variable).") {");
     $indent++;
 }
 
@@ -202,11 +216,11 @@ sub _if
 sub _eval
 {
     my $class = shift;
-    push @code, ("    " x $indent . $class->_add_res("eval {"));    
+    $class->add_code($class->_add_res("eval {"));    
     $indent++;
-    push @code, ("    " x $indent . "my " . $class->_init_res() .";");
-    push @code, ("    " x $indent . "local %SIG;");
-    push @code, ("    " x $indent . "\$SIG{__DIE__} = sub { \$\@ = shift };");
+    $class->add_code("my " . $class->_init_res() .";");
+    $class->add_code("local %SIG;");
+    $class->add_code("\$SIG{__DIE__} = sub { \$\@ = shift };");
 }
 
 
@@ -219,16 +233,16 @@ sub _endeval
     my $variable = $token_hash{'errormsg'} or
        confess "Cannot parse $token : 'errormsg' attribute is not defined";
     
-    push @code, ("    " x $indent . "return " . $class->_get_res() . ";");
+    $class->add_code("return " . $class->_get_res() . ";");
     $indent--;
-    push @code, ("    " x $indent . "};");
+    $class->add_code("};");
 
-    push @code, ("    " x $indent . "if (defined \$\@ and \$\@) {");
+    $class->add_code("if (defined \$\@ and \$\@) {");
     $indent++;
     $variable = quotemeta ($variable);
-    push @code, ("    " x $indent . $class->_add_res("\"$variable\";"));
+    $class->add_code($class->_add_res("\"$variable\";"));
     $indent--;
-    push @code, ("    " x $indent . "}");
+    $class->add_code("}");
 }
 
 
@@ -253,9 +267,11 @@ sub _attr
     $variables->{$tmp} = 1;
     
     $variable =~ s/\'/\\\'/g;
-    push @code, ("    " x $indent . "if (defined \$hash->get ('$variable') and \$hash->get ('$variable') ne '') {");
-    push @code, ("    " x ++$indent . $class->_add_res("\"$attribute\" . '=\"' . \$hash->get ('$variable') . '\"'"));
-    push @code, ("    " x --$indent . "}");
+    $class->add_code("if (defined ".$class->comp_expr($variable)." and ".$class->comp_expr($variable)." ne '') {");
+    $indent++;
+    $class->add_code($class->_add_res("\"$attribute\" . '=\"' . ".$class->comp_expr($variable)." . '\"'"));
+    $indent--;
+    $class->add_code("}");
 }
 
 
@@ -266,8 +282,8 @@ sub _else
 {
     my $class = shift;
     $indent--;
-    push @code, ("    " x $indent . "}");
-    push @code, ("    " x $indent . "else {");
+    $class->add_code("}");
+    $class->add_code("else {");
     $indent++;
 }
 
@@ -299,28 +315,28 @@ sub _for
     $variable =~ s/\'/\\\'/g;
     unless (defined $my_array->{$indent})
     {
-	push @code, ("    " x $indent . "my \@array = \@{\$hash->get ('$variable')};");
+	$class->add_code("my \@array = \@{".$class->comp_expr($variable)."};");
 	$my_array->{$indent} = 1;
     }
     else
     {
-	push @code, ("    " x $indent . "\@array = \@{\$hash->get ('$variable')};");
+	$class->add_code("\@array = \@{".$class->comp_expr($variable)."};");
     }
     
-    push @code, ("    " x $indent . "for (my \$i=0; \$i < \@array; \$i++) {");
+    $class->add_code("for (my \$i=0; \$i < \@array; \$i++) {");
     $indent++;
-    push @code, ("    " x $indent . "my \$hash = \$hash->new();");
-    push @code, ("    " x $indent . "my \$count= \$i + 1;");
-    push @code, ("    " x $indent . "\$hash->{__count__}    = \$count;");
-    push @code, ("    " x $indent . "\$hash->{__is_first__} = (\$count == 1);");
-    push @code, ("    " x $indent . "\$hash->{__is_last__}  = (\$count == \@array);");
-    push @code, ("    " x $indent . "\$hash->{__is_inner__} = " .
+    $class->add_code("my \$hash = \$hash->new();");
+    $class->add_code("my \$count= \$i + 1;");
+    $class->add_code("\$hash->{__count__}    = \$count;");
+    $class->add_code("\$hash->{__is_first__} = (\$count == 1);");
+    $class->add_code("\$hash->{__is_last__}  = (\$count == \@array);");
+    $class->add_code("\$hash->{__is_inner__} = " .
 		                        "(not \$hash->{__is_first__} " . 
 		                        "and not \$hash->{__is_last__});");
     
-    push @code, ("    " x $indent . "\$hash->{__even__}     = (\$count % 2 == 0);");
-    push @code, ("    " x $indent . "\$hash->{__odd__}      = not \$hash->{__even__};");
-    push @code, ("    " x $indent . "\$hash->{'$as'} = \$array[\$i];");
+    $class->add_code("\$hash->{__even__}     = (\$count % 2 == 0);");
+    $class->add_code("\$hash->{__odd__}      = not \$hash->{__even__};");
+    $class->add_code("\$hash->{'$as'} = \$array[\$i];");
 }
 
 

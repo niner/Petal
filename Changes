@@ -1,10 +1,11 @@
 Revision history for Petal.
 
-0.94
+0.94 Thu Jun 19 11:58:52 2003
+	- Patched with Fergal Daly's indent.patch, expr.patch, warn.patch
 	- Patched with Steve Purkis' contributed tests
 	- Patched with Fergal Daly's contributed tests
 
-0.93 Thu Jun  5 11:06:33 2003
+0.93 Thu Jun 05 11:06:33 2003
 	- Fixed petal:set and cached values bug
 	- Changed error handling so that it's subclassable
 	- Fixed Petal::Hash::VAR method invocation bug
@@ -17,13 +18,13 @@ Revision history for Petal.
         - Applied William's Hash.pm taintmode diff
         - Did a lot of work on the docs based on Patrick's suggestions 
 
-0.91 Mon Apr  7 16:20:15 2003
+0.91 Mon Apr 07 16:20:15 2003
 	- Added multi-lingual mode
 	- Added scoping to included templates
 	- Applied Fergal Daly's XML_Encode_Decode patch
 	- Revamped the documentation
 
-0.90 Wed Apr  2 14:02:27 2003
+0.90 Wed Apr 02 14:02:27 2003
 	- Re-done plugin system
 
 0.89 Tue Mar 25 13:57:24 2003
@@ -44,7 +45,7 @@ Revision history for Petal.
 	- Fixed minor documentation bugs
 	- Fixed string: semicolon escaping bug
 
-0.84 Wed Feb  5 14:12:08 2003
+0.84 Wed Feb 05 14:12:08 2003
 	- Added 'use warnings' to all tests
 	- Fixed entities not being encoded in static attributes
 	- Fixed backwards compatibility include / xinclude bug
@@ -71,7 +72,7 @@ Revision history for Petal.
 	- Implemented TAL's on-error statement
 	- Updated test suite
 
-0.77 Wed Dec  4 15:05:28 2002
+0.77 Wed Dec 04 15:05:28 2002
 	- Implemented TAL's omit-tag statement
 
 0.76 Mon Oct 21 13:05:46 2002
@@ -102,7 +103,7 @@ Revision history for Petal.
 	- Updated documentation
 	- Added list of hashrefs test
 
-0.7 Sat Sep  7 19:19:42 2002
+0.7 Sat Sep 07 19:19:42 2002
 	- Fixed inline interpolation ${expr} bug
 	- Everything is now XML encoded unless the 'structure' keyword is present
 	- Added coderefs modifiers
@@ -110,13 +111,13 @@ Revision history for Petal.
 	- Added Lucas Saud's <lucas.marinho@uol.com.br> patch for code padding
 	- Fixed <?petal:repeat name="element list"?> bug
 
-0.64 Tue Sep  3 15:48:23 2002
+0.64 Tue Sep 03 15:48:23 2002
 	- Fixed extra AUTOLOAD bug
 	- Fixed _split_expression critical bug 
 	- Added test
 	- Sorry for the broken 0.63 release :-(
 
-0.63 Mon Sep  2 17:01:23 2002
+0.63 Mon Sep 02 17:01:23 2002
 	- Fixed petal:repeat documentation bug
 	- Changed Petal::Parser::HTMLWrapper to preserve ignorable whitespaces
 	- Fixed Petal stripping comments with Petal::Parser::HTMLWrapper
@@ -147,7 +148,7 @@ Revision history for Petal.
 	- Changed the cache modules w/ new $Petal::INPUT and $Petal::OUTPUT
         - Implemented $Petal::INPUT and $Petal::OUTPUT for XHTML
 
-0.5 Sat Aug  3 19:56:13 2002
+0.5 Sat Aug 03 19:56:13 2002
 	- Modifiers are now 'modifier:' rather than ':modifier'
 	- Modifiers are now stackable (i.e. foo:bar:baz/buz)
         - Implemented TALES-like slash '/' as an alias for dot '.'
