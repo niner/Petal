@@ -634,6 +634,20 @@ whole tag.
 You cannot use petal:content and petal:replace in the same tag.
 
 
+=head2 omit-tag
+
+omit-tag statements can be used to leave the contents of a tag in place
+while omitting the surrounding start and end tags if the expression which
+is evaluated is TRUE.
+
+Example:
+
+  <b petal:omit-tag="not:bold">I may not be bold.</b>
+
+If 'not:bold' is evaluated as TRUE, then the <b> tag will be omited.
+If 'not:bold' is evaluated as FALSE, then the <b> tag will stay in place.
+
+
 =head2 multiple commands
 
 You can do things like:

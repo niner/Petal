@@ -200,7 +200,20 @@ sub StartTag
 	}
 	
 	my $att_str = join " ", @att_str;
-	push @Result, (defined $att_str and $att_str) ? "<$tag $att_str>" : "<$tag>";
+
+	if (defined $att->{"$petal:omit-tag"})
+	{
+	    my $expression = $att->{"$petal:omit-tag"};
+	    $NodeStack[$#NodeStack]->{'omit-tag'} = $expression;
+	    push @Result, (defined $att_str and $att_str) ?
+	        "<?petal:if name=\"$expression\"?><?petal:else?><$tag $att_str><?petal:end?>" :
+		"<?petal:if name=\"$expression\"?><?petal:else?><$tag><?petal:end?>";
+	}
+	else
+	{
+	    push @Result, (defined $att_str and $att_str) ? "<$tag $att_str>" : "<$tag>";
+	}
+	
 	$class->_content ($tag, $att);
     }
 }
@@ -229,7 +242,19 @@ sub EndTag
     my ($tag) = $_ =~ /^<\/\s*((?:\w|:)*)/;
     my $node = pop (@NodeStack);
     
-    push @Result, "</$tag>" unless (defined $node->{replace} and $node->{replace});
+    unless (defined $node->{replace} and $node->{replace})
+    {
+	if (defined $node->{'omit-tag'})
+	{
+	    my $expression = $node->{'omit-tag'};
+	    push @Result, "<?petal:if name=\"$expression\"?><?petal:else?></$tag><?petal:end?>";
+	}
+	else
+	{
+	    push @Result, "</$tag>";
+	}
+    }
+    
     my $repeat = $node->{repeat} || '0';
     my $condition = $node->{condition} || '0';
     push @Result, map { '<?petal:end?>' } 1 .. ($repeat+$condition);
@@ -457,6 +482,17 @@ sub _content
     push @Result, @new;
     $NodeStack[$#NodeStack]->{content} = 'true';
     return 1;
+}
+
+
+# _omit_tag;
+# ----------
+#   Rewrites <tag petal:omit-tag="[expression]"> as
+#   <?petal:if name="[expression]"?><tag><?petal:end?>
+sub _omit_tag
+{
+    my $class = shift;
+
 }
 
 

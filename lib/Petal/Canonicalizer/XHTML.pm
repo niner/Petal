@@ -138,12 +138,35 @@ sub StartTag
 	     (uc ($tag) eq 'META')     or 
 	     (uc ($tag) eq 'PARAM') )
 	{
-	    push @Petal::Canonicalizer::XML::Result, (defined $att_str and $att_str) ? "<$tag $att_str />" : "<$tag />";
+	    if (defined $att->{"$petal:omit-tag"})
+	    {
+		my $expression = $att->{"$petal:omit-tag"};
+		$Petal::Canonicalizer::XML::NodeStack[$#Petal::Canonicalizer::XML::NodeStack]->{'omit-tag'} = $expression;
+		push @Petal::Canonicalizer::XML::Result, (defined $att_str and $att_str) ?
+		    "<?petal:if name=\"$expression\"?><?petal:else?><$tag $att_str /><?petal:end?>" :
+		    "<?petal:if name=\"$expression\"?><?petal:else?><$tag /><?petal:end?>";
+	    }
+	    else
+	    {
+		push @Petal::Canonicalizer::XML::Result, (defined $att_str and $att_str) ? "<$tag $att_str />" : "<$tag />";
+	    }
 	}
 	else
 	{
-	    push @Petal::Canonicalizer::XML::Result, (defined $att_str and $att_str) ? "<$tag $att_str>" : "<$tag>";
+	    if (defined $att->{"$petal:omit-tag"})
+	    {
+		my $expression = $att->{"$petal:omit-tag"};
+		$Petal::Canonicalizer::XML::NodeStack[$#Petal::Canonicalizer::XML::NodeStack]->{'omit-tag'} = $expression;
+		push @Petal::Canonicalizer::XML::Result, (defined $att_str and $att_str) ?
+		    "<?petal:if name=\"$expression\"?><?petal:else?><$tag $att_str><?petal:end?>" :
+		    "<?petal:if name=\"$expression\"?><?petal:else?><$tag><?petal:end?>";
+	    }
+	    else
+	    {
+		push @Petal::Canonicalizer::XML::Result, (defined $att_str and $att_str) ? "<$tag $att_str>" : "<$tag>";
+	    }
 	}
+	
 	$class->_content ($tag, $att);
     }
 }
@@ -186,7 +209,15 @@ sub EndTag
 	 (uc ($tag) ne 'META')     and 
 	 (uc ($tag) ne 'PARAM') )
     {
-	push @Petal::Canonicalizer::XML::Result, "</$tag>";
+	if (defined $node->{'omit-tag'})
+	{
+	    my $expression = $node->{'omit-tag'};
+	    push @Petal::Canonicalizer::XML::Result, "<?petal:if name=\"not:$expression\"?><?petal:else?></$tag><?petal:end?>";
+	}
+	else
+	{
+	    push @Petal::Canonicalizer::XML::Result, "</$tag>";
+	}
     }
     
     my $repeat = $node->{repeat} || '0';
