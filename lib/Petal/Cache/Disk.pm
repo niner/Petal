@@ -40,7 +40,8 @@ sub get
 {
     my $class = shift;
     my $file  = shift;
-    my $key   = $class->compute_key ($file);
+    my $lang  = shift || '';
+    my $key   = $class->compute_key ($file, $lang);
     return $class->cached ($key) if ($class->is_ok ($file));
     return;
 }
@@ -54,7 +55,8 @@ sub set
     my $class = shift;
     my $file  = shift;
     my $data  = shift;
-    my $key   = $class->compute_key ($file);
+    my $lang  = shift || '';
+    my $key   = $class->compute_key ($file, $lang);
     my $tmp   = $class->tmp;
     {
 	if ($] > 5.007)
@@ -79,8 +81,9 @@ sub is_ok
 {
     my $class = shift;
     my $file  = shift;
+    my $lang  = shift || '';
     
-    my $key = $class->compute_key ($file);
+    my $key = $class->compute_key ($file, $lang);
     my $tmp = $class->tmp;    
     my $tmp_file = "$tmp/$key";
     return unless (-e $tmp_file);
@@ -100,8 +103,9 @@ sub compute_key
 {
     my $class = shift;
     my $file = shift;
+    my $lang = shift || '';
     
-    my $key = md5_hex ($file . ";INPUT=" . $Petal::INPUT . ";OUTPUT=" . $Petal::OUTPUT);
+    my $key = md5_hex ($file . ";$lang" . ";INPUT=" . $Petal::INPUT . ";OUTPUT=" . $Petal::OUTPUT);
     $key = $PREFIX . "_" . $Petal::VERSION . "_" . $key if (defined $PREFIX);
     return $key;
 }
@@ -115,7 +119,8 @@ sub cached_mtime
 {
     my $class = shift;
     my $file = shift;
-    my $key = $class->compute_key ($file);
+    my $lang = shift || '';
+    my $key = $class->compute_key ($file, $lang);
     my $tmp = $class->tmp;
     
     my $tmp_file = "$tmp/$key";

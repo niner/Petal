@@ -55,11 +55,8 @@ $@ = '';
 $output = eval { $template->process(@args) };
 
 ok(!$@, "template with lang and includes successfully processed");
-TODO: {
-   local $TODO = 'Memory cache breakage';
 like($output, qr{^\s*
   <p>\s+
   <span>Bonjour,\sMonde\s\(fr-CA\)</span>\s+
   </p>
 }x, "output is correct");
-};

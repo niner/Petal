@@ -6,6 +6,7 @@ Revision history for Petal.
     - Skip test 071 when URI.pm not installed (William McKee)
     - Added tests 085 & 086 demonstrating breakage when using {disk,mem} cache and multi-language includes
     - $Petal::Hash::String::VARIABLE_RE_BRACKETS no longer treats ${1} as a variable
+    - Fix that adds language to the mix when generating cache keys
 
 2.15 Wed Jan  5 15:31:00 2005
     - Fixed some 'used of uninitialized values' warnings

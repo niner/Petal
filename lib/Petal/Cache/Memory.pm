@@ -30,8 +30,9 @@ sub get
 {
     my $class = shift;
     my $file  = shift;
-    my $key = $class->compute_key ($file);
     my $data  = shift;
+    my $lang  = shift || '';
+    my $key = $class->compute_key ($file, $lang);
     return $FILE_TO_SUBS->{$key} if ($class->is_ok ($file));
     return;
 }
@@ -44,8 +45,9 @@ sub set
 {
     my $class = shift;
     my $file  = shift;
-    my $key = $class->compute_key ($file);
     my $code  = shift;
+    my $lang  = shift || '';
+    my $key = $class->compute_key ($file, $lang);
     $FILE_TO_SUBS->{$key} = $code;
     $FILE_TO_MTIME->{$key} = $class->current_mtime ($file);
 }
@@ -58,7 +60,8 @@ sub is_ok
 {
     my $class = shift;
     my $file  = shift;
-    my $key = $class->compute_key ($file);
+    my $lang  = shift || '';
+    my $key = $class->compute_key ($file, $lang);
     return unless (defined $FILE_TO_SUBS->{$key});
     
     my $cached_mtime = $class->cached_mtime ($file);
@@ -75,7 +78,8 @@ sub cached_mtime
 {
     my $class = shift;
     my $file = shift;
-    my $key = $class->compute_key ($file);
+    my $lang = shift || '';
+    my $key = $class->compute_key ($file, $lang);
     return $FILE_TO_MTIME->{$key};
 }
 
@@ -102,8 +106,9 @@ sub compute_key
 {
     my $class = shift;
     my $file = shift;
+    my $lang = shift || '';
     
-    my $key = $file . ";INPUT=" . $Petal::INPUT . ";OUTPUT=" . $Petal::OUTPUT;
+    my $key = $file . ";$lang" . ";INPUT=" . $Petal::INPUT . ";OUTPUT=" . $Petal::OUTPUT;
     return $key;
 }
 

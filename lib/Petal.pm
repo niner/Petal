@@ -606,7 +606,7 @@ sub _file_data_ref
 sub _code_disk_cached
 {
     my $self = shift;
-    my $code = (defined $DISK_CACHE and $DISK_CACHE) ? Petal::Cache::Disk->get ($self->_file_path_with_macro) : undef;
+    my $code = (defined $DISK_CACHE and $DISK_CACHE) ? Petal::Cache::Disk->get ($self->_file_path_with_macro, $self->language) : undef;
     unless (defined $code)
     {
 	my $macro = $self->_macro() || $MT_NAME_CUR;
@@ -617,7 +617,7 @@ sub _code_disk_cached
 	my $data_ref = $self->_canonicalize;
 	load_code_generator();
 	$code = $CodeGenerator->process ($data_ref, $self);
-	Petal::Cache::Disk->set ($self->_file_path_with_macro, $code) if (defined $DISK_CACHE and $DISK_CACHE);
+	Petal::Cache::Disk->set ($self->_file_path_with_macro, $code, $self->language) if (defined $DISK_CACHE and $DISK_CACHE);
     }
     
     return $code;
@@ -630,7 +630,7 @@ sub _code_disk_cached
 sub _code_memory_cached
 {
     my $self = shift;
-    my $code = (defined $MEMORY_CACHE and $MEMORY_CACHE) ? Petal::Cache::Memory->get ($self->_file_path_with_macro) : undef;
+    my $code = (defined $MEMORY_CACHE and $MEMORY_CACHE) ? Petal::Cache::Memory->get ($self->_file_path_with_macro, $self->language) : undef;
     unless (defined $code)
     {
 	my $code_perl = $self->_code_disk_cached;
@@ -656,7 +656,7 @@ sub _code_memory_cached
 	    $code = $VAR1;
 	}
 	
-	Petal::Cache::Memory->set ($self->_file_path_with_macro, $code) if (defined $MEMORY_CACHE and $MEMORY_CACHE);	
+	Petal::Cache::Memory->set ($self->_file_path_with_macro, $code, $self->language) if (defined $MEMORY_CACHE and $MEMORY_CACHE);	
     }
     
     return $code;
