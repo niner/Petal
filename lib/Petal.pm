@@ -129,7 +129,7 @@ $MEMORY_CACHE - If set to FALSE, Petal will not use the Petal::Disk::Memory modu
 our $MEMORY_CACHE = 1;
 
 
-our $VERSION = '0.62';
+our $VERSION = '0.63';
 
 
 =head2 Example
@@ -783,12 +783,16 @@ None.
 
 =head1 BUGS
 
-Probably plenty at the time of this writing.
-Mail them to me and I'll squash 'em all!
-Begon jaune a l'attaque!
+The XML::Parser wrapper cannot expand any other entity than &lt;, &gt; &amp;
+and &quot;.
 
-Problems have been reported with the petal cache on a
-(Apache + Windows + mod_perl) platform.
+Both XML::Parser and HTML::TreeBuilder expand all entities, hence &nbsp;s are
+lost.
+
+XML::Parser is deprecated and should be replaced by SAX handlers at some point.
+
+Problems have been reported with the petal cache on a (Apache + Windows +
+mod_perl) platform.
 
 
 =head1 AUTHOR

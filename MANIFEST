@@ -37,6 +37,10 @@ t/015_Dummy_Data.t
 t/016_Method_Param.t
 t/017_Entities.t
 t/018_String_Count.t
+t/019_Autoload.t
+t/020_Comments.t
+t/data/autoload.xml
+t/data/comments.xml
 t/data/decl.xml
 t/data/delete_attribute.xml
 t/data/dummy_data.xml

@@ -1,6 +1,6 @@
 Revision history for Petal.
 
-0.63
+0.63 Mon Sep  2 17:01:23 2002
 	- Fixed petal:repeat documentation bug
 	- Changed Petal::Parser::HTMLWrapper to preserve ignorable whitespaces
 	- Fixed Petal stripping comments with Petal::Parser::HTMLWrapper
