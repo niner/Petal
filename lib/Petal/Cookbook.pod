@@ -153,7 +153,7 @@ to do things like alter color, font-size, etc, is relatively easy.
 Example:
 
   <table>
-    <tr class="decode: repeat/even 1 'even' 'odd'">...</tr>
+    <tr tal:attr="class decode: repeat/even 1 'even' 'odd'">...</tr>
   </table>
 
 
