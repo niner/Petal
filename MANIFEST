@@ -50,6 +50,7 @@ t/029_Test_NS_Attributes.t
 t/030_Attributes_AndQuot.t
 t/031_Escape_Semicolon.t
 t/032_Hypen_XML.t
+t/033_Hash.t
 t/data/attributes_andquot.xml
 t/data/autoload.xml
 t/data/canonical_error.html
@@ -59,6 +60,8 @@ t/data/delete_attribute.xml
 t/data/dummy_data.xml
 t/data/entities.xml
 t/data/eval.xml
+t/data/hash_mustfail.xml
+t/data/hash_mustpass.xml
 t/data/hashref_list.html
 t/data/hypen.xml
 t/data/if.html

@@ -1,6 +1,9 @@
 Revision history for Petal.
 
-0.88 Mon Mar 24 15:17:31 GMT 2003
+0.89 Tue Mar 25 13:57:24 2003
+	- Fixed another critical bug due to changes in 0.87.
+
+0.88 Mon Mar 24 15:17:31 2003
 	- Fixed a critical bug due to changes in 0.87.
 
 0.87 Mon Mar 17 17:25:00 2003
