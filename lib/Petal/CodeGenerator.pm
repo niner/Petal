@@ -117,7 +117,15 @@ sub _include
     my $class = shift;
     my $file  = $token_hash{file};
     my $path  = $petal_object->_include_compute_path ($file);
-    push @code, ("    " x $indent . "push \@res, Petal->new ('$path')->process (\$hash);");
+    my $lang  = $petal_object->language();
+    if (defined $lang and $lang)
+    {
+        push @code, ("    " x $indent . "push \@res, Petal->new (file => '$path', lang => '$lang')->process (\$hash);");
+    }
+    else
+    {
+        push @code, ("    " x $indent . "push \@res, Petal->new ('$path')->process (\$hash);");
+    }
 }
 
 

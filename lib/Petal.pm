@@ -61,6 +61,8 @@ use Petal::Parser::XMLWrapper;
 use Petal::Parser::HTMLWrapper;
 use Petal::Canonicalizer::XML;
 use Petal::Canonicalizer::XHTML;
+use Petal::Functions;
+use File::Spec;
 use strict;
 use warnings;
 use Carp;
@@ -126,8 +128,9 @@ list until it finds one base directory which has the requested file.
 @BASE_DIR defaults to ('.', '/').
 
 =cut
-our @BASE_DIR = ('.', '/');
+our @BASE_DIR = ('.');
 our $BASE_DIR = undef; # for backwards compatibility...
+
 
 =pod
 
@@ -165,6 +168,9 @@ know what you're doing.
 =cut
 
 our $CodeGenerator = 'Petal::CodeGenerator';
+
+
+our $LANGUAGE = 'en';
 
 
 # this is for XML namespace support. Can't touch this :-)
@@ -258,7 +264,34 @@ sub new
     my $class = shift;
     $class = ref $class || $class;
     unshift (@_, 'file') if (@_ == 1);
-    return bless { @_ }, $class;
+    my $self = bless { @_ }, $class;
+    $self->_initialize();
+    
+    return $self;
+}
+
+
+sub _initialize
+{
+    my $self = shift;
+    my $lang = $self->language() || return;
+
+    my @dirs = @BASE_DIR;
+    unshift (@dirs, $BASE_DIR) if (defined $BASE_DIR);
+    @dirs = map { "$_/$self->{file}" } @dirs;
+
+    $self->{file} =~ s/\/$//;
+    my $filename = Petal::Functions::find_filename ($lang, @dirs) ||
+        confess "Could not find language template for $lang";
+    
+    $self->{file} .= "/$filename";
+}
+
+
+sub language
+{
+    my $self = shift;
+    return $self->{language} || $self->{lang};
 }
 
 
@@ -272,37 +305,32 @@ sub _include_compute_path
     my $file  = shift;
     return $file unless ($file =~ /^\./);
     
-    my $path1 = $self->{file};
-    $path1 =~ s/^\///;
-    my @path1 = split /\//, $path1;
-    pop (@path1); # get old filename out of the way
+    my $path = $self->{file};
+    ($path)  = $path =~ /(.*)\/.*/;
+    $path  ||= '.';
+    $path .= '/';
+    $path .= $file;
     
-    my $path2 = $file;
-    my @path2 = split /\//, $path2;
-    
-    my @path = (@path1, @path2);
+    my @path = split /\//, $path;
     my @new_path = ();
-    while (@path)
+    while (scalar @path)
     {
-	my $dir = shift (@path);
-	next if ($dir) eq '.';
+	my $next = shift (@path);
+	next if $next eq '.';
 	
-	if ($dir eq '..')
+	if ($next eq '..')
 	{
-	    confess "Cannot include $file: Cannot go above base directory"
-	    unless (scalar @new_path);
-	    
+	    die "Cannot go above base directory: $file" if (scalar @new_path == 0);
 	    pop (@new_path);
+	    next;
 	}
-	else
-	{
-	    push @new_path, $dir;
-	}
+	
+	push @new_path, $next;
     }
     
-    my $res = '/' . join '/', @new_path;
-    return $res;
+    return join '/', @new_path;
 }
+
 
 
 =head2 $self->process (%hash);
@@ -394,16 +422,10 @@ sub _file_path
 {
     my $self = shift;
     my $file = $self->_file;
-    if (defined $BASE_DIR)
-    {
-	my $base_dir = File::Spec->canonpath ($BASE_DIR);
-	$base_dir = File::Spec->rel2abs ($base_dir) unless ($base_dir =~ /^\//);
-	$base_dir =~ s/\/$//;
-	my $file_path = File::Spec->canonpath ($base_dir . '/' . $file);
-	return $file_path if (-e $file_path and -r $file_path);
-    }
+    my @dirs = @BASE_DIR;
+    unshift (@dirs, $BASE_DIR) if (defined $BASE_DIR);
     
-    foreach my $dir (@BASE_DIR)
+    foreach my $dir (@dirs)
     {
 	my $base_dir = File::Spec->canonpath ($dir);
 	$base_dir = File::Spec->rel2abs ($base_dir) unless ($base_dir =~ /^\//);
@@ -447,7 +469,7 @@ sub _code_disk_cached
     unless (defined $code)
     {
 	my $data_ref = $self->_file_data_ref;
-	$data_ref  = $self->_canonicalize;
+	$data_ref    = $self->_canonicalize;
 	$code = $CodeGenerator->process ($data_ref, $self);
 	Petal::Cache::Disk->set ($file, $code) if (defined $DISK_CACHE and $DISK_CACHE);
     }
