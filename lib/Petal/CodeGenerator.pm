@@ -194,20 +194,24 @@ sub _include
     my $file  = $token_hash{file};
     my $path  = $petal_object->_include_compute_path ($file);
     my $lang  = $petal_object->language();
-    if (defined $lang and $lang)
-    {
-	my @l = ();
-	push @l, $class->_add_res ("eval { Petal->new (file => '$path', lang => '$lang')->process (\$hash->new()) };");
-	push @l, $class->_add_res ("\$\@ if (defined \$\@ and \$\@);");
-	for (@l) { $class->add_code ($_) }
-    }
-    else
-    {
-	my @l = ();
-        push @l, $class->_add_res ("eval { Petal->new ('$path')->process (\$hash->new()) };");
-	push @l, $class->_add_res ("\$\@ if (defined \$\@ and \$\@);");
-	for (@l) { $class->add_code ($_) }
-    }
+    
+    $class->add_code ($class->_add_res ("do {"));
+    $class->indent_increment();
+    
+    (defined $lang and $lang) ?
+        $class->add_code ("my \$res = eval { Petal->new (file => '$path', lang => '$lang')->process (\$hash->new()) };") :
+	$class->add_code ("my \$res = eval { Petal->new ('$path')->process (\$hash->new()) };");
+    
+    $class->add_code ("\$res = \$\@ if (defined \$\@ and \$\@);");
+    $class->add_code ("if (scalar keys \%Encode::) {");
+    $class->indent_increment();
+    $class->add_code ("\$res = Encode::decode (\$Petal::ENCODE_CHARSET, \$res) if (\$Petal::ENCODE_CHARSET);");
+    $class->add_code ("Encode::_utf8_on (\$res) if (Encode->can ('_utf8_on'));");
+    $class->indent_decrement();
+    $class->add_code ("}");
+    $class->add_code ("\$res;");
+    $class->indent_decrement();
+    $class->add_code ("};");
 }
 
 

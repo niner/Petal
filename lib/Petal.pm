@@ -498,6 +498,7 @@ sub _code_memory_cached
 	    my $cpt = Safe->new ("Petal::CPT");
 	    $cpt->permit ('entereval');
 	    $cpt->permit ('leaveeval');
+	    $cpt->permit ('require');
 	    
 	    $cpt->reval($code_perl);
 	    die $@ if ($@);
