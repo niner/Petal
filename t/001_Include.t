@@ -39,14 +39,25 @@ print "ok 2\n";
 
 
 {
-    $Petal::INPUT = "XML";
+    $Petal::INPUT  = "XML";
     $Petal::OUTPUT = "XML";
     $petal = new Petal ('index_xinclude.xml');
     ($petal->process =~ /__INCLUDED__/) ? print "ok 7\n" : print "not ok 7\n";
     
-    $Petal::INPUT = "XHTML";
+    $Petal::INPUT  = "XHTML";
+    $Petal::OUTPUT = "XML";
     my $petal = new Petal ('index_xinclude.xml');
     ($petal->process =~ /__INCLUDED__/) ? print "ok 8\n" : print "not ok 8\n";
+    
+    $Petal::INPUT  = "XML";
+    $Petal::OUTPUT = "XHTML";
+    $petal = new Petal ('index_xinclude.xml');
+    ($petal->process =~ /__INCLUDED__/) ? print "ok 9\n" : print "not ok 9\n";
+    
+    $Petal::INPUT  = "XHTML";
+    $Petal::OUTPUT = "XHTML";
+    my $petal = new Petal ('index_xinclude.xml');
+    ($petal->process =~ /__INCLUDED__/) ? print "ok 10\n" : print "not ok 10\n";
 }
 
 

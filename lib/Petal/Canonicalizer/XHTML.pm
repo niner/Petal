@@ -76,6 +76,7 @@ sub StartTag
     $class->_define ($tag, $att);
     $class->_condition ($tag, $att);
     $class->_repeat ($tag, $att);
+    $class->_is_xinclude ($tag) and $class->_xinclude ($tag, $att) and return;
     $class->_replace ($tag, $att);
     
     my $petal = quotemeta ($Petal::NS);
@@ -194,6 +195,8 @@ sub EndTag
     return if ($class->_is_inside_content_or_replace ( 'endtag' ));
     my ($tag) = $_ =~ /^<\/\s*((?:\w|:)*)/;
     my $node = pop (@Petal::Canonicalizer::XML::NodeStack);
+    
+    return if ($class->_is_xinclude ($tag));
     
     if ( (not (defined $node->{replace} and $node->{replace})) and
 	 (uc ($tag) ne 'AREA')     and 
