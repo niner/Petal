@@ -801,7 +801,7 @@ code.
 =head2 Version 3: Personalizable
 
 Now let's say that your method some_object() can take an optional
-argument so that C<$my_var->hello_world ('Jack')> returns I<Hello Jack>.
+argument so that C<$my_var-E<gt>hello_world ('Jack')> returns I<Hello Jack>.
 
 You would write:
 
