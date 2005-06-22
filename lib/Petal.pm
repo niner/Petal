@@ -1513,7 +1513,7 @@ I'm pretty sure you can work this one out by yourself :-)
 =head2 set:variable_name EXPRESSION
 
 Sets the value returned by the evaluation of EXPRESSION in
-C<$hash->{variable_name}>. For instance:
+C<$hash-E<gt>{variable_name}>. For instance:
 
 Perl expression:
 
