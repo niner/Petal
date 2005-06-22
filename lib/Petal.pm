@@ -764,7 +764,7 @@ Let's say you have the following Perl code:
     local $Petal::OUTPUT = 'XHTML';
 
     my $template = new Petal ('foo.xhtml');
-    template->process ( my_var => my_var() );
+    template->process ( my_var => some_object() );
 
 some_object() is a subroutine that returns some kind of object, may it be a scalar,
 object, array referebce or hash reference. Let's see what we can do...
@@ -800,8 +800,8 @@ code.
 
 =head2 Version 3: Personalizable
 
-Now let's say that your method some_object() can take an optional
-argument so that C<$my_var-E<gt>hello_world ('Jack')> returns I<Hello Jack>.
+Now let's say that your method hello_world() can take an optional
+argument so that C<$some_object-E<gt>hello_world ('Jack')> returns I<Hello Jack>.
 
 You would write:
 
@@ -845,7 +845,7 @@ You can use Petal as follows in your Perl code:
     local $Petal::OUTPUT = 'XHTML';
 
     my $template = new Petal ( file => 'hello_world', lang => 'fr-CA' );
-    print $template->process ( my_var => my_var() );
+    print $template->process ( my_var => some_object() );
 
 What will happen is that the C<$template> object will try to find a file named
 C<fr-CA>, then C<fr>, then will default to <en>. It should work fine for
