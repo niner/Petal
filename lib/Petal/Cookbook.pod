@@ -69,7 +69,7 @@ in your template like so:
 
   <html xmlns="http://www.w3.org/1999/xhtml"
    xmlns:petal="http://purl.org/petal/1.0/"
-   xmlns:metal="http://purl.org/petal/1.0/">
+   xmlns:metal="http://xml.zope.org/namespaces/metal">
 
 You may receive errors from xmllint about unknown entities such as &nbsp;.
 These can be safely ignored, though you can use the numeric version &#160;
