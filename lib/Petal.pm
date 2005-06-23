@@ -1255,7 +1255,7 @@ WYSIWYG compatible way of doing template includes.
 =head2 define-macro
 
 In order to define a macro inside a file (i.e. a fragment to be included), you
-use the metal:use-macro directive. For example:
+use the metal:define-macro directive. For example:
 
   File foo.xml
   ============
@@ -1271,7 +1271,7 @@ use the metal:use-macro directive. For example:
 
 =head2 use-macro
 
-In order to use a previously defined macro, you use the metal:define-macro directive.
+In order to use a previously defined macro, you use the metal:use-macro directive.
 For example:
 
   File bar.xml
