@@ -1260,7 +1260,7 @@ use the metal:use-macro directive. For example:
   File foo.xml
   ============
 
-  <html>
+  <html xmlns:metal="http://xml.zope.org/namespaces/metal">
     <body>
       <p metal:define-macro="footer">
         (c) Me (r)(tm) (pouet pouet)
@@ -1277,7 +1277,7 @@ For example:
   File bar.xml
   ============
 
-  <html>
+  <html xmlns:metal="http://xml.zope.org/namespaces/metal">
     <body>
       ... plenty of content ...
 
@@ -1299,7 +1299,7 @@ example above, imagine that we want to be able to optionally override the
   File foo.xml
   ============
 
-  <html>
+  <html xmlns:metal="http://xml.zope.org/namespaces/metal">
     <body>
       <p metal:define-macro="footer">
         (c) Me (r)(tm) <span metal:define-slot="pouet">(pouet pouet)</span>
@@ -1315,7 +1315,7 @@ Your including file can override any slot using the fill-slot instruction, i.e.
   File bar.xml
   ============
 
-  <html>
+  <html xmlns:metal="http://xml.zope.org/namespaces/metal">
     <body>
       ... plenty of content ...
 
@@ -1345,7 +1345,8 @@ which allows for recursive macros.
 This example templates a sitemap, which on a hierarchically organized site would
 be recursive by nature:
 
-  <html>
+  <html xmlns:metal="http://xml.zope.org/namespaces/metal"
+        xmlns:petal="http://purl.org/petal/1.0/">
     <body>
       <p>Sitemap:</p>
 
