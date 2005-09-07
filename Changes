@@ -1,10 +1,10 @@
 Revision history for Petal.
 
-2.17
-    - check that &nbsp; becomes chr(160) not chr(194) (William McKee)
-    - Fix bug where \-escaped semicolons were not recognised (William McKee)
+2.17 Wed Sep  7 15:30:00 2005
+    - test 041 check that &nbsp; becomes chr(160) not chr(194) (William McKee)
+    - Petal::Canonicalizer::XML Fix bug where \-escaped semicolons were not recognised (William McKee)
     - test 090 for ${1} appearance when Petal::I18N->process
-    - pod fixes (Kurt Stephens, Tom Metro)
+    - pod fixes (Kurt Stephens, Tom Metro, Bruno Postle)
 
 2.16 Fri Mar 18 15:30:00 2005
     - Added Cookbook.pod documentation and associated tests from William McKee

@@ -91,6 +91,10 @@ t/083_test_attributes_chars.t
 t/084_Cookbook.t
 t/085_lang_include_memcache.t
 t/086_lang_include_diskcache.t
+t/087_dollar_one.t
+t/088_latin1.t
+t/089_utf-8.t
+t/090_dollarone-again.t
 t/benchmark.pl
 t/data/access_obj_array.html
 t/data/access_obj_hash.html
@@ -107,6 +111,8 @@ t/data/content_encoded.html
 t/data/cookbook.html
 t/data/decl.xml
 t/data/delete_attribute.xml
+t/data/dollar-one.xml
+t/data/dollarone-again.xml
 t/data/dummy_data.xml
 t/data/entities.html
 t/data/entities.xml
@@ -141,6 +147,7 @@ t/data/language/exists_filename/fr.xml
 t/data/language/fr.xml
 t/data/language/include/fr-CA.html
 t/data/language/include/fr.html
+t/data/latin1.xml
 t/data/locale/es/LC_MESSAGES/testdomain.mo
 t/data/locale/es/LC_MESSAGES/testdomain.po
 t/data/locale/fr/LC_MESSAGES/testdomain.mo
@@ -195,5 +202,6 @@ t/data/test_ns_attributes/test_ns_attributes6.xml
 t/data/test_ns_attributes/test_ns_attributes7.xml
 t/data/test_ns_attributes/test_rightWayOfDoing.xml
 t/data/tests_with_zero.xml
+t/data/utf-8.xml
 t/data/xhtml.html
 t/data/xhtml_omit_tag.html
