@@ -162,9 +162,9 @@ sub process
 
     foreach $token (@{$tokens})
     {
-        if ($token =~ /$PI_RE/)
+        if ($token =~ /$PI_RE/s)
         {
-	    ($token_name) = $token =~ /$PI_RE/;
+	    ($token_name) = $token =~ /$PI_RE/s;
 	    my @atts1 = $token =~ /(\S+)\=\"(.*?)\"/gos;
 	    my @atts2 = $token =~ /(\S+)\=\'(.*?)\'/gos;
 	    %token_hash = (@atts1, @atts2); 

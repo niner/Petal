@@ -121,7 +121,7 @@ sub StartTag
 	    {
 		my $tokens = Petal::CodeGenerator->_tokenize (\$value);
 		my @res = map {
-		    ($_ =~ /$Petal::CodeGenerator::PI_RE/) ?
+		    ($_ =~ /$Petal::CodeGenerator::PI_RE/s) ?
 		        $_ :
 			do {
 			    $_ =~ s/\&/&amp;/g;
