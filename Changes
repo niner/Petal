@@ -2,6 +2,8 @@ Revision history for Petal.
 
 2.18
     - $Petal::CodeGenerator::PI_RE should be applied newline insensitively
+    - pod fixes
+    - Cookbook tal:repeat example (DSL)
 
 2.17 Wed Sep  7 15:30:00 2005
     - test 041 check that &nbsp; becomes chr(160) not chr(194) (William McKee)

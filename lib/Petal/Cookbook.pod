@@ -97,9 +97,72 @@ data to be passed to the template slowly:
   print $html;
 
 
+=head2 Basic loops with tal:repeat
+
+One way to use tal:repeat is to create an a reference to an array of anonymous
+hashes. Here is an example:
+
+  my $array_ref= [
+    { firstname=>"David",
+      surname=>"Lloyd"
+    },
+    { firstname=>"Susan",
+      surname=>"Jones"
+    }
+  ];
+
+With this array you can use the tal:repeat structure. Let's say you have this
+template - this is a snippet so don't forget the proper name space declarations
+and such:
+
+  <table>
+  <tr>
+    <th>First Name</th>
+    <th>Last Name</th>
+  </tr>
+  
+  <tr tal:repeat="name names/list_of_names">
+    <td tal:content="name/firstname">First Name</td>
+    <td tal:content="name/lastname">Last Name</td>
+  </tr>
+  </table>
+
+If you processed that template and the method call "list_of_names" returned an
+array reference as described above, you'd get:
+
+  <table>
+  <tr>
+    <th>First Name</th>
+    <th>Last Name</th>
+  </tr>
+  
+  <tr>
+    <td>David</td>
+    <td>Lloyd</td>
+  </tr>
+  
+  <tr>
+    <td>Susan</td>
+    <td>Jones</td>
+  </tr>
+  </table>
+
+So, in a tal:repeat construct:
+
+  tal:repeat="tal_variable_name EXPRESSION"
+
+tal_variable_name is the name of the variable you use in your tal template to
+refer to each row of data you are looping through.
+
+EXPRESSION should return an array reference, where each row is an anonymous
+hash, array, scalar or object.
+
+You can then refer to the members of the anonymous hash like this:
+
+   "$tal_variable_name/key_from_hash"
+
 
 =head1 INTERMEDIATE TIPS
-
 
 =head2 Assigning attributes (submitted by Warren Smith)
 
@@ -160,8 +223,6 @@ Example:
   </table>
 
 See L<Petal::Utils|Petal::Utils> for more information.
-
-
 
 =head1 ADVANCED
 
