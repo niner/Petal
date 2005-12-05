@@ -4,6 +4,8 @@ Revision history for Petal.
     - $Petal::CodeGenerator::PI_RE should be applied newline insensitively
     - pod fixes
     - Cookbook tal:repeat example (DSL)
+    - pod note that on-error isn't fully implemented
+    - defang html metacharacters in on-error output
 
 2.17 Wed Sep  7 15:30:00 2005
     - test 041 check that &nbsp; becomes chr(160) not chr(194) (William McKee)

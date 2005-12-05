@@ -381,6 +381,11 @@ sub _endeval
     
     $class->add_code("if (defined \$\@ and \$\@) {");
     $class->indent_increment();
+
+    $variable =~ s/\&/&amp;/g;
+    $variable =~ s/\</&lt;/g;
+    $variable =~ s/\>/&gt;/g;
+    $variable =~ s/\"/&quot;/g;
     $variable = quotemeta ($variable);
     $class->add_code($class->_add_res("\"$variable\";"));
     $class->indent_decrement();

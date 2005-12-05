@@ -1195,6 +1195,10 @@ If you want to ALWAYS remove a tag, you can use C<omit-tag="string:1">
 
 =head2 on-error
 
+Warning: this is currently only partially implemented.  C<on-error> may be used
+in Petal templates, but the expression isn't evaluated - Petal simply prints
+the expression as a string.
+
 Abstract
 
   <tag on-error="EXPRESSION">...</tag>

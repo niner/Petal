@@ -96,6 +96,7 @@ t/088_latin1.t
 t/089_utf-8.t
 t/090_dollarone-again.t
 t/091_attribute-newline.t
+t/092_on-error.t
 t/benchmark.pl
 t/data/access_obj_array.html
 t/data/access_obj_hash.html
@@ -120,6 +121,7 @@ t/data/entities.html
 t/data/entities.xml
 t/data/error_on_undef_var.html
 t/data/eval.xml
+t/data/eval2.xml
 t/data/gettext/html/index.html
 t/data/gettext/html/menu-no-css.html
 t/data/gettext/mo/en.mo
