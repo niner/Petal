@@ -12,7 +12,7 @@ use Carp;
 
 
 our $VARIABLE_RE_SIMPLE   = qq |\\\$[A-Za-z_][A-Za-z0-9_\\.:\/]+|;
-our $VARIABLE_RE_BRACKETS = qq |\\\$(?<!\\\\)\\{[^0-9].*?(?<!\\\\)\\}|;
+our $VARIABLE_RE_BRACKETS = qq |\\\$(?<!\\\\)\\{.*?(?<!\\\\)\\}|;
 our $TOKEN_RE             = "(?:$VARIABLE_RE_SIMPLE|$VARIABLE_RE_BRACKETS)";
 
 

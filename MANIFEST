@@ -97,6 +97,7 @@ t/089_utf-8.t
 t/090_dollarone-again.t
 t/091_attribute-newline.t
 t/092_on-error.t
+t/093_translate.t
 t/benchmark.pl
 t/data/access_obj_array.html
 t/data/access_obj_hash.html
@@ -206,6 +207,7 @@ t/data/test_ns_attributes/test_ns_attributes6.xml
 t/data/test_ns_attributes/test_ns_attributes7.xml
 t/data/test_ns_attributes/test_rightWayOfDoing.xml
 t/data/tests_with_zero.xml
+t/data/translate.xml
 t/data/utf-8.xml
 t/data/xhtml.html
 t/data/xhtml_omit_tag.html

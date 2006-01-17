@@ -20,8 +20,3 @@ like ($string, qr|<e></e>|);
 
 like ($string, qr|<f>\$@</f>|);
 like ($string, qr|<g>\$1</g>|);
-like ($string, qr|<h>\$\{1\}</h>|);
-
-like ($string, qr|<i>\$\{1 bar\}</i>|);
-like ($string, qr|<j>\$\{1bar\}</j>|);
-like ($string, qr|<k>\$\{1_bar\}</k>|);
