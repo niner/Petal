@@ -70,6 +70,7 @@ $MODIFIERS->{'false:'} = sub {
     return not $hash->fetch ("true:$variable");
 };
 
+$MODIFIERS->{'not:'} = $MODIFIERS->{'false:'};
 
 # encode: modifier (deprecated stuff)
 $MODIFIERS->{'encode:'} = sub {

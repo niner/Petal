@@ -98,6 +98,7 @@ t/090_dollarone-again.t
 t/091_attribute-newline.t
 t/092_on-error.t
 t/093_translate.t
+t/094_notfalse.t
 t/benchmark.pl
 t/data/access_obj_array.html
 t/data/access_obj_hash.html
@@ -176,6 +177,7 @@ t/data/namespaces.xml
 t/data/nbsp.html
 t/data/nested_modifiers/test1.xml
 t/data/nested_modifiers/test2.xml
+t/data/notfalse.xml
 t/data/omit-tag.xml
 t/data/pass_variables/attributes.html
 t/data/pass_variables/content.html

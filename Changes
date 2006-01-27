@@ -1,5 +1,8 @@
 Revision history for Petal.
 
+2.19
+    - alias false: modifier as not: to match TALES spec (Jonathan)
+
 2.18 Tue Jan 17 13:01:00 2006
     - $Petal::CodeGenerator::PI_RE should be applied newline insensitively
     - pod fixes
