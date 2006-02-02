@@ -1079,7 +1079,7 @@ A table with rows of alternating colours set via CSS:
     >
       <tr 
         class="odd"
-        tal:condition="true: audience/odd"
+        tal:condition="repeat/odd"
       >
         <td>
           This a odd row, it comes before the even row.
@@ -1087,7 +1087,7 @@ A table with rows of alternating colours set via CSS:
       </tr>
       <tr 
         class="even"
-        tal:condition="true: audience/even"
+        tal:condition="repeat/even"
       >
         <td> 
           This a even row.
