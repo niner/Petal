@@ -1050,6 +1050,11 @@ Abstract
      blah blah blah
   </tag>
 
+Why?
+
+Repeat statements are used to loop through a list of values,
+typically to display the resulting records of a database query.
+
 Example:
 
   <li tal:repeat="user system/user_list">$user/real_name</li>
@@ -1096,11 +1101,38 @@ A table with rows of alternating colours set via CSS:
     </div>
   </table>
 
-Why?
+I<repeat> is a local temporary object that only exists within a
+petal:repeat loop.  It has a bunch of methods useful for selecting
+different positions in the loop:
 
-Repeat statements are used to loop through a list of values,
-typically to display the resulting records of a database query.
+=head3 repeat/index
 
+I<index> returns the numeric position of this item within the loop, starts with
+one not zero.
+
+=head3 repeat/number
+
+I<number> is an alias for I<index>.
+
+=head3 repeat/even
+
+I<even> is true if the position is even (0, 2, 4 ...)
+
+=head3 repeat/odd
+
+I<odd> is true is the position is odd (1, 3, 5 ...)
+
+=head3 repeat/start
+
+I<start> is true if this is the first item.
+
+=head3 repeat/end
+
+I<end> is true if this is the last item.
+
+=head3 repeat/inner
+
+I<inner> is true if this is not the I<start> or I<end>.
 
 =head2 attributes
 
