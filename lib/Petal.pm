@@ -764,7 +764,7 @@ Let's say you have the following Perl code:
     local $Petal::OUTPUT = 'XHTML';
 
     my $template = new Petal ('foo.xhtml');
-    template->process ( my_var => some_object() );
+    $template->process ( my_var => some_object() );
 
 some_object() is a subroutine that returns some kind of object, may it be a scalar,
 object, array referebce or hash reference. Let's see what we can do...
@@ -847,11 +847,15 @@ You can use Petal as follows in your Perl code:
     my $template = new Petal ( file => 'hello_world', lang => 'fr-CA' );
     print $template->process ( my_var => some_object() );
 
-What will happen is that the C<$template> object will try to find a file named
-C<fr-CA>, then C<fr>, then will default to <en>. It should work fine for
-includes, too!
+What will happen is that the C<$template> object will look in the
+C<hello_world> directory and try to find a file named C<fr-CA.xhtml>, then
+C<fr.xhtml>, then will default to C<en.xhtml>. It works fine for includes, too!
 
-NOTE: There is now beta support for ZPT-like i18n attributes, which should
+These internationalized templates can have whatever file-extension you like,
+Petal searches on the first part of the filename.  So you can call them
+C<fr.html>, C<fr.xml>, C<fr.xhtml> or use whatever convention suits you.
+
+NOTE: There is now support for ZPT-like i18n attributes, which should
 provide a much nicer framework. See L<Petal::I18N> for details.
 
 
@@ -970,7 +974,8 @@ is to guard against accidental infinite recursions.
 
 If this option is true, when Petal cannot process a template it will
 output lots of debugging information in a temporary file which you can
-inspect.
+inspect.  The location for this file is wherever File::Spec->tmpdir()
+specifies as a temp directory (usually /tmp on a unix system).
 
 
 =head2 encode_charset => I<charset> (default: undef)
