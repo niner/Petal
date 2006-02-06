@@ -1,8 +1,8 @@
 Revision history for Petal.
 
 2.19
-    - alias false: modifier as not: to match TALES spec (Jonathan)
-    - fix repeat/odd documentation bug
+    - alias false: modifier as not: to match TALES spec (Jonathan Vanasco)
+    - fix repeat/odd documentation bug and add to cookbook (Jonathan Vanasco)
     - pod typos (sarabob)
 
 2.18 Tue Jan 17 13:01:00 2006

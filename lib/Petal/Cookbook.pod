@@ -224,6 +224,35 @@ Example:
 
 See L<Petal::Utils|Petal::Utils> for more information.
 
+Alternatively, this can be done entirely with TAL (contributed by Jonathan
+Vanasco):
+
+  <div tal:repeat="row rows">
+          <tag tal:omit-tag="string:1" tal:condition="repeat/even"><tag
+  tal:define="rowClass string:rowEven" tal:omit-tag="string:1"/></tag>
+          <tag tal:omit-tag="string:1" tal:condition="repeat/odd"><tag
+  tal:define="rowClass string:rowOdd" tal:omit-tag="string:1"/></tag>
+          <div
+                  tal:attributes="class rowClass"
+          >
+          This will use either the rowEven or rowOdd class. All of the 'tag'
+  elements are omitted on render. This uses a nested define tag in a
+  condition tag, because define precedes condition in order of operations.
+          </div>
+  <div>
+
+The simplest way to do odd/even rows may to duplicate the code entirely for
+each type or row, though this may cause maintenance headaches:
+
+  <table>
+    <tr tal:repeat="emp employees">
+      <td tal:condition="repeat/odd" class="odd" tal:content="emp/name">Employee Name</td>
+      <td tal:condition="repeat/even" class="even" tal:content="emp/name">Employee Name</td>
+      ...
+    </tr>
+  </table>
+
+
 =head1 ADVANCED
 
 
