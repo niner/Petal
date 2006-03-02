@@ -95,6 +95,10 @@ our $DISK_CACHE = 1;
 our $MEMORY_CACHE = 1;
 
 
+# cache only mode
+our $CACHE_ONLY = 0;
+
+
 # prevents infinites includes...
 our $MAX_INCLUDES = 30;
 our $CURRENT_INCLUDES = 0;
@@ -137,6 +141,7 @@ sub main::canonical
     my $file = shift (@ARGV);
     local $Petal::DISK_CACHE = 0;
     local $Petal::MEMORY_CACHE = 0;
+    local $Petal::CACHE_ONLY = 0;
     local $Petal::INPUT  = $ENV{PETAL_INPUT}  || 'XML';
     local $Petal::OUTPUT = $ENV{PETAL_OUTPUT} || 'XHTML';
     print ${Petal->new ($file)->_canonicalize()};
@@ -151,6 +156,7 @@ sub main::code
     my $file = shift (@ARGV);
     local $Petal::DISK_CACHE = 0;
     local $Petal::MEMORY_CACHE = 0;
+    local $Petal::CACHE_ONLY = 0;
     print Petal->new ($file)->_code_disk_cached;
 }
 
@@ -163,6 +169,7 @@ sub main::lcode
     my $file = shift (@ARGV);
     local $Petal::DISK_CACHE = 0;
     local $Petal::MEMORY_CACHE = 0;
+    local $Petal::CACHE_ONLY = 0;
     print Petal->new ($file)->_code_with_line_numbers;
 }
 
@@ -241,6 +248,7 @@ sub taint              { exists $_[0]->{taint}              ? $_[0]->{taint}    
 sub error_on_undef_var { exists $_[0]->{error_on_undef_var} ? $_[0]->{error_on_undef_var} : $ERROR_ON_UNDEF_VAR }
 sub disk_cache         { exists $_[0]->{disk_cache}         ? $_[0]->{disk_cache}         : $DISK_CACHE         }
 sub memory_cache       { exists $_[0]->{memory_cache}       ? $_[0]->{memory_cache}       : $MEMORY_CACHE       }
+sub cache_only         { exists $_[0]->{cache_only}         ? $_[0]->{cache_only}         : $CACHE_ONLY         }
 sub max_includes       { exists $_[0]->{max_includes}       ? $_[0]->{max_includes}       : $MAX_INCLUDES       }
 
 
@@ -341,6 +349,7 @@ sub process
     local $ERROR_ON_UNDEF_VAR = defined $self->{error_on_undef_var}  ? $self->{error_on_undef_var}  : $ERROR_ON_UNDEF_VAR;
     local $DISK_CACHE         = defined $self->{disk_cache}          ? $self->{disk_cache}          : $DISK_CACHE;
     local $MEMORY_CACHE       = defined $self->{memory_cache}        ? $self->{memory_cache}        : $MEMORY_CACHE;
+    local $CACHE_ONLY         = defined $self->{cache_only}          ? $self->{cache_only}          : $CACHE_ONLY;
     local $MAX_INCLUDES       = defined $self->{max_includes}        ? $self->{max_includes}        : $MAX_INCLUDES;
     local $INPUT              = defined $self->{input}               ? $self->{input}               : $INPUT;
     local $OUTPUT             = defined $self->{output}              ? $self->{output}              : $OUTPUT;
@@ -369,6 +378,8 @@ sub process
 	die "\$hash is undefined\n\n" unless $hash;
 	$res = $coderef->($hash);
     };
+    
+    if ( $CACHE_ONLY == 1 ){ return 1; }
    
     if (defined $@ and $@) { $res = $self->_handle_error ($@) }
     elsif (defined $TranslationService && $CURRENT_INCLUDES == 1) { $res = Petal::I18N->process ($res) } 
@@ -962,6 +973,13 @@ If set to C<false>, Petal will not use the C<Petal::Cache::Disk> module.
 =head2 memory_cache => I<true> | I<false> (default: I<true>)
 
 If set to C<false>, Petal will not use the C<Petal::Cache::Memory> module.
+
+
+=head2 cache_only => I<true> | I<false> (default: I<false>)
+
+If set to C<true>, Petal will return true after having compiled a template into
+perl code and a subroutine , and optionally using disk_cache or memory_cache if
+either is set.
 
 
 =head2 max_includes => I<number> (default: 30)
@@ -1732,6 +1750,10 @@ the same template will be reduced to step 8 until the source template changes.
 
 Otherwise, subsequent calls will resume at step 6, until the source template
 changes.
+
+If you are using the mod_perl prefork MPM, you can precompile Petal templates
+into Apache's shared memory at startup by using the cache_only option.  This
+will allow you to run through steps 1-7 without passing any data to Petal.
 
 
 =head1 DECRYPTING WARNINGS AND ERRORS

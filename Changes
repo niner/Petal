@@ -4,6 +4,7 @@ Revision history for Petal.
     - alias false: modifier as not: to match TALES spec (Jonathan Vanasco)
     - fix repeat/odd documentation bug and add to cookbook (Jonathan Vanasco)
     - pod typos (sarabob)
+    - CACHE_ONLY option (Jonathan Vanasco)
 
 2.18 Tue Jan 17 13:01:00 2006
     - $Petal::CodeGenerator::PI_RE should be applied newline insensitively
