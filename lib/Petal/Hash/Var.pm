@@ -96,8 +96,11 @@ sub process
 	elsif (isa ($current, 'HASH'))
 	{
 	  ACCESS_HASH:
+          unless (isa $current->{$next}, 'CODE')
+          {
 	    confess "Cannot access hash at '$current_path' with parameters (near $argument)"
 	        if ($has_args and not $has_path_tokens);
+          }
 	    $current = $current->{$next};
 	}
 	elsif (isa ($current, 'ARRAY'))
@@ -127,7 +130,7 @@ sub process
 	    return '';
 	}
 
-	$current = (isa ($current, 'CODE')) ? $current->() : $current;
+	$current = (isa ($current, 'CODE')) ? $current->(@args) : $current;
 	$current_path .= "/$next";
     }
     
