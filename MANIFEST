@@ -100,6 +100,8 @@ t/092_on-error.t
 t/093_translate.t
 t/094_notfalse.t
 t/096_oddeven.t
+t/097_cache_only.t
+t/098_multiple-attributes.t
 t/benchmark.pl
 t/data/access_obj_array.html
 t/data/access_obj_hash.html
@@ -170,6 +172,7 @@ t/data/metal_double_include/main.xhtml
 t/data/metal_self_include.xml
 t/data/metal_use_macro.xml
 t/data/method_param.xml
+t/data/multiple-attributes.xml
 t/data/multiple_includes/includes/footer.tmpl
 t/data/multiple_includes/includes/header.tmpl
 t/data/multiple_includes/register_form.tmpl
