@@ -7,6 +7,7 @@ Revision history for Petal.
     - CACHE_ONLY option (Jonathan Vanasco)
     - Add Digest::MD5 dependency (aaron)
     - Allow passing arguments to coderefs
+    - Encoding support for gettext mo/po files (Andrew Rodland)
 
 2.18 Tue Jan 17 13:01:00 2006
     - $Petal::CodeGenerator::PI_RE should be applied newline insensitively

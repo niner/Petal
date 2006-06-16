@@ -1,5 +1,6 @@
 package Petal::TranslationService::MOFile;
 use Locale::Maketext::Gettext;
+use Encode;
 use strict;
 use warnings;
 
@@ -24,6 +25,8 @@ sub new
 
     my $self = bless { file => $file }, $class;
     $self->{lexicon} = { read_mo ($file) };
+
+    ($self->{encoding}) = $self->{lexicon}{""} =~ /^Content-Type: text\/plain; charset=(.*)$/im;
     return $self;
 }
 
@@ -35,7 +38,9 @@ sub maketext
     $self->{lexicon} || return;
     my $res  = $self->{lexicon}->{$id};
 
-    return $res;
+    return undef unless defined $res;
+
+    return decode($self->{encoding}, $res);
 }
 
 
