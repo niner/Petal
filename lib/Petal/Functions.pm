@@ -89,11 +89,7 @@ sub exists_filename
     my $language = shift;
     my $path = shift;
     
-    opendir DD, $path;
-    my @grep = grep /^$language\./, readdir (DD);
-    closedir DD;
-    
-    return shift (@grep);
+    return (map { s{$path/?}{}; $_ } <$path/$language.*>)[0];
 }
 
 
