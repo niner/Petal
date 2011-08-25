@@ -1,5 +1,10 @@
 Revision history for Petal.
 
+2.20 Thu Aug 25 13:05:00 2011
+    - Remove usage of Safe in taint mode to fix compatability with Perl 5.12. This may break existing
+      code and reduces security! But for now it seems better to have at least a working version. (Damyan Ivanov)
+    - Fix code using deprecated UNIVERSAL->import (Stefan Seifert)
+
 2.19 Fri Jun 16 15:22:00 2006
     - alias false: modifier as not: to match TALES spec (Jonathan Vanasco)
     - fix repeat/odd documentation bug and add to cookbook (Jonathan Vanasco)
