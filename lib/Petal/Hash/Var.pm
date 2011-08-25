@@ -11,8 +11,7 @@ use strict;
 use warnings;
 
 use Carp;
-use UNIVERSAL qw( isa );
-use Scalar::Util qw( blessed );
+use Scalar::Util qw( blessed reftype );
 
 
 our $STRING_RE_DOUBLE  = qr/(?<!\\)\".*?(?<!\\)\"/;
@@ -78,7 +77,7 @@ sub process
 	if (blessed $current)
 	{
 	  ACCESS_OBJECT:
-	    goto ACCESS_HASH if (isa ($current, 'Petal::Hash'));
+	    goto ACCESS_HASH if ($current->isa('Petal::Hash'));
 
 	    if ($current->can ($next) or $current->can ('AUTOLOAD'))
 	    {
@@ -87,23 +86,23 @@ sub process
 	    }
 	    else
 	    {
-		goto ACCESS_HASH  if (isa ($current, 'HASH'));
-		goto ACCESS_ARRAY if (isa ($current, 'ARRAY'));
+		goto ACCESS_HASH  if ((reftype($current) or '') eq 'HASH');
+		goto ACCESS_ARRAY if ((reftype($current) or '') eq 'ARRAY');
 		confess "Cannot invoke '$next' on '" . ref($current) .
 		  "' object at '$current_path' - no such method (near $argument)";
 	    }
 	}
-	elsif (isa ($current, 'HASH'))
+	elsif (ref($current) eq 'HASH')
 	{
 	  ACCESS_HASH:
-          unless (isa $current->{$next}, 'CODE')
+          unless (ref($current->{$next}) eq 'CODE')
           {
 	    confess "Cannot access hash at '$current_path' with parameters (near $argument)"
 	        if ($has_args and not $has_path_tokens);
           }
 	    $current = $current->{$next};
 	}
-	elsif (isa ($current, 'ARRAY'))
+	elsif (ref($current) eq 'ARRAY')
 	{
 	  ACCESS_ARRAY:
 	    # it might be an array, then the key has to be numerical...
@@ -130,13 +129,13 @@ sub process
 	    return '';
 	}
 
-	$current = (isa ($current, 'CODE')) ? $current->(@args) : $current;
+	$current = (ref($current) eq 'CODE') ? $current->(@args) : $current;
 	$current_path .= "/$next";
     }
     
     # return '' unless (defined $current);
     # $current = "$current" if (defined $current);
-    return $$current if isa($current, 'SCALAR');
+    return $$current if ref($current) eq 'SCALAR';
     return $current;
 }
 
