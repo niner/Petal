@@ -15,7 +15,6 @@ use Petal::Functions;
 use Petal::Entities;
 use File::Spec;
 use Carp;
-use Safe;
 use Data::Dumper;
 use Scalar::Util;
 use strict;
@@ -647,25 +646,9 @@ sub _code_memory_cached
 	my $code_perl = $self->_code_disk_cached;
 	my $VAR1 = undef;
 	
-	if ($TAINT)
-	{
-	    # important line, don't remove
-	    ($code_perl) = $code_perl =~ m/^(.+)$/s;
-	    die "\$code_perl is empty after untainting!" unless defined $code_perl && $code_perl;
-	    my $cpt = Safe->new ("Petal::CPT");
-	    $cpt->permit ('entereval');
-	    $cpt->permit ('leaveeval');
-	    $cpt->permit ('require');
-	    $code = $cpt->reval($code_perl);
-	    confess ("Error in reval:\n" . $@ . "\n" . $self->_code_with_line_numbers) if $@;
-	    warn "\$code is empty after reval.\n" . Dumper($code, $Petal::CPT::VAR1, length($code_perl)) unless $code;
-	}
-	else
-	{
-	    eval "$code_perl";
-	    confess ($@ . "\n" . $self->_code_with_line_numbers) if $@;
-	    $code = $VAR1;
-	}
+	eval "$code_perl";
+	confess ($@ . "\n" . $self->_code_with_line_numbers) if $@;
+	$code = $VAR1;
 	
 	Petal::Cache::Memory->set ($self->_file_path_with_macro, $code, $self->language) if (defined $MEMORY_CACHE and $MEMORY_CACHE);	
     }
