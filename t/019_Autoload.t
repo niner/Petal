@@ -2,9 +2,13 @@
 use warnings;
 use strict;
 use lib ('lib');
-use Test::More 'no_plan';
+use Test::More;
+BEGIN {
+    eval "use CGI";
+    plan skip_all => "CGI required" if $@;
+    plan 'no_plan';
+}
 use Petal;
-use CGI;
 
 my $template_file = 'autoload.xml';
 $Petal::DISK_CACHE = 0;

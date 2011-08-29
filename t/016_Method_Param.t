@@ -22,8 +22,12 @@ sub baz
 package main;
 use warnings;
 use lib ('lib');
-use CGI;
-use Test::More 'no_plan';
+use Test::More;
+BEGIN {
+    eval "use CGI";
+    plan skip_all => "CGI required" if $@;
+    plan 'no_plan';
+}
 use Petal;
 
 $|=1;
