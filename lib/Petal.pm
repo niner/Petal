@@ -1333,7 +1333,7 @@ For example:
 =head2 define-slot
 
 In any given macro you can define slots, which are bits of macros that can be
-overriden by something else using the fill-macro directive. To re-use the
+overridden by something else using the fill-macro directive. To re-use the
 example above, imagine that we want to be able to optionally override the
 (pouet pouet) bit with something else:
 
@@ -1728,7 +1728,7 @@ The cycle of a Petal template is the following:
     8. Petal executes the subroutine
     9. (optional) Petal internationalizes the resulting output.
 
-If you are under a persistent environement a la mod_perl, subsequent calls to
+If you are under a persistent environment a la mod_perl, subsequent calls to
 the same template will be reduced to step 8 until the source template changes.
 
 Otherwise, subsequent calls will resume at step 6, until the source template
