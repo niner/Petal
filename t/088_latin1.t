@@ -2,8 +2,11 @@
 use warnings;
 use strict;
 use lib ('lib');
-use Test::More 'no_plan';
+use Test::More;
 use Petal;
+
+plan skip_all => 'decode_charset does not work on Perl < 5.8' if $] < 5.008;
+plan 'no_plan';
 
 $Petal::BASE_DIR = './t/data/';
 $Petal::DISK_CACHE = 0;
