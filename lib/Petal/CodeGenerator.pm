@@ -469,12 +469,17 @@ sub _for
     $variable =~ s/\'/\\\'/g;
     unless (defined $my_array->{$idt})
     {
-	$class->add_code("my \@array = \@{".$class->comp_expr($variable)."};");
+	$class->add_code("my \$array = ".$class->comp_expr($variable).";");
+	$class->add_code(qq{die "tried to repeat but $variable gave no array reference" unless defined \$array and ref \$array eq 'ARRAY';});
+	$class->add_code("my \@array = \@\$array;");
 	$my_array->{$idt} = 1;
     }
     else
     {
-	$class->add_code("\@array = \@{".$class->comp_expr($variable)."};");
+	#$class->add_code("\@array = \@{".$class->comp_expr($variable)."};");
+	$class->add_code("\$array = ".$class->comp_expr($variable).";");
+	$class->add_code(qq{die "tried to repeat but $variable gave no array reference" unless defined \$array and ref \$array eq 'ARRAY';});
+	$class->add_code("\@array = \@\$array;");
     }
 
         
