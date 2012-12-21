@@ -1,5 +1,11 @@
 Revision history for Petal.
 
+2.21 Fri Dec 21 17:40:00 2012
+    - Improve error message for undef in tal:repeat variables
+    - Don't fail tests if CGI is not installed
+    - Don't run charset tests on Perl < 5.8
+    - Update TAL/TALES/METAL specification URIs in docs
+
 2.20 Thu Aug 25 13:05:00 2011
     - Remove usage of Safe in taint mode to fix compatability with Perl 5.12. This may break existing
       code and reduces security! But for now it seems better to have at least a working version. (Damyan Ivanov)
