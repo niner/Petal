@@ -1004,7 +1004,7 @@ I<charset> can be any character set that can be used with the module L<Encode>.
 =head1 TAL SYNTAX
 
 This functionality is directly and shamelessly stolen from the excellent TAL
-specification: L<http://www.zope.org/Wikis/DevSite/Projects/ZPT/TAL>.
+specification: L<http://wiki.zope.org/ZPT/TAL>.
 
 
 =head2 define
@@ -1812,7 +1812,7 @@ Mailing list archives:
 
 Have a peek at the TAL / TALES / METAL specs:
 
-  http://www.zope.org/Wikis/DevSite/Projects/ZPT/TAL
-  http://www.zope.org/Wikis/DevSite/Projects/ZPT/TALES
-  http://www.zope.org/Wikis/DevSite/Projects/ZPT/METAL
+  http://wiki.zope.org/ZPT/TAL
+  http://wiki.zope.org/ZPT/TALES
+  http://wiki.zope.org/ZPT/METAL
 
