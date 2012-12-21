@@ -1,4 +1,3 @@
-.cvsignore
 Changes
 lib/Petal.pm
 lib/Petal/Cache/Disk.pm
@@ -7,7 +6,7 @@ lib/Petal/Canonicalizer/XHTML.pm
 lib/Petal/Canonicalizer/XML.pm
 lib/Petal/CodeGenerator.pm
 lib/Petal/Cookbook.pod
-lib/Petal/Deprecated.pm
+lib/Petal/Deprecated.pod
 lib/Petal/Entities.pm
 lib/Petal/Functions.pm
 lib/Petal/Hash.pm
