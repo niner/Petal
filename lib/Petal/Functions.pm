@@ -89,7 +89,7 @@ sub exists_filename
     my $language = shift;
     my $path = shift;
     
-    return (map { s{$path/?}{}; $_ } <$path/$language.*>)[0];
+    return (map { s{\Q$path\E/?}{}; $_ } <$path/$language.*>)[0];
 }
 
 

@@ -21,7 +21,7 @@ sub sillyness
 }
 
 
-# $class->get ($file);
+# $class->get ($file, $lang);
 # --------------------
 # Returns the cached subroutine if its last modification time
 # is more recent than the last modification time of the template,
@@ -30,15 +30,14 @@ sub get
 {
     my $class = shift;
     my $file  = shift;
-    my $data  = shift;
     my $lang  = shift || '';
     my $key = $class->compute_key ($file, $lang);
-    return $FILE_TO_SUBS->{$key} if ($class->is_ok ($file));
+    return $FILE_TO_SUBS->{$key} if ($class->is_ok ($file, $lang));
     return;
 }
 
 
-# $class->set ($file, $code);
+# $class->set ($file, $code, $lang);
 # ---------------------------
 # Sets the cached code for $file.
 sub set
@@ -53,7 +52,7 @@ sub set
 }
 
 
-# $class->is_ok ($file);
+# $class->is_ok ($file, $lang);
 # ----------------------
 # Returns TRUE if the cache is still fresh, FALSE otherwise.
 sub is_ok
@@ -64,16 +63,16 @@ sub is_ok
     my $key = $class->compute_key ($file, $lang);
     return unless (defined $FILE_TO_SUBS->{$key});
     
-    my $cached_mtime = $class->cached_mtime ($file);
+    my $cached_mtime = $class->cached_mtime ($file, $lang);
     my $current_mtime = $class->current_mtime ($file);
     return $cached_mtime >= $current_mtime;
 }
 
 
-# $class->cached_mtime ($file);
+# $class->cached_mtime ($file, $lang);
 # -----------------------------
 # Returns the last modification date of the cached data
-# for $file
+# for $file & $lang
 sub cached_mtime
 {
     my $class = shift;
