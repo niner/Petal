@@ -31,7 +31,7 @@ our $TMP_DIR = File::Spec->tmpdir;
 our $PREFIX = 'petal_cache';
 
 
-# $class->get ($file);
+# $class->get ($file, $lang);
 # --------------------
 # Returns the cached data if its last modification time is more
 # recent than the last modification time of the template
@@ -42,19 +42,19 @@ sub get
     my $file  = shift;
     my $lang  = shift || '';
     my $key   = $class->compute_key ($file, $lang);
-    return $class->cached ($key) if ($class->is_ok ($file));
+    return $class->cached ($key) if ($class->is_ok ($file, $lang));
     return;
 }
 
 
-# $class->set ($file, $data);
+# $class->set ($file, $code, $lang);
 # ---------------------------
-# Sets the cached data for $file.
+# Sets the cached code for $file + $lang
 sub set
 {
     my $class = shift;
     my $file  = shift;
-    my $data  = shift;
+    my $code  = shift;
     my $lang  = shift || '';
     my $key   = $class->compute_key ($file, $lang);
     my $tmp   = $class->tmp;
@@ -68,13 +68,13 @@ sub set
 	    open FP, ">$tmp/$key" or ( Carp::cluck "Cannot write-open $tmp/$key" and return );
 	}
 	
-	print FP $data;
+	print FP $code;
 	close FP;
     }
 }
 
 
-# $class->is_ok ($file);
+# $class->is_ok ($file, $lang);
 # ----------------------
 # Returns TRUE if the cache is still fresh, FALSE otherwise.
 sub is_ok
@@ -88,15 +88,15 @@ sub is_ok
     my $tmp_file = "$tmp/$key";
     return unless (-e $tmp_file);
     
-    my $cached_mtime = $class->cached_mtime ($file);
+    my $cached_mtime = $class->cached_mtime ($file, $lang);
     my $current_mtime = $class->current_mtime ($file);
     return $cached_mtime >= $current_mtime;
 }
 
 
-# $class->compute_key ($file);
+# $class->compute_key ($file, $lang);
 # ----------------------------
-# Computes a cache 'key' for $file, which should be unique.
+# Computes a cache 'key' for $file+$lang, which should be unique.
 # (Well, currently an MD5 checksum is used, which is not
 # *exactly* unique but which should be good enough)
 sub compute_key
@@ -111,10 +111,10 @@ sub compute_key
 }
 
 
-# $class->cached_mtime ($file);
+# $class->cached_mtime ($file, $lang);
 # -----------------------------
 # Returns the last modification date of the cached data
-# for $file
+# for $file + $lang
 sub cached_mtime
 {
     my $class = shift;

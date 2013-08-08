@@ -4,11 +4,12 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     'NAME'		=> 'Petal',
     'VERSION_FROM'	=> 'lib/Petal.pm', # finds $VERSION
+    LICENSE             => 'perl',
     'PREREQ_PM'		=> {
 	'Test::Harness'	    => '2.00',
 	'Scalar::Util'      => '1.07',
 	'MKDoc::XML'        => '0.72',
-        'Digest::MD5'       => '',
+        'Digest::MD5'       => '0',
     },
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM => 'lib/Petal.pm', # retrieve abstract from module
