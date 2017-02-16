@@ -1,5 +1,8 @@
 Revision history for Petal.
 
+2.24 Thu Feb 16 13:10:00 2013
+    - Add missing requirement to Makefile.PL
+
 2.23 Thu Aug 08 15:50:00 2013
     - Fix Petal::Utils installation after regression caused by improved tal:repeat error message
 
