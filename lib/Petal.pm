@@ -459,7 +459,7 @@ sub _handle_error
 	my $tmpfile = $$ . '.' . time() . '.' . ( join '', map { chr (ord ('a') + int (rand (26))) } 1..10 );
 	my $debug   = "$tmpdir/petal_debug.$tmpfile";
 	
-	open ERROR, ">$debug" || die "Cannot write-open \">$debug\"";
+	open ERROR, ">$debug" || die "Cannot write-open \">$debug\" ($!)";
 	
 	print ERROR "Error: $error\n";
 	ref $error and do {
@@ -590,11 +590,11 @@ sub _file_data_ref
     if ($] > 5.007)
     {
 	my $encoding = Encode::resolve_alias ($DECODE_CHARSET) || 'utf8';
-	open FP, "<:encoding($encoding)", "$file_path" or die "Cannot read-open $file_path";
+	open FP, "<:encoding($encoding)", "$file_path" or die "Cannot read-open $file_path ($!)";
     }
     else
     {
-	open FP, "<$file_path" || die 'Cannot read-open $file_path';
+	open FP, "<$file_path" || die "Cannot read-open $file_path ($!)";
     }
     
     my $res = join '', <FP>;
