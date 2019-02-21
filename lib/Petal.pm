@@ -1272,7 +1272,7 @@ You can do things like:
      tal:content="child/data"
      tal:on-error="string:Ouch!">Some Dummy Content</p>
 
-Given the fact that XML attributes are not ordered, withing the same tag
+Given the fact that XML attributes are not ordered, within the same tag
 statements will be executed in the following order:
 
     define
