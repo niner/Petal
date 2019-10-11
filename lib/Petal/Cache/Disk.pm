@@ -59,17 +59,17 @@ sub set
     my $key   = $class->compute_key ($file, $lang);
     my $tmp   = $class->tmp;
     {
-	if ($] > 5.007)
-	{
-	    open FP, ">:utf8", "$tmp/$key" or ( Carp::cluck "Cannot write-open $tmp/$key ($!)" and return );
-	}
-	else
-	{
-	    open FP, ">$tmp/$key" or ( Carp::cluck "Cannot write-open $tmp/$key ($!)" and return );
-	}
-	
-	print FP $code;
-	close FP;
+        if ($] > 5.007)
+        {
+            open FP, ">:utf8", "$tmp/$key" or ( Carp::cluck "Cannot write-open $tmp/$key ($!)" and return );
+        }
+        else
+        {
+            open FP, ">$tmp/$key" or ( Carp::cluck "Cannot write-open $tmp/$key ($!)" and return );
+        }
+
+        print FP $code;
+        close FP;
     }
 }
 
@@ -82,12 +82,12 @@ sub is_ok
     my $class = shift;
     my $file  = shift;
     my $lang  = shift || '';
-    
+
     my $key = $class->compute_key ($file, $lang);
-    my $tmp = $class->tmp;    
+    my $tmp = $class->tmp;
     my $tmp_file = "$tmp/$key";
     return unless (-e $tmp_file);
-    
+
     my $cached_mtime = $class->cached_mtime ($file, $lang);
     my $current_mtime = $class->current_mtime ($file);
     return $cached_mtime >= $current_mtime;
@@ -104,7 +104,7 @@ sub compute_key
     my $class = shift;
     my $file = shift;
     my $lang = shift || '';
-    
+
     my $key = md5_hex ($file . ";$lang" . ";INPUT=" . $Petal::INPUT . ";OUTPUT=" . $Petal::OUTPUT);
     $key = $PREFIX . "_" . $Petal::VERSION . "_" . $key if (defined $PREFIX);
     return $key;
@@ -122,7 +122,7 @@ sub cached_mtime
     my $lang = shift || '';
     my $key = $class->compute_key ($file, $lang);
     my $tmp = $class->tmp;
-    
+
     my $tmp_file = "$tmp/$key";
     my $mtime = (stat($tmp_file))[9];
     return $mtime;
@@ -151,24 +151,24 @@ sub cached
     my $key = shift;
     my $tmp = $class->tmp;
     my $cached_filepath = $tmp . '/' . $key;
-    
+
     (-e $cached_filepath) or return;
 
     my $res = undef;
     {
-	if ($] > 5.007)
-	{
-	    open FP, "<:utf8", "$tmp/$key" or ( Carp::cluck "Cannot read-open $tmp/$key ($!)" and return );
-	}
-	else
-	{
-	    open FP, "<$tmp/$key" or ( Carp::cluck "Cannot read-open $tmp/$key ($!)" and return );
-	}
-	
-	$res = join '', <FP>;
-	close FP;
+        if ($] > 5.007)
+        {
+            open FP, "<:utf8", "$tmp/$key" or ( Carp::cluck "Cannot read-open $tmp/$key ($!)" and return );
+        }
+        else
+        {
+            open FP, "<$tmp/$key" or ( Carp::cluck "Cannot read-open $tmp/$key ($!)" and return );
+        }
+
+        $res = join '', <FP>;
+        close FP;
     }
-    
+
     return $res;
 }
 
@@ -180,7 +180,7 @@ sub tmp
 {
     my $class = shift;
     $TMP_DIR ||= File::Spec->tmpdir;
-    
+
     (-e $TMP_DIR) or confess "\$TMP_DIR '$TMP_DIR' does not exist";
     (-d $TMP_DIR) or confess "\$TMP_DIR '$TMP_DIR' is not a directory";
     $TMP_DIR =~ s/\/+$//;
