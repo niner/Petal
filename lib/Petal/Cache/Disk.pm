@@ -58,19 +58,11 @@ sub set
     my $lang  = shift || '';
     my $key   = $class->compute_key ($file, $lang);
     my $tmp   = $class->tmp;
-    {
-        if ($] > 5.007)
-        {
-            open FP, ">:utf8", "$tmp/$key" or ( Carp::cluck "Cannot write-open $tmp/$key ($!)" and return );
-        }
-        else
-        {
-            open FP, ">$tmp/$key" or ( Carp::cluck "Cannot write-open $tmp/$key ($!)" and return );
-        }
 
-        print FP $code;
-        close FP;
-    }
+    open FP, ">:utf8", "$tmp/$key"
+        or ( Carp::cluck "Cannot write-open $tmp/$key ($!)" and return );
+    print FP $code;
+    close FP;
 }
 
 
@@ -155,19 +147,12 @@ sub cached
     (-e $cached_filepath) or return;
 
     my $res = undef;
-    {
-        if ($] > 5.007)
-        {
-            open FP, "<:utf8", "$tmp/$key" or ( Carp::cluck "Cannot read-open $tmp/$key ($!)" and return );
-        }
-        else
-        {
-            open FP, "<$tmp/$key" or ( Carp::cluck "Cannot read-open $tmp/$key ($!)" and return );
-        }
 
-        $res = join '', <FP>;
-        close FP;
-    }
+    open FP, "<:utf8", "$tmp/$key"
+        or ( Carp::cluck "Cannot read-open $tmp/$key ($!)" and return );
+
+    $res = join '', <FP>;
+    close FP;
 
     return $res;
 }
