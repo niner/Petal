@@ -9,6 +9,7 @@ package Petal::Cache::Disk;
 use strict;
 use warnings;
 use File::Spec;
+use File::Temp qw/tempfile/;
 use Digest::MD5 qw /md5_hex/;
 use Carp;
 
@@ -58,11 +59,20 @@ sub set
     my $lang  = shift || '';
     my $key   = $class->compute_key ($file, $lang);
     my $tmp   = $class->tmp;
+    my $final_file_path = "$tmp/$key";
 
-    open FP, ">:utf8", "$tmp/$key"
-        or ( Carp::cluck "Cannot write-open $tmp/$key ($!)" and return );
-    print FP $code;
-    close FP;
+    #we write the cached templated to a temp file first and move it to the final
+    #destination afterwards. this prevents a rare race condition if a
+    #request attempts to use a cached template that is not yet fully written
+    #by turning it into a atomic operation
+
+    my ($fh, $temp_file_path) = tempfile( $PREFIX . "_XXXXXX", dir => $tmp);
+    binmode( $fh, ":utf8" );
+    print $fh $code;
+    close($fh);
+
+    rename($temp_file_path, $final_file_path)
+        or ( Carp::cluck "Cannot write-open $final_file_path ($!)" and return );
 }
 
 
